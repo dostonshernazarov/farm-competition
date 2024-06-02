@@ -7,7 +7,6 @@ import (
 	_ "musobaqa/farm-competition/api/docs"
 	v1 "musobaqa/farm-competition/api/handlers/v1"
 
-	"musobaqa/farm-competition/api/middleware"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-contrib/cors"
@@ -20,7 +19,6 @@ import (
 	"musobaqa/farm-competition/internal/pkg/config"
 	tokens "musobaqa/farm-competition/internal/pkg/token"
 	"musobaqa/farm-competition/internal/usecase/app_version"
-	// "musobaqa/farm-competition/internal/usecase/refresh_token"
 )
 
 type RouteOption struct {
@@ -63,13 +61,14 @@ func NewRoute(option RouteOption) *gin.Engine {
 	router.Use(cors.New(corsConfig))
 
 	// router.Use(middleware.Tracing)
-	router.Use(middleware.CheckCasbinPermission(option.Enforcer, *option.Config))
+	// router.Use(middleware.CheckCasbinPermission(option.Enforcer, *option.Config))
 
 	router.Static("/media", "./media")
 	api := router.Group("/v1")
 
 	// ANIMAL METHODS
-	api.POST("/v1/users", HandlerV1.Create)
+	api.POST("/animal", HandlerV1.CreateAnimal)
+	api.GET("/animals/products/{id}")
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
