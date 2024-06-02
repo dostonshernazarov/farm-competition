@@ -17,5 +17,4 @@ import (
 // @Failure 500 {object} models.StandartError
 // @Router /v1/users [post]
 func (h *HandlerV1) Create(c *gin.Context) {
-
 }
