@@ -8,7 +8,7 @@ import (
 type QueryParam struct {
 	Filters  map[string]string
 	Limit    uint64
-	Page   uint64
+	Page     uint64
 	Ordering []string
 	Search   string
 }
@@ -17,7 +17,7 @@ func ParseQueryParam(queryParams map[string][]string) (*QueryParam, []string) {
 	params := QueryParam{
 		Filters:  make(map[string]string),
 		Limit:    10,
-		Page:   0,
+		Page:     1,
 		Ordering: []string{},
 		Search:   "",
 	}
