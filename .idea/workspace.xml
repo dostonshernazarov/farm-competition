@@ -5,8 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2d0f7276-8cd6-481b-b848-4e77998e0f61" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/handlers/v1/animals.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/handlers/v1/animals.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/entity/app_version.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/infrastructure/repository/postgresql/app_version.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/infrastructure/repository/postgresql/refresh_token.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/infrastructure/repository/postgresql/repo/app_version.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/pkg/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/utils/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/usecase/app_version/interface.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/usecase/app_version/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/usecase/event/interface.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/usecase/refresh_token/interface.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/usecase/refresh_token/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/000001_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/000001_table.up.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,26 +39,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/gopher",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/gopher&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

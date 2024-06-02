@@ -14,30 +14,42 @@ import (
 
 	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
 
-	// "musobaqa/farm-competition/internal/infrastructure/kafka"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql"
 	"musobaqa/farm-competition/internal/pkg/config"
 	"musobaqa/farm-competition/internal/pkg/logger"
 	"musobaqa/farm-competition/internal/pkg/otlp"
 
-	// "musobaqa/farm-competition/internal/pkg/otlp"
-
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"musobaqa/farm-competition/internal/pkg/redis"
-	"musobaqa/farm-competition/internal/usecase/app_version"
-	// "musobaqa/farm-competition/internal/usecase/refresh_token"
-	// "musobaqa/farm-competition/internal/usecase/refresh_token"
+	"musobaqa/farm-competition/internal/usecase/animals"
+	animlaService "musobaqa/farm-competition/internal/usecase/animals"
+	"musobaqa/farm-competition/internal/usecase/category"
+	categoryService "musobaqa/farm-competition/internal/usecase/category"
+	"musobaqa/farm-competition/internal/usecase/drugs"
+	drugService "musobaqa/farm-competition/internal/usecase/drugs"
+	"musobaqa/farm-competition/internal/usecase/foods"
+	foodService "musobaqa/farm-competition/internal/usecase/foods"
+	"musobaqa/farm-competition/internal/usecase/products"
+	productService "musobaqa/farm-competition/internal/usecase/products"
 )
 
+type Services struct {
+	Category category.Category
+	Product  products.Product
+	Animals  animals.Animal
+	Food     foods.Food
+	Drug     drugs.Drug
+}
+
 type App struct {
-	Config         *config.Config
-	Logger         *zap.Logger
-	DB             *postgres.PostgresDB
-	RedisDB        *redis.RedisDB
-	server         *http.Server
-	Enforcer       *casbin.Enforcer
-	ShutdownOTLP   func() error
-	appVersion     app_version.AppVersion
+	Config       *config.Config
+	Logger       *zap.Logger
+	DB           *postgres.PostgresDB
+	RedisDB      *redis.RedisDB
+	server       *http.Server
+	Enforcer     *casbin.Enforcer
+	ShutdownOTLP func() error
+	services     Services
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -46,9 +58,6 @@ func NewApp(cfg config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// kafka producer init
-	// kafkaProducer := kafka.NewProducer(&cfg, logger)
 
 	// postgres init
 	db, err := postgres.New(&cfg)
@@ -86,9 +95,33 @@ func NewApp(cfg config.Config) (*App, error) {
 		return nil, err
 	}
 
-	appVersionRepo := postgresql.NewAppVersionRepo(db)
+	// category
+	categoryRepo := postgresql.NewCategory(db)
+	appCategoryUseCase := categoryService.NewCategoryService(contextTimeout, categoryRepo)
 
-	appVersionUseCase := app_version.NewAppVersionService(contextTimeout, appVersionRepo)
+	// product
+	productRepo := postgresql.NewProduct(db)
+	appProductUseCase := productService.NewFoodService(contextTimeout, productRepo)
+
+	// animals
+	animalRepo := postgresql.NewAnimal(db)
+	appAnimalUseCase := animlaService.NewAnimalService(contextTimeout, animalRepo)
+
+	// drugs
+	drugRepo := postgresql.NewDrug(db)
+	appDrugUseCase := drugService.NewDrugService(contextTimeout, drugRepo)
+
+	// food
+	foodRepo := postgresql.NewFood(db)
+	appFoodUseCase := foodService.NewFoodService(contextTimeout, foodRepo)
+
+	services := Services{
+		Category: appCategoryUseCase,
+		Product:  appProductUseCase,
+		Animals:  appAnimalUseCase,
+		Food:     appFoodUseCase,
+		Drug:     appDrugUseCase,
+	}
 
 	return &App{
 		Config:   &cfg,
@@ -98,7 +131,7 @@ func NewApp(cfg config.Config) (*App, error) {
 		Enforcer: enforcer,
 		// BrokerProducer: kafkaProducer,
 		ShutdownOTLP: shutdownOTLP,
-		appVersion:   appVersionUseCase,
+		services:     services,
 	}, nil
 }
 
@@ -122,8 +155,8 @@ func (a *App) Run() error {
 		Logger:         a.Logger,
 		ContextTimeout: contextTimeout,
 		// Cache:          cache,
-		Enforcer:       a.Enforcer,
-		AppVersion:     a.appVersion,
+		Enforcer: a.Enforcer,
+		//AppVersion: a.appVersion,
 	})
 	err = a.Enforcer.LoadPolicy()
 	if err != nil {
