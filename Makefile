@@ -52,6 +52,10 @@ test:
 migrate:
 	migrate -source file://migrations -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=disable up
 
+.PHONY: create-migration
+create-migration:
+	migrate create -ext sql -dir migrations -seq "$(name)"
+
 # -------------- for deploy --------------
 build-image:
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} .
