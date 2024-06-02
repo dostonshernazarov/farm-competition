@@ -68,7 +68,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 	router.Static("/media", "./media")
 	api := router.Group("/v1")
 
-	// USER METHODS
+	// ANIMAL METHODS
 	api.POST("/v1/users", HandlerV1.Create)
 
 	url := ginSwagger.URL("swagger/doc.json")
