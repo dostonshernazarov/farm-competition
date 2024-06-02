@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"musobaqa/api-service/internal/pkg/config"
+	"musobaqa/farm-competition/internal/pkg/config"
 )
 
 func NewServer(cfg *config.Config, handler http.Handler) (*http.Server, error) {

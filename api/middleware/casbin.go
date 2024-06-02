@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"errors"
-	"musobaqa/api-service/internal/pkg/config"
-	tokens "musobaqa/api-service/internal/pkg/token"
+	"musobaqa/farm-competition/internal/pkg/config"
+	tokens "musobaqa/farm-competition/internal/pkg/token"
 	"net/http"
 	"strings"
 

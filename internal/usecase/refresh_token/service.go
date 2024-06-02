@@ -6,8 +6,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"musobaqa/api-service/internal/entity"
-	// "musobaqa/api-service/internal/pkg/token"
+	"musobaqa/farm-competition/internal/entity"
+	// "musobaqa/farm-competition/internal/pkg/token"
 )
 
 type refreshTokenService struct {

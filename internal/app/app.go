@@ -10,25 +10,23 @@ import (
 	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
 
-	"musobaqa/api-service/api"
-	grpcService "musobaqa/api-service/internal/infrastructure/grpc_service_client"
+	"musobaqa/farm-competition/api"
 
 	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
 
-	// "musobaqa/api-service/internal/infrastructure/kafka"
-	"musobaqa/api-service/internal/infrastructure/repository/postgresql"
-	"musobaqa/api-service/internal/pkg/config"
-	"musobaqa/api-service/internal/pkg/logger"
-	"musobaqa/api-service/internal/pkg/otlp"
+	// "musobaqa/farm-competition/internal/infrastructure/kafka"
+	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql"
+	"musobaqa/farm-competition/internal/pkg/config"
+	"musobaqa/farm-competition/internal/pkg/logger"
+	"musobaqa/farm-competition/internal/pkg/otlp"
 
-	// "musobaqa/api-service/internal/pkg/otlp"
+	// "musobaqa/farm-competition/internal/pkg/otlp"
 
-	"musobaqa/api-service/internal/pkg/postgres"
-	"musobaqa/api-service/internal/pkg/redis"
-	"musobaqa/api-service/internal/usecase/app_version"
-	"musobaqa/api-service/internal/usecase/event"
-	// "musobaqa/api-service/internal/usecase/refresh_token"
-	// "musobaqa/api-service/internal/usecase/refresh_token"
+	"musobaqa/farm-competition/internal/pkg/postgres"
+	"musobaqa/farm-competition/internal/pkg/redis"
+	"musobaqa/farm-competition/internal/usecase/app_version"
+	// "musobaqa/farm-competition/internal/usecase/refresh_token"
+	// "musobaqa/farm-competition/internal/usecase/refresh_token"
 )
 
 type App struct {
@@ -38,9 +36,7 @@ type App struct {
 	RedisDB        *redis.RedisDB
 	server         *http.Server
 	Enforcer       *casbin.Enforcer
-	Clients        grpcService.ServiceClient
 	ShutdownOTLP   func() error
-	BrokerProducer event.BrokerProducer
 	appVersion     app_version.AppVersion
 }
 
@@ -112,12 +108,6 @@ func (a *App) Run() error {
 		return fmt.Errorf("error while parsing context timeout: %v", err)
 	}
 
-	clients, err := grpcService.New(a.Config)
-	if err != nil {
-		return err
-	}
-	a.Clients = clients
-
 	// initialize cache
 	// cache := redisrepo.NewCache(a.RedisDB)
 
@@ -133,8 +123,6 @@ func (a *App) Run() error {
 		ContextTimeout: contextTimeout,
 		// Cache:          cache,
 		Enforcer:       a.Enforcer,
-		Service:        clients,
-		BrokerProducer: a.BrokerProducer,
 		AppVersion:     a.appVersion,
 	})
 	err = a.Enforcer.LoadPolicy()
@@ -159,12 +147,6 @@ func (a *App) Stop() {
 
 	// close database
 	a.DB.Close()
-
-	// close grpc connections
-	a.Clients.Close()
-
-	// kafka producer close
-	a.BrokerProducer.Close()
 
 	// shutdown server http
 	if err := a.server.Shutdown(context.Background()); err != nil {

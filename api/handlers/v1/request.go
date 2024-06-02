@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"musobaqa/api-service/internal/pkg/config"
-	tokens "musobaqa/api-service/internal/pkg/token"
+	"musobaqa/farm-competition/internal/pkg/config"
+	tokens "musobaqa/farm-competition/internal/pkg/token"
 	"net/http"
 	"strings"
 

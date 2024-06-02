@@ -1,8 +1,8 @@
 package postgresql
 
 import (
-	"musobaqa/api-service/internal/pkg/postgres"
-	"musobaqa/api-service/internal/usecase/refresh_token"
+	"musobaqa/farm-competition/internal/pkg/postgres"
+	"musobaqa/farm-competition/internal/usecase/refresh_token"
 )
 
 func NewRefreshTokenRepo(db *postgres.PostgresDB) refresh_token.RefreshTokenRepo {

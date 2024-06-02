@@ -8,8 +8,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"musobaqa/api-service/internal/app"
-	configpkg "musobaqa/api-service/internal/pkg/config"
+	"musobaqa/farm-competition/internal/app"
+	configpkg "musobaqa/farm-competition/internal/pkg/config"
 )
 
 func main() {

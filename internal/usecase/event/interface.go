@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"musobaqa/api-service/api/models"
+	"musobaqa/farm-competition/api/models"
 )
 
 type ConsumerConfig interface {

@@ -3,9 +3,9 @@
 package tokens
 
 import (
-	// "musobaqa/api-service/internal/pkg/config"
+	// "musobaqa/farm-competition/internal/pkg/config"
 	"fmt"
-	"musobaqa/api-service/internal/pkg/logger"
+	"musobaqa/farm-competition/internal/pkg/logger"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"

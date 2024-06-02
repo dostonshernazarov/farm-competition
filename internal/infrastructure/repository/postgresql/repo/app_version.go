@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 
-	"musobaqa/api-service/internal/entity"
+	"musobaqa/farm-competition/internal/entity"
 )
 
 type AppVersionRepo interface {

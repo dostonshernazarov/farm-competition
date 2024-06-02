@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 
-	"musobaqa/api-service/internal/pkg/config"
+	"musobaqa/farm-competition/internal/pkg/config"
 )
 
 type RedisDB struct {

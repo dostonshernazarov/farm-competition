@@ -3,11 +3,11 @@ package postgresql
 import (
 	"context"
 
-	"musobaqa/api-service/internal/entity"
-	"musobaqa/api-service/internal/infrastructure/repository/postgresql/repo"
+	"musobaqa/farm-competition/internal/entity"
+	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 
-	// "musobaqa/api-service/internal/pkg/otlp"
-	"musobaqa/api-service/internal/pkg/postgres"
+	// "musobaqa/farm-competition/internal/pkg/otlp"
+	"musobaqa/farm-competition/internal/pkg/postgres"
 )
 
 type appVersionRepo struct {

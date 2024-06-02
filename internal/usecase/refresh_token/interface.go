@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"musobaqa/api-service/internal/entity"
+	"musobaqa/farm-competition/internal/entity"
 )
 
 type RefreshToken interface {

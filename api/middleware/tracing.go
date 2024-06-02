@@ -11,8 +11,8 @@ package middleware
 // 	"go.opentelemetry.io/otel"
 // 	"go.opentelemetry.io/otel/attribute"
 
-// 	// "musobaqa/api-service/api/response"
-// 	// "musobaqa/api-service/internal/pkg/otlp"
+// 	// "musobaqa/farm-competition/api/response"
+// 	// "musobaqa/farm-competition/internal/pkg/otlp"
 // )
 
 // // Tracing middleware function

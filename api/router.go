@@ -4,10 +4,10 @@ import (
 	// "net/http"
 	"time"
 
-	_ "musobaqa/api-service/api/docs"
-	v1 "musobaqa/api-service/api/handlers/v1"
+	_ "musobaqa/farm-competition/api/docs"
+	v1 "musobaqa/farm-competition/api/handlers/v1"
 
-	"musobaqa/api-service/api/middleware"
+	"musobaqa/farm-competition/api/middleware"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-contrib/cors"
@@ -17,21 +17,17 @@ import (
 
 	"go.uber.org/zap"
 
-	grpcClients "musobaqa/api-service/internal/infrastructure/grpc_service_client"
-	"musobaqa/api-service/internal/pkg/config"
-	tokens "musobaqa/api-service/internal/pkg/token"
-	"musobaqa/api-service/internal/usecase/app_version"
-	"musobaqa/api-service/internal/usecase/event"
-	// "musobaqa/api-service/internal/usecase/refresh_token"
+	"musobaqa/farm-competition/internal/pkg/config"
+	tokens "musobaqa/farm-competition/internal/pkg/token"
+	"musobaqa/farm-competition/internal/usecase/app_version"
+	// "musobaqa/farm-competition/internal/usecase/refresh_token"
 )
 
 type RouteOption struct {
 	Config         *config.Config
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
-	Service        grpcClients.ServiceClient
 	JwtHandler     tokens.JwtHandler
-	BrokerProducer event.BrokerProducer
 	AppVersion     app_version.AppVersion
 	Enforcer       *casbin.Enforcer
 }
@@ -53,10 +49,8 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Config:         option.Config,
 		Logger:         option.Logger,
 		ContextTimeout: option.ContextTimeout,
-		Service:        option.Service,
 		JwtHandler:     option.JwtHandler,
 		AppVersion:     option.AppVersion,
-		BrokerProducer: option.BrokerProducer,
 		Enforcer:       option.Enforcer,
 	})
 
@@ -75,36 +69,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api := router.Group("/v1")
 
 	// USER METHODS
-
-	api.POST("/users", HandlerV1.Create)
-	api.GET("/users/:id", HandlerV1.Get)
-	api.GET("/users/list", HandlerV1.ListUsers)
-	api.GET("/users/list/deleted", HandlerV1.ListDeletedUsers)
-	api.PUT("/users", HandlerV1.Update)
-	api.DELETE("/users/:id", HandlerV1.Delete)
-	api.GET("/users/token", HandlerV1.GetByToken)
-
-	// REGISTER METHODS
-	api.POST("/users/register", HandlerV1.RegisterUser)
-	api.GET("/users/verify", HandlerV1.Verification)
-	api.POST("/users/login", HandlerV1.Login)
-	api.GET("/users/set/:email", HandlerV1.ForgetPassword)
-	api.GET("/users/code", HandlerV1.ForgetPasswordVerify)
-	api.PUT("/users/password", HandlerV1.SetNewPassword)
-	api.POST("/admins/login", HandlerV1.LoginAdmin)
-
-	api.GET("/token/:refresh", HandlerV1.UpdateToken)
-
-	// ADMIN METHODS
-	api.POST("/admins", HandlerV1.CreateAdmin)
-	api.GET("/admins/:id", HandlerV1.GetAdmin)
-	api.GET("/admins/list", HandlerV1.ListAdmins)
-	api.PUT("/admins", HandlerV1.UpdateAdmin)
-	api.DELETE("/admins/:id", HandlerV1.DeleteAdmin)
-
-	// MEDIA
-	api.POST("/media/user-photo", HandlerV1.UploadMedia)
-	api.POST("/media/establishment/:id", HandlerV1.CreateEstablishmentMedia)
+	api.POST("/v1/users", HandlerV1.Create)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

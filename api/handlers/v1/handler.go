@@ -6,13 +6,11 @@ import (
 	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
 
-	grpcClients "musobaqa/api-service/internal/infrastructure/grpc_service_client"
-	"musobaqa/api-service/internal/pkg/config"
-	tokens "musobaqa/api-service/internal/pkg/token"
+	"musobaqa/farm-competition/internal/pkg/config"
+	tokens "musobaqa/farm-competition/internal/pkg/token"
 
-	appV "musobaqa/api-service/internal/usecase/app_version"
-	"musobaqa/api-service/internal/usecase/event"
-	// "musobaqa/api-service/internal/usecase/refresh_token"
+	appV "musobaqa/farm-competition/internal/usecase/app_version"
+	// "musobaqa/farm-competition/internal/usecase/refresh_token"
 )
 
 type HandlerV1 struct {
@@ -20,9 +18,7 @@ type HandlerV1 struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	Service        grpcClients.ServiceClient
 	AppVersion     appV.AppVersion
-	BrokerProducer event.BrokerProducer
 	Enforcer       *casbin.Enforcer
 }
 
@@ -31,9 +27,7 @@ type HandlerV1Config struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	Service        grpcClients.ServiceClient
 	AppVersion     appV.AppVersion
-	BrokerProducer event.BrokerProducer
 	Enforcer       *casbin.Enforcer
 }
 
@@ -42,10 +36,8 @@ func New(c *HandlerV1Config) *HandlerV1 {
 		Config:         c.Config,
 		Logger:         c.Logger,
 		ContextTimeout: c.ContextTimeout,
-		Service:        c.Service,
-		JwtHandler: c.JwtHandler,
+		JwtHandler:     c.JwtHandler,
 		AppVersion:     c.AppVersion,
-		BrokerProducer: c.BrokerProducer,
 		Enforcer:       c.Enforcer,
 	}
 }

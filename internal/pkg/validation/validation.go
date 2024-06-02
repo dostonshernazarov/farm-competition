@@ -12,7 +12,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	validatorEn "github.com/go-playground/validator/v10/translations/en"
 
-	errorpkg "musobaqa/api-service/internal/errors"
+	errorpkg "musobaqa/farm-competition/internal/errors"
 )
 
 func Validator(s interface{}) error {

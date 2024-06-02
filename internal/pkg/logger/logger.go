@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"musobaqa/api-service/internal/pkg/app"
+	"musobaqa/farm-competition/internal/pkg/app"
 )
 
 func productionConfig(file string) zap.Config {

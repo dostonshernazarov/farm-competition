@@ -11,8 +11,8 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	pgxadapter "github.com/pckhoi/casbin-pgx-adapter/v2"
 
-	errorspkg "musobaqa/api-service/internal/errors"
-	"musobaqa/api-service/internal/pkg/config"
+	errorspkg "musobaqa/farm-competition/internal/errors"
+	"musobaqa/farm-competition/internal/pkg/config"
 )
 
 // PostgresDB ...

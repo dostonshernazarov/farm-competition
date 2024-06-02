@@ -7,8 +7,8 @@ import (
 
 	// "go.opentelemetry.io/otel/attribute"
 
-	// otlp_pkg "musobaqa/api-service/internal/pkg/otlp"
-	"musobaqa/api-service/internal/pkg/redis"
+	// otlp_pkg "musobaqa/farm-competition/internal/pkg/otlp"
+	"musobaqa/farm-competition/internal/pkg/redis"
 )
 
 type Cache interface {
