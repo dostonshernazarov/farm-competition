@@ -36,9 +36,9 @@ type RouteOption struct {
 	Enforcer       *casbin.Enforcer
 }
 
-// NewRouter
-// @title Welcome To Booking API
-// @Description API for Touristan
+// NewRoute
+// @title Welcome To Farmish API
+// @Description API for Farmer
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
@@ -105,7 +105,6 @@ func NewRoute(option RouteOption) *gin.Engine {
 	// MEDIA
 	api.POST("/media/user-photo", HandlerV1.UploadMedia)
 	api.POST("/media/establishment/:id", HandlerV1.CreateEstablishmentMedia)
-
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
