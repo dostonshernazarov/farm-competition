@@ -1,12 +1,15 @@
 package api
 
 import (
-	// "net/http"
+	"musobaqa/farm-competition/internal/usecase/animals"
+	"musobaqa/farm-competition/internal/usecase/category"
+	"musobaqa/farm-competition/internal/usecase/drugs"
+	"musobaqa/farm-competition/internal/usecase/foods"
+	"musobaqa/farm-competition/internal/usecase/products"
 	"time"
 
 	_ "musobaqa/farm-competition/api/docs"
 	v1 "musobaqa/farm-competition/api/handlers/v1"
-
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-contrib/cors"
@@ -18,7 +21,6 @@ import (
 
 	"musobaqa/farm-competition/internal/pkg/config"
 	tokens "musobaqa/farm-competition/internal/pkg/token"
-	"musobaqa/farm-competition/internal/usecase/app_version"
 )
 
 type RouteOption struct {
@@ -26,7 +28,11 @@ type RouteOption struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	AppVersion     app_version.AppVersion
+	Category       category.Category
+	Product        products.Product
+	Animals        animals.Animal
+	Food           foods.Food
+	Drug           drugs.Drug
 	Enforcer       *casbin.Enforcer
 }
 
@@ -48,7 +54,11 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Logger:         option.Logger,
 		ContextTimeout: option.ContextTimeout,
 		JwtHandler:     option.JwtHandler,
-		AppVersion:     option.AppVersion,
+		Category:       option.Category,
+		Product:        option.Product,
+		Animals:        option.Animals,
+		Food:           option.Food,
+		Drug:           option.Drug,
 		Enforcer:       option.Enforcer,
 	})
 

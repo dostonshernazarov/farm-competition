@@ -8,9 +8,11 @@ import (
 
 	"musobaqa/farm-competition/internal/pkg/config"
 	tokens "musobaqa/farm-competition/internal/pkg/token"
-
-	appV "musobaqa/farm-competition/internal/usecase/app_version"
-	// "musobaqa/farm-competition/internal/usecase/refresh_token"
+	"musobaqa/farm-competition/internal/usecase/animals"
+	"musobaqa/farm-competition/internal/usecase/category"
+	"musobaqa/farm-competition/internal/usecase/drugs"
+	"musobaqa/farm-competition/internal/usecase/foods"
+	"musobaqa/farm-competition/internal/usecase/products"
 )
 
 type HandlerV1 struct {
@@ -18,7 +20,11 @@ type HandlerV1 struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	AppVersion     appV.AppVersion
+	Category       category.Category
+	Product        products.Product
+	Animals        animals.Animal
+	Food           foods.Food
+	Drug           drugs.Drug
 	Enforcer       *casbin.Enforcer
 }
 
@@ -27,7 +33,11 @@ type HandlerV1Config struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	AppVersion     appV.AppVersion
+	Category       category.Category
+	Product        products.Product
+	Animals        animals.Animal
+	Food           foods.Food
+	Drug           drugs.Drug
 	Enforcer       *casbin.Enforcer
 }
 
@@ -37,7 +47,11 @@ func New(c *HandlerV1Config) *HandlerV1 {
 		Logger:         c.Logger,
 		ContextTimeout: c.ContextTimeout,
 		JwtHandler:     c.JwtHandler,
-		AppVersion:     c.AppVersion,
+		Category:       c.Category,
+		Product:        c.Product,
+		Animals:        c.Animals,
+		Food:           c.Food,
+		Drug:           c.Drug,
 		Enforcer:       c.Enforcer,
 	}
 }

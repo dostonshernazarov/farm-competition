@@ -10,10 +10,9 @@ import (
 	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
 
-	"musobaqa/farm-competition/api"
-
 	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
 
+	"musobaqa/farm-competition/api"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql"
 	"musobaqa/farm-competition/internal/pkg/config"
 	"musobaqa/farm-competition/internal/pkg/logger"
@@ -22,24 +21,11 @@ import (
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"musobaqa/farm-competition/internal/pkg/redis"
 	"musobaqa/farm-competition/internal/usecase/animals"
-	animlaService "musobaqa/farm-competition/internal/usecase/animals"
 	"musobaqa/farm-competition/internal/usecase/category"
-	categoryService "musobaqa/farm-competition/internal/usecase/category"
 	"musobaqa/farm-competition/internal/usecase/drugs"
-	drugService "musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
-	foodService "musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
-	productService "musobaqa/farm-competition/internal/usecase/products"
 )
-
-type Services struct {
-	Category category.Category
-	Product  products.Product
-	Animals  animals.Animal
-	Food     foods.Food
-	Drug     drugs.Drug
-}
 
 type App struct {
 	Config       *config.Config
@@ -49,7 +35,11 @@ type App struct {
 	server       *http.Server
 	Enforcer     *casbin.Enforcer
 	ShutdownOTLP func() error
-	services     Services
+	Category     category.Category
+	Product      products.Product
+	Animals      animals.Animal
+	Food         foods.Food
+	Drug         drugs.Drug
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -97,41 +87,36 @@ func NewApp(cfg config.Config) (*App, error) {
 
 	// category
 	categoryRepo := postgresql.NewCategory(db)
-	appCategoryUseCase := categoryService.NewCategoryService(contextTimeout, categoryRepo)
+	appCategoryUseCase := category.NewCategoryService(contextTimeout, categoryRepo)
 
 	// product
 	productRepo := postgresql.NewProduct(db)
-	appProductUseCase := productService.NewFoodService(contextTimeout, productRepo)
+	appProductUseCase := products.NewFoodService(contextTimeout, productRepo)
 
 	// animals
 	animalRepo := postgresql.NewAnimal(db)
-	appAnimalUseCase := animlaService.NewAnimalService(contextTimeout, animalRepo)
+	appAnimalUseCase := animals.NewAnimalService(contextTimeout, animalRepo)
 
 	// drugs
 	drugRepo := postgresql.NewDrug(db)
-	appDrugUseCase := drugService.NewDrugService(contextTimeout, drugRepo)
+	appDrugUseCase := drugs.NewDrugService(contextTimeout, drugRepo)
 
 	// food
 	foodRepo := postgresql.NewFood(db)
-	appFoodUseCase := foodService.NewFoodService(contextTimeout, foodRepo)
-
-	services := Services{
-		Category: appCategoryUseCase,
-		Product:  appProductUseCase,
-		Animals:  appAnimalUseCase,
-		Food:     appFoodUseCase,
-		Drug:     appDrugUseCase,
-	}
+	appFoodUseCase := foods.NewFoodService(contextTimeout, foodRepo)
 
 	return &App{
-		Config:   &cfg,
-		Logger:   logger,
-		DB:       db,
-		RedisDB:  redisdb,
-		Enforcer: enforcer,
-		// BrokerProducer: kafkaProducer,
+		Config:       &cfg,
+		Logger:       logger,
+		DB:           db,
+		RedisDB:      redisdb,
+		Enforcer:     enforcer,
 		ShutdownOTLP: shutdownOTLP,
-		services:     services,
+		Category:     appCategoryUseCase,
+		Product:      appProductUseCase,
+		Animals:      appAnimalUseCase,
+		Drug:         appDrugUseCase,
+		Food:         appFoodUseCase,
 	}, nil
 }
 
@@ -156,7 +141,6 @@ func (a *App) Run() error {
 		ContextTimeout: contextTimeout,
 		// Cache:          cache,
 		Enforcer: a.Enforcer,
-		//AppVersion: a.appVersion,
 	})
 	err = a.Enforcer.LoadPolicy()
 	if err != nil {
