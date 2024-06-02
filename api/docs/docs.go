@@ -15,14 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/users": {
+        "/v1/animal": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Api for Create",
+                "description": "Api for Create animal",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,17 +25,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "USER"
+                    "ANIMAL"
                 ],
-                "summary": "CREATE",
+                "summary": "CREATE ANIMAL",
                 "parameters": [
                     {
                         "description": "createModel",
-                        "name": "User",
+                        "name": "Animal",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserReq"
+                            "$ref": "#/definitions/models.AnimalReq"
                         }
                     }
                 ],
@@ -48,7 +43,61 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserRes"
+                            "$ref": "#/definitions/models.AnimalCreateRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.StandartError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.StandartError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/animals/products/{id}": {
+            "get": {
+                "description": "Api for Get Animal",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ANIMAL"
+                ],
+                "summary": "GET ANIMAL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "animal_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimalProdactList"
                         }
                     },
                     "400": {
@@ -68,6 +117,119 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AnimalCreateRes": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "genus": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_healt": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.AnimalProdactList": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "genus": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_healt": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AnimalProdacts"
+                    }
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.AnimalProdacts": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "string"
+                },
+                "get_time": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimalReq": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "genus": {
+                    "type": "string"
+                },
+                "is_healt": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "models.Error": {
             "type": "object",
             "properties": {
@@ -81,76 +243,6 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "$ref": "#/definitions/models.Error"
-                }
-            }
-        },
-        "models.UserReq": {
-            "type": "object",
-            "properties": {
-                "card": {
-                    "type": "string"
-                },
-                "date_of_birth": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "gender": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone_number": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UserRes": {
-            "type": "object",
-            "properties": {
-                "card": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "date_of_birth": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "gender": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "phone_number": {
-                    "type": "string"
-                },
-                "profile_img": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         }

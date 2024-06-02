@@ -1,35 +1,64 @@
 package models
 
-type UserReq struct {
-	FullName    string `json:"full_name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
+type AnimalReq struct {
+	Name    string `json:"name"`
+	CategoryName       string `json:"category_name"`
+	Gender    string `json:"gender"`
 	DateOfBirth string `json:"date_of_birth"`
-	Card        string `json:"card"`
-	Gender      string `json:"gender"`
-	PhoneNumber string `json:"phone_number"`
+	Description        string `json:"description"`
+	Genus      string `json:"genus"`
+	Weight float32 `json:"weight"`
+	IsHealth bool `json:"is_healt"`
 }
 
-type UserRes struct {
+type AnimalCreateRes struct {
 	Id           string `json:"id"`
-	FullName     string `json:"full_name"`
-	Email        string `json:"email"`
-	DateOfBirth  string `json:"date_of_birth"`
-	ProfileImg   string `json:"profile_img"`
-	Card         string `json:"card"`
-	Gender       string `json:"gender"`
-	PhoneNumber  string `json:"phone_number"`
-	Role         string `json:"role"`
-	RefreshToken string `json:"refresh_token"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
-	DeletedAt    string `json:"deleted_at"`
+	Name    string `json:"name"`
+	CategoryName       string `json:"category_name"`
+	Gender    string `json:"gender"`
+	DateOfBirth string `json:"date_of_birth"`
+	Description        string `json:"description"`
+	Genus      string `json:"genus"`
+	Weight float32 `json:"weight"`
+	IsHealth bool `json:"is_healt"`
 }
 
-type ListUsersRes struct{}
+type AnimalProdactList struct {
+	Id           string `json:"id"`
+	Name    string `json:"name"`
+	CategoryName       string `json:"category_name"`
+	Gender    string `json:"gender"`
+	DateOfBirth string `json:"date_of_birth"`
+	Description        string `json:"description"`
+	Genus      string `json:"genus"`
+	Weight float32 `json:"weight"`
+	IsHealth bool `json:"is_healt"`
+	Products []*AnimalProdacts `json:"products"`
+}
 
-type Users struct {
-	Users []*UserRes `json:"users"`
+type AnimalProdacts struct {
+	Name string `json:"product_name"`
+	Capacity string `json:"capacity"` // animal_products capacity + products union
+	GetTime string `json:"get_time"`
+}
+
+type AnimalFoodList struct {
+	Id           string `json:"id"`
+	Name    string `json:"name"`
+	CategoryName       string `json:"category_name"`
+	Gender    string `json:"gender"`
+	DateOfBirth string `json:"date_of_birth"`
+	Description        string `json:"description"`
+	Genus      string `json:"genus"`
+	Weight float32 `json:"weight"`
+	IsHealth bool `json:"is_healt"`
+	Foods []*AnimalFoods `json:"foods"`
+}
+
+type AnimalFoods struct {
+	Name string `json:"food_name"`
+	Capacity string `json:"capacity"` // animal_given_eatables + foods union
+	GivenTime string `json:"given_time"`
 }
 
 type Pagination struct {
@@ -37,7 +66,14 @@ type Pagination struct {
 	Page  int `json:"page"`
 }
 
-type FieldValues struct {
-	Column string `json:"column"`
-	Value  string `json:"value"`
+type ListAnimalsRes struct {
+	Animals []*AnimalCreateRes `json:"animals"`
+}
+
+type AnimalFieldValues struct {
+	Category string `json:"category"`
+	Genus string `json:"genus"`
+	Gender  string `json:"gender"`
+	Weight float32 `json:"weight"`
+	IsHealth bool `json:"is_health"`
 }

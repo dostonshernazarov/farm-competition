@@ -1,4 +1,78 @@
 definitions:
+  models.AnimalCreateRes:
+    properties:
+      category_name:
+        type: string
+      date_of_birth:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      genus:
+        type: string
+      id:
+        type: string
+      is_healt:
+        type: boolean
+      name:
+        type: string
+      weight:
+        type: number
+    type: object
+  models.AnimalProdactList:
+    properties:
+      category_name:
+        type: string
+      date_of_birth:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      genus:
+        type: string
+      id:
+        type: string
+      is_healt:
+        type: boolean
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.AnimalProdacts'
+        type: array
+      weight:
+        type: number
+    type: object
+  models.AnimalProdacts:
+    properties:
+      capacity:
+        type: string
+      get_time:
+        type: string
+      name:
+        type: string
+    type: object
+  models.AnimalReq:
+    properties:
+      category_name:
+        type: string
+      date_of_birth:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      genus:
+        type: string
+      is_healt:
+        type: boolean
+      name:
+        type: string
+      weight:
+        type: number
+    type: object
   models.Error:
     properties:
       message:
@@ -9,76 +83,30 @@ definitions:
       error:
         $ref: '#/definitions/models.Error'
     type: object
-  models.UserReq:
-    properties:
-      card:
-        type: string
-      date_of_birth:
-        type: string
-      email:
-        type: string
-      full_name:
-        type: string
-      gender:
-        type: string
-      password:
-        type: string
-      phone_number:
-        type: string
-    type: object
-  models.UserRes:
-    properties:
-      card:
-        type: string
-      created_at:
-        type: string
-      date_of_birth:
-        type: string
-      deleted_at:
-        type: string
-      email:
-        type: string
-      full_name:
-        type: string
-      gender:
-        type: string
-      id:
-        type: string
-      phone_number:
-        type: string
-      profile_img:
-        type: string
-      refresh_token:
-        type: string
-      role:
-        type: string
-      updated_at:
-        type: string
-    type: object
 info:
   contact: {}
   description: API for Farmer
   title: Welcome To Farmish API
 paths:
-  /v1/users:
+  /v1/animal:
     post:
       consumes:
       - application/json
-      description: Api for Create
+      description: Api for Create animal
       parameters:
       - description: createModel
         in: body
-        name: User
+        name: Animal
         required: true
         schema:
-          $ref: '#/definitions/models.UserReq'
+          $ref: '#/definitions/models.AnimalReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserRes'
+            $ref: '#/definitions/models.AnimalCreateRes'
         "400":
           description: Bad Request
           schema:
@@ -87,11 +115,44 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.StandartError'
-      security:
-      - BearerAuth: []
-      summary: CREATE
+      summary: CREATE ANIMAL
       tags:
-      - USER
+      - ANIMAL
+  /v1/animals/products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Api for Get Animal
+      parameters:
+      - description: ID
+        in: path
+        name: animal_id
+        required: true
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimalProdactList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandartError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandartError'
+      summary: GET ANIMAL
+      tags:
+      - ANIMAL
 securityDefinitions:
   BearerAuth:
     in: header

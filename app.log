@@ -1,0 +1,25 @@
+2024-06-02T19:02:51.360+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-02T19:03:00.644+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-02T19:03:00.645+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-02T19:03:24.054+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-02T19:03:35.801+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-02T19:03:35.801+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-02T19:04:01.742+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-02T19:04:22.249+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-02T19:04:22.250+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-02T19:06:32.921+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-02T19:06:46.771+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-02T19:06:46.772+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-02T19:07:45.004+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-02T19:07:54.245+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-02T19:07:54.245+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
