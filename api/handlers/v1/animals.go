@@ -125,7 +125,6 @@ func (h *HandlerV1) GetAnimalWithEatables(c *gin.Context) {
 
 // LIST ANIMALS
 // @Summary LIST ANIMALS
-// @Security BearerAuth
 // @Description Api for ListAnimals
 // @Tags ANIMAL
 // @Accept json
@@ -137,7 +136,7 @@ func (h *HandlerV1) GetAnimalWithEatables(c *gin.Context) {
 // @Failure 500 {object} models.StandartError
 // @Router /v1/animals [get]
 func (h *HandlerV1) ListAnimals(c *gin.Context) {
-	_, span := otlp.Start(c, "api", "ListUser")
+	ctx, span := otlp.Start(c, "api", "ListUser")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -155,6 +154,23 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 	}
 
 	println(params)
+
+	category := c.Query("category")
+	genus := c.Query("genus")
+	gender := c.Query("gender")
+	weight := c.Query("weight")
+	is_health := c.Query("is_health")
+
+	_ = map[string]interface{}{
+    "category":  category,
+    "genus":     genus,
+    "gender":    gender, // Empty string
+    "weight":    weight,
+    "is_health": is_health,
+  }
+
+	h.Animals.List(ctx, params.Page, params.Limit)
+
 
 	c.JSON(http.StatusOK, &models.ListAnimalsRes{})
 }
