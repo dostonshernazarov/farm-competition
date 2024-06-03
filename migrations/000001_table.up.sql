@@ -15,18 +15,10 @@ CREATE TYPE "store_category" AS ENUM (
     'water'
 );
 
-CREATE TABLE IF NOT EXISTS category (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ DEFAULT NULL
-);
-
 CREATE TABLE IF NOT EXISTS animals (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    category_id UUID NOT NULL,
+    category_name VARCHAR(100) NOT NULL,
     gender animal_gender NOT NULL,
     birth_day DATE NOT NULL DEFAULT CURRENT_DATE,
     genus VARCHAR(100),
@@ -35,14 +27,13 @@ CREATE TABLE IF NOT EXISTS animals (
     is_health BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ DEFAULT NULL,
-    FOREIGN KEY (category_id) REFERENCES category(id)
+    deleted_at TIMESTAMPTZ DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    union product_union NOT NULL,
+    product_union product_union NOT NULL,
     description TEXT,
     total_capacity BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,7 +59,7 @@ CREATE TABLE IF NOT EXISTS foods (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     capacity BIGINT NOT NULL,
-    union product_union NOT NULL,
+    product_union product_union NOT NULL,
     description TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -79,7 +70,7 @@ CREATE TABLE IF NOT EXISTS drugs (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     capacity BIGINT NOT NULL,
-    union product_union NOT NULL,
+    product_union product_union NOT NULL,
     status VARCHAR(100) NOT NULL,
     description TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -118,7 +109,7 @@ CREATE TABLE IF NOT EXISTS into_store (
     name VARCHAR(100) NOT NULL,
     category store_category NOT NULL,
     capacity BIGINT NOT NULL,
-    union product_union NOT NULL,
+    product_union product_union NOT NULL,
     time TIMESTAMP NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -2,10 +2,8 @@
 export
 
 CURRENT_DIR=$(shell pwd)
-APP=evrone_api_gateway
+APP=farm-competition
 CMD_DIR=./cmd
-
-.DEFAULT_GOAL = build
 
 # build for current os
 .PHONY: build
@@ -22,45 +20,32 @@ build-linux:
 run:
 	go run ${CMD_DIR}/app/main.go
 
-# proto
-.PHONY: proto-gen
-proto-gen:
-	./scripts/gen-proto.sh
-
-# git submodule init
-.PHONY: pull-proto
-pull-proto:
-	git submodule update --init --recursive
-
-# go generate
-.PHONY: go-gen
-go-gen:
-	go generate ./...
-
 # generate swag
 .PHONY: swag-gen
 swag-gen:
 	swag init -g api/router.go -o api/docs
 
-# run test
-.PHONY: test
-test:
-	go test -v -cover -race ./internal/...
-
-# migrate
-.PHONY: migrate
-migrate:
-	migrate -source file://migrations -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=disable up
-
+# create migrate
 .PHONY: create-migration
 create-migration:
 	migrate create -ext sql -dir migrations -seq "$(name)"
 
-# -------------- for deploy --------------
-build-image:
-	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} .
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:${ENV_TAG}
+# migrate up
+.PHONY: migrate-up
+migrate-up:
+	migrate -source file://migrations -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=disable up
 
-push-image:
-	docker push ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG}
-	docker push ${REGISTRY}/${PROJECT_NAME}/${APP}:${ENV_TAG}
+# migrate down
+.PHONY: migrate-down
+migrate-down:
+	migrate -source file://migrations -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=disable down
+
+# show migrate version
+.PHONY: migration-version
+migration-version:
+	migrate -source file://migrations -database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=disable -path migrations version
+
+# fix migrate version
+.PHONY: migrate-dirty
+migrate-dirty:
+	migrate -path ./migrations/ -database file://migrations - database postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=${POSTGRES_SSL_MODE} force $(number)

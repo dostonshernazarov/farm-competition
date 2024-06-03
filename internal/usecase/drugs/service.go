@@ -2,6 +2,7 @@ package drugs
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"time"
@@ -20,6 +21,7 @@ func NewDrugService(timeout time.Duration, repository repo.Drug) Drug {
 }
 
 func (d *drugService) beforeCreate(drug *entity.Drug) {
+	drug.ID = uuid.New().String()
 	drug.CreatedAt = time.Now().UTC()
 	drug.UpdatedAt = time.Now().UTC()
 }

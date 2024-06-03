@@ -2,6 +2,7 @@ package products
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"time"
@@ -20,6 +21,7 @@ func NewFoodService(timeout time.Duration, repository repo.Product) Product {
 }
 
 func (p *productService) beforeCreate(product *entity.Product) {
+	product.ID = uuid.New().String()
 	product.CreatedAt = time.Now().UTC()
 	product.UpdatedAt = time.Now().UTC()
 }
