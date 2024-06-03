@@ -39,10 +39,12 @@ definitions:
       category_name:
         type: string
       date_of_birth:
+        example: "1000-01-01"
         type: string
       description:
         type: string
       gender:
+        example: male
         type: string
       genus:
         type: string
@@ -92,6 +94,7 @@ definitions:
       total_capacity:
         type: integer
       union:
+        example: piece
         type: string
     type: object
   models.DrugRes:
@@ -249,17 +252,12 @@ paths:
       - application/json
       description: Api for Update Animal
       parameters:
-      - description: animal_id
-        in: query
-        name: animal_id
-        required: true
-        type: string
       - description: createModel
         in: body
         name: Animal
         required: true
         schema:
-          $ref: '#/definitions/models.AnimalReq'
+          $ref: '#/definitions/models.AnimalRes'
       produces:
       - application/json
       responses:
@@ -285,7 +283,7 @@ paths:
       description: Api for Delete animal by animal ID
       parameters:
       - description: ID
-        in: query
+        in: path
         name: id
         required: true
         type: string
@@ -312,9 +310,9 @@ paths:
       - application/json
       description: Api for Get Animal by ID
       parameters:
-      - description: ID
+      - description: Animal_id
         in: path
-        name: animal_id
+        name: id
         required: true
         type: string
       produces:
@@ -508,17 +506,12 @@ paths:
       - application/json
       description: Api for Update drug by drug id
       parameters:
-      - description: drug_id
-        in: query
-        name: drug_id
-        required: true
-        type: string
       - description: createModel
         in: body
         name: Drug
         required: true
         schema:
-          $ref: '#/definitions/models.DrugReq'
+          $ref: '#/definitions/models.DrugRes'
       produces:
       - application/json
       responses:
@@ -543,8 +536,8 @@ paths:
       - application/json
       description: Api for Delete drug by drug ID
       parameters:
-      - description: ID
-        in: query
+      - description: Drug ID
+        in: path
         name: id
         required: true
         type: string
@@ -571,9 +564,9 @@ paths:
       - application/json
       description: Api for Get drug by ID
       parameters:
-      - description: ID
+      - description: Drug ID
         in: path
-        name: drug_id
+        name: id
         required: true
         type: string
       produces:
@@ -664,17 +657,12 @@ paths:
       - application/json
       description: Api for Update product by product id
       parameters:
-      - description: product_id
-        in: query
-        name: product_id
-        required: true
-        type: string
       - description: createModel
         in: body
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/models.ProductReq'
+          $ref: '#/definitions/models.ProductRes'
       produces:
       - application/json
       responses:

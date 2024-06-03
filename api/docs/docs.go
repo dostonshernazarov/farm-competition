@@ -146,19 +146,12 @@ const docTemplate = `{
                 "summary": "UPDATE ANIMAL",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "animal_id",
-                        "name": "animal_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "description": "createModel",
                         "name": "Animal",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AnimalReq"
+                            "$ref": "#/definitions/models.AnimalRes"
                         }
                     }
                 ],
@@ -308,8 +301,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "animal_id",
+                        "description": "Animal_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -352,7 +345,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -500,19 +493,12 @@ const docTemplate = `{
                 "summary": "UPDATE DRUG",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "drug_id",
-                        "name": "drug_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "description": "createModel",
                         "name": "Drug",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DrugReq"
+                            "$ref": "#/definitions/models.DrugRes"
                         }
                     }
                 ],
@@ -598,8 +584,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "drug_id",
+                        "description": "Drug ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -640,9 +626,9 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
+                        "description": "Drug ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -738,19 +724,12 @@ const docTemplate = `{
                 "summary": "UPDATE PRODUCT",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "product_id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "description": "createModel",
                         "name": "Product",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductReq"
+                            "$ref": "#/definitions/models.ProductRes"
                         }
                     }
                 ],
@@ -968,13 +947,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date_of_birth": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1000-01-01"
                 },
                 "description": {
                     "type": "string"
                 },
                 "gender": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "male"
                 },
                 "genus": {
                     "type": "string"
@@ -1049,7 +1030,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "union": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "piece"
                 }
             }
         },

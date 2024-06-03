@@ -93,7 +93,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 // @Tags ANIMAL
 // @Accept json
 // @Produce json
-// @Param animal_id path string true "ID"
+// @Param id path string true "Animal_id"
 // @Success 200 {object} models.AnimalRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -255,8 +255,7 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 // @Tags ANIMAL
 // @Accept json
 // @Produce json
-// @Param animal_id query string true "animal_id"
-// @Param Animal body models.AnimalReq true "createModel"
+// @Param Animal body models.AnimalRes true "createModel"
 // @Success 200 {object} models.AnimalRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -270,10 +269,8 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.AnimalReq
+		body models.AnimalRes
 	)
-
-	animal_id := c.Query("animal_id")
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -286,7 +283,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 
 
 	resAnimals, err := h.Animals.Update(ctx, &entity.Animal{
-		ID:          animal_id,
+		ID:          body.Id,
 		Name:        body.Name,
 		CategoryID:  body.CategoryName,
 		Gender:      body.Gender,
@@ -321,7 +318,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 // @Tags ANIMAL
 // @Accept json
 // @Produce json
-// @Param id query string true "ID"
+// @Param id path string true "ID"
 // @Success 200 {object} models.Result
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -334,7 +331,7 @@ func (h *HandlerV1) DeleteAnimal(c *gin.Context) {
 	)
 	defer span.End()
 
-	id := c.Query("id")
+	id := c.Param("id")
 
 	_, err := h.Animals.Get(ctx, id)
 	if err != nil {

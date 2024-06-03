@@ -9,8 +9,8 @@ import (
 type AnimalReq struct {
 	Name    string `json:"name"`
 	CategoryName       string `json:"category_name"`
-	Gender    string `json:"gender"`
-	DateOfBirth string `json:"date_of_birth"`
+	Gender    string `json:"gender" example:"male"`
+	DateOfBirth string `json:"date_of_birth" example:"1000-01-01"`
 	Description        string `json:"description"`
 	Genus      string `json:"genus"`
 	Weight float32 `json:"weight"`
@@ -93,7 +93,7 @@ type CategoryRes struct {
 }
 
 func (t *AnimalReq) Validate() error {
-	return validation.ValidateStruct(&t,
+	return validation.ValidateStruct(t,
 		validation.Field(
 			&t.Gender,
 			validation.Required,

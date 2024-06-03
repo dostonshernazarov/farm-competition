@@ -6,7 +6,7 @@ type Product struct {
 	ID            string
 	Name          string
 	Union         string
-	TotalCapacity uint64
+	TotalCapacity int64
 	Description   string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time

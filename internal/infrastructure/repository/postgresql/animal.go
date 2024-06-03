@@ -98,7 +98,7 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 
 func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity.Animal, error) {
 	query := `
-	UPDATE 
+	UPDATE
 		animals
 	SET
 	    name = $1,
@@ -110,7 +110,7 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 	    description = $7,
 	    is_health = $8,
 	    updated_at = $9
-	WHERE 
+	WHERE
 	    id = $10
 		AND deleted_at IS NULL
 	RETURNING
@@ -174,12 +174,12 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 func (a *animalRepo) Delete(ctx context.Context, animalID string) error {
 	query := `UPDATE animals SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL`
 
-	result, err := a.db.Exec(ctx, query, animalID, time.Now().Format(time.RFC3339))
+	result, err := a.db.Exec(ctx, query, time.Now().Format(time.RFC3339), animalID)
 	if err != nil {
 		return err
 	}
 
-	if result.RowsAffected() != 0 {
+	if result.RowsAffected() == 0 {
 		return sql.ErrNoRows
 	}
 
@@ -242,7 +242,7 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 
 func (a *animalRepo) List(ctx context.Context, page, limit uint64) (*entity.ListAnimal, error) {
 	query := `
-	SELECT 
+	SELECT
 		id,
 		name,
 		category_name,
