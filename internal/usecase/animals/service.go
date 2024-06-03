@@ -50,6 +50,6 @@ func (a *animalService) Get(ctx context.Context, animalID string) (*entity.Anima
 	return a.repo.Get(ctx, animalID)
 }
 
-func (a *animalService) List(ctx context.Context, page, limit uint64) (*entity.ListAnimal, error) {
-	return a.repo.List(ctx, page, limit)
+func (a *animalService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListAnimal, error) {
+	return a.repo.List(ctx, page, limit, params)
 }

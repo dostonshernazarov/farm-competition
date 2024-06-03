@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -128,12 +129,12 @@ func (a *foodRepo) Update(ctx context.Context, food *entity.Food) (*entity.Food,
 func (a *foodRepo) Delete(ctx context.Context, foodID string) error {
 	query := `UPDATE foods SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL`
 
-	result, err := a.db.Exec(ctx, query, foodID, time.Now().Format(time.RFC3339))
+	result, err := a.db.Exec(ctx, query, time.Now().Format(time.RFC3339), foodID)
 	if err != nil {
 		return err
 	}
 
-	if result.RowsAffected() != 0 {
+	if result.RowsAffected() == 0 {
 		return sql.ErrNoRows
 	}
 
@@ -179,28 +180,26 @@ func (a *foodRepo) Get(ctx context.Context, foodID string) (*entity.Food, error)
 	return &food, nil
 }
 
-func (a *foodRepo) List(ctx context.Context, page, limit uint64) (*entity.ListFoods, error) {
-	query := `
-	SELECT
-		id,
-		name,
-		capacity,
-		product_union,
-		description
-	FROM
-	    foods
-	WHERE
-	  	deleted_at IS NULL
-	LIMIT $1
-	OFFSET $2
-	`
-
+func (a *foodRepo) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListFoods, error) {
 	var (
 		offset = limit * (page - 1)
 		foods  entity.ListFoods
 	)
 
-	rows, err := a.db.Query(ctx, query, limit, offset)
+	queryBuilder := a.db.Sq.Builder.Select("id, name, capacity, product_union, description")
+	queryBuilder = queryBuilder.From(a.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
+	queryBuilder = queryBuilder.Limit(limit)
+	queryBuilder = queryBuilder.Offset(offset)
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := a.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -229,15 +228,33 @@ func (a *foodRepo) List(ctx context.Context, page, limit uint64) (*entity.ListFo
 		foods.Foods = append(foods.Foods, &food)
 	}
 
-	var (
-		count      = 0
-		totalQuery = `SELECT COUNT(*) FROM foods WHERE deleted_at IS NULL`
-	)
+	totalQueryBuilder := a.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From(a.tableName)
+	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
 
-	if err := a.db.QueryRow(ctx, totalQuery).Scan(&count); err != nil {
+	totalQuery, totalArgs, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := a.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
 		return nil, err
 	}
 	foods.TotalCount = uint64(count)
 
 	return &foods, nil
+}
+
+func (d *foodRepo) UniqueFoodName(ctx context.Context, foodName string) (int, error) {
+	query := `SELECT COUNT(*) FROM foods WHERE name = $1 AND deleted_at IS NULL`
+	var count int
+
+	if err := d.db.QueryRow(ctx, query, foodName).Scan(&count); err != nil {
+		return -1, err
+	}
+
+	return count, nil
 }
