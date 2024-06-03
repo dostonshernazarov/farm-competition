@@ -46,6 +46,15 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 		return
 	}
 
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
 	res, err := h.Animals.Create(ctx, &entity.Animal{
 		ID:          uuid.NewString(),
 		Name:        body.Name,
@@ -274,6 +283,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 		h.Logger.Error("failed to bind json", l.Error(err))
 		return
 	}
+
 
 	resAnimals, err := h.Animals.Update(ctx, &entity.Animal{
 		ID:          animal_id,

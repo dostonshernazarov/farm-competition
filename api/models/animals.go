@@ -1,5 +1,11 @@
 package models
 
+import (
+	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+)
+
 type AnimalReq struct {
 	Name    string `json:"name"`
 	CategoryName       string `json:"category_name"`
@@ -84,4 +90,21 @@ type Result struct {
 
 type CategoryRes struct {
 	Categories []*string `json:"categories"`
+}
+
+func (t *AnimalReq) Validate() error {
+	return validation.ValidateStruct(&t,
+		validation.Field(
+			&t.Gender,
+			validation.Required,
+			validation.In("male", "femail"),
+		),
+		validation.Field(
+			&t.DateOfBirth,
+			validation.Required,
+			validation.Date(time.DateOnly),
+		),
+	)
+
+
 }
