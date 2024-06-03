@@ -9,23 +9,22 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-// CREATE DRUG
-// @Summary CREATE DRUG
-// @Description Api for Create new drug
-// @Tags DRUG
+// CREATE ANIMAL PRODUCT
+// @Summary CREATE ANIMAL PRODUCT
+// @Description Api for Create product which has got from animal
+// @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
-// @Param Drug body models.DrugReq true "createModel"
-// @Success 201 {object} models.DrugRes
+// @Param Animal-Product body models.DrugReq true "createModel"
+// @Success 201 {object} models.AnimalProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [post]
-func (h *HandlerV1) CreateDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "CreateDrug")
+// @Router /v1/animals/products [post]
+func (h *HandlerV1) CreateAnimalProduct(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "CreateAnimalProduct")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -33,7 +32,7 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DrugReq
+		body models.AnimalProductReq
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -46,12 +45,7 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 	}
 
 	res, err := h.Drug.Create(ctx, &entity.Drug{
-		ID:          uuid.New().String(),
-		Name:        body.DrugName,
-		Status:      body.Status,
-		Capacity:    uint64(body.TotalCapacity),
-		Union:       body.Union,
-		Description: body.Description,
+
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
@@ -61,29 +55,28 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, &models.DrugRes{
-		Id:            res.ID,
-		DrugName:      res.Name,
-		Union:         res.Union,
-		Description:   res.Description,
-		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
+	c.JSON(http.StatusCreated, &models.AnimalProductRes{
+		Id:        res.ID,
+		AnimalID:  "",
+		ProductName: "",
+		Capacity:  0,
+		GetTime:   "",
 	})
 }
 
 // GET DRUG
-// @Summary GET DRUG BY DRUG ID
-// @Description Api for Get drug by ID
-// @Tags DRUG
+// @Summary GET ANIMAL PRODUCT BY ID
+// @Description Api for Get animal product by ID
+// @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
-// @Param id path string true "Drug ID"
-// @Success 200 {object} models.DrugRes
+// @Param id path string true "Animal-Product ID"
+// @Success 200 {object} models.AnimalProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs/{id} [get]
-func (h *HandlerV1) GetDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "GetDrug")
+// @Router /v1/animals/products/{id} [get]
+func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "GetAnimalProduct")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -101,30 +94,29 @@ func (h *HandlerV1) GetDrug(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &models.DrugRes{
-		Id:            res.ID,
-		DrugName:      res.Name,
-		Union:         res.Union,
-		Description:   res.Description,
-		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
+	c.JSON(http.StatusOK, &models.AnimalProductRes{
+		Id:          id,
+		AnimalID:    res.ID,
+		ProductName: "",
+		Capacity:    0,
+		GetTime:     "",
 	})
 }
 
-// LIST DRUG
-// @Summary LIST DRUG
-// @Description Api for ListDrug by page limit and extra values
-// @Tags DRUG
+// LIST ANIMAL PRODUCT
+// @Summary LIST ANIMAL PRODUCT
+// @Description Api for List products which have got from animals by page limit
+// @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
 // @Param request query models.Pagination true "request"
-// @Param request query models.DrugFieldValues true "request"
-// @Success 200 {object} models.ListDrugsRes
+// @Param request query models.AnimalProductFieldValues true "request"
+// @Success 200 {object} models.ListAnimalaProductsRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [get]
-func (h *HandlerV1) ListDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "ListDrug")
+// @Router /v1/animals/products [get]
+func (h *HandlerV1) ListAnimalProducts(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "ListAnimalProducts")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -141,17 +133,13 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 	}
 
 
-	name := c.Query("name")
-	union := c.Query("union")
-	status := c.Query("status")
+	animalID := c.Query("animal_id")
 
 	_ = map[string]interface{}{
-		"name":  name,
-		"union": union,
-		"status": status,
+		"animal_id":  animalID,
 	}
 
-	res, err := h.Drug.List(ctx, params.Page, params.Limit)
+	_, err := h.Drug.List(ctx, params.Page, params.Limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
@@ -160,38 +148,38 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 		return
 	}
 
-	var resList []*models.DrugRes
-	for _, i := range res.Drugs {
-		var resItem models.DrugRes
-		resItem.Id = i.ID
-		resItem.DrugName = i.Name
-		resItem.Description = i.Description
-		resItem.Union = i.Union
-		resItem.TotalCapacity = int64(i.Capacity)
-		resItem.Status = i.Status
+	// var resList []*models.AnimalProductRes
+	// for _, i := range res.AnimalProducts {
+	// 	var resItem models.AnimalProductRes
+	// 	resItem.Id = i.ID
+	// 	resItem.AnimalProductsName = i.Name
+	// 	resItem.Description = i.Description
+	// 	resItem.Union = i.Union
+	// 	resItem.TotalCapacity = int64(i.Capacity)
+	// 	resItem.Status = i.Status
 
-		resList = append(resList, &resItem)
-	}
+	// 	resList = append(resList, &resItem)
+	// }
 
-	c.JSON(http.StatusOK, &models.ListDrugsRes{
-		Drugs: resList,
+	c.JSON(http.StatusOK, &models.ListAnimalProductsRes{
+		AnimalProducts: []*models.AnimalProductRes{},
 	})
 }
 
 
 // UPDATE
-// @Summary UPDATE DRUG
-// @Description Api for Update drug by drug id
-// @Tags DRUG
+// @Summary UPDATE ANIMAL PRODUCT
+// @Description Api for Update animal product by id
+// @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
-// @Param Drug body models.DrugRes true "createModel"
-// @Success 200 {object} models.DrugRes
+// @Param Animal-Product body models.AnimalProductRes true "createModel"
+// @Success 200 {object} models.AnimalProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [put]
-func (h *HandlerV1) UpdateDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "UpdateDrug")
+// @Router /v1/animals/products [put]
+func (h *HandlerV1) UpdateAnimalProduct(c *gin.Context) {
+	_, span := otlp.Start(c, "api", "UpdateAnimalProduct")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -199,7 +187,7 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DrugRes
+		body models.AnimalProductRes
 	)
 
 
@@ -212,43 +200,38 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Drug.Update(ctx, &entity.Drug{
-		ID:          body.Id,
-		Name:        body.DrugName,
-		Status:      body.Status,
-		Capacity:    uint64(body.TotalCapacity),
-		Union:       body.Union,
-		Description: body.Description,
-	})
-	if err != nil {
-		c.JSON(500, models.InternalMessage)
-		h.Logger.Error(err.Error())
-		return
-	}
+	// res, err := h.Drug.Update(ctx, &entity.Drug{
+	// 	ID:          body.Id,
+	// 	Name:        body.DrugName,
+	// 	Status:      body.Status,
+	// 	Capacity:    uint64(body.TotalCapacity),
+	// 	Union:       body.Union,
+	// 	Description: body.Description,
+	// })
+	// if err != nil {
+	// 	c.JSON(500, models.InternalMessage)
+	// 	h.Logger.Error(err.Error())
+	// 	return
+	// }
 
-	c.JSON(http.StatusOK, &models.DrugRes{
-		Id:            res.ID,
-		DrugName:      res.Name,
-		Union:         res.Union,
-		Description:   res.Description,
-		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
+	c.JSON(http.StatusOK, &models.AnimalProductRes{
+
 	})
 }
 
 // DELETE
-// @Summary DELETE DRUG
-// @Description Api for Delete drug by drug ID
-// @Tags DRUG
+// @Summary DELETE ANIMAL PRODUCT
+// @Description Api for Delete animal product by ID
+// @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
-// @Param id path string true "Drug ID"
+// @Param id path string true "Animal Product ID"
 // @Success 200 {object} models.Result
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs/{id} [delete]
-func (h *HandlerV1) DeleteDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "DeleteDrug")
+// @Router /v1/animals/products/{id} [delete]
+func (h *HandlerV1) DeleteAnimalProduct(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "DeleteAnimalProduct")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -274,6 +257,6 @@ func (h *HandlerV1) DeleteDrug(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &models.Result{
-		Message: "Drug` has been deleted",
+		Message: "Product from animal has been deleted",
 	})
 }

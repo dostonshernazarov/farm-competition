@@ -13,19 +13,19 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 )
 
-// CREATE DRUG
-// @Summary CREATE DRUG
-// @Description Api for Create new drug
-// @Tags DRUG
+// CREATE FOOD
+// @Summary CREATE FOOD
+// @Description Api for Create new food
+// @Tags FOOD
 // @Accept json
 // @Produce json
-// @Param Drug body models.DrugReq true "createModel"
-// @Success 201 {object} models.DrugRes
+// @Param Food body models.FoodReq true "createModel"
+// @Success 201 {object} models.FoodRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [post]
-func (h *HandlerV1) CreateDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "CreateDrug")
+// @Router /v1/foods [post]
+func (h *HandlerV1) CreateFood(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "CreateFood")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -33,7 +33,7 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DrugReq
+		body models.FoodReq
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -45,10 +45,9 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Drug.Create(ctx, &entity.Drug{
+	res, err := h.Food.Create(ctx, &entity.Food{
 		ID:          uuid.New().String(),
-		Name:        body.DrugName,
-		Status:      body.Status,
+		Name:        body.FoodName,
 		Capacity:    uint64(body.TotalCapacity),
 		Union:       body.Union,
 		Description: body.Description,
@@ -61,29 +60,28 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, &models.DrugRes{
+	c.JSON(http.StatusCreated, &models.FoodRes{
 		Id:            res.ID,
-		DrugName:      res.Name,
+		FoodName:      res.Name,
 		Union:         res.Union,
 		Description:   res.Description,
 		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
 	})
 }
 
-// GET DRUG
-// @Summary GET DRUG BY DRUG ID
-// @Description Api for Get drug by ID
-// @Tags DRUG
+// GET FOOD
+// @Summary GET FOOD BY FOOD ID
+// @Description Api for Get food by ID
+// @Tags FOOD
 // @Accept json
 // @Produce json
-// @Param id path string true "Drug ID"
-// @Success 200 {object} models.DrugRes
+// @Param id path string true "Food ID"
+// @Success 200 {object} models.FoodRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs/{id} [get]
-func (h *HandlerV1) GetDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "GetDrug")
+// @Router /v1/foods/{id} [get]
+func (h *HandlerV1) GetFood(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "GetFood")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -92,7 +90,7 @@ func (h *HandlerV1) GetDrug(c *gin.Context) {
 
 	id := c.Param("id")
 
-	res, err := h.Drug.Get(ctx, id)
+	res, err := h.Food.Get(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -101,30 +99,29 @@ func (h *HandlerV1) GetDrug(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &models.DrugRes{
+	c.JSON(http.StatusOK, &models.FoodRes{
 		Id:            res.ID,
-		DrugName:      res.Name,
+		FoodName:      res.Name,
 		Union:         res.Union,
 		Description:   res.Description,
 		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
 	})
 }
 
-// LIST DRUG
-// @Summary LIST DRUG
-// @Description Api for ListDrug by page limit and extra values
-// @Tags DRUG
+// LIST FOOD
+// @Summary LIST FOOD
+// @Description Api for List food by page limit and extra values
+// @Tags FOOD
 // @Accept json
 // @Produce json
 // @Param request query models.Pagination true "request"
-// @Param request query models.DrugFieldValues true "request"
-// @Success 200 {object} models.ListDrugsRes
+// @Param request query models.FoodFieldValues true "request"
+// @Success 200 {object} models.ListFoodsRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [get]
-func (h *HandlerV1) ListDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "ListDrug")
+// @Router /v1/foods [get]
+func (h *HandlerV1) ListFood(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "ListFood")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -140,18 +137,17 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 		return
 	}
 
+	println(params)
 
 	name := c.Query("name")
 	union := c.Query("union")
-	status := c.Query("status")
 
 	_ = map[string]interface{}{
 		"name":  name,
 		"union": union,
-		"status": status,
 	}
 
-	res, err := h.Drug.List(ctx, params.Page, params.Limit)
+	res, err := h.Food.List(ctx, params.Page, params.Limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
@@ -160,38 +156,37 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 		return
 	}
 
-	var resList []*models.DrugRes
-	for _, i := range res.Drugs {
-		var resItem models.DrugRes
+	var resList []*models.FoodRes
+	for _, i := range res.Foods {
+		var resItem models.FoodRes
 		resItem.Id = i.ID
-		resItem.DrugName = i.Name
+		resItem.FoodName = i.Name
 		resItem.Description = i.Description
 		resItem.Union = i.Union
 		resItem.TotalCapacity = int64(i.Capacity)
-		resItem.Status = i.Status
 
 		resList = append(resList, &resItem)
 	}
 
-	c.JSON(http.StatusOK, &models.ListDrugsRes{
-		Drugs: resList,
+	c.JSON(http.StatusOK, &models.ListFoodsRes{
+		Foods: resList,
 	})
 }
 
 
 // UPDATE
-// @Summary UPDATE DRUG
-// @Description Api for Update drug by drug id
-// @Tags DRUG
+// @Summary UPDATE FOOD
+// @Description Api for Update food by food id
+// @Tags FOOD
 // @Accept json
 // @Produce json
-// @Param Drug body models.DrugRes true "createModel"
-// @Success 200 {object} models.DrugRes
+// @Param Food body models.FoodRes true "createModel"
+// @Success 200 {object} models.FoodRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs [put]
-func (h *HandlerV1) UpdateDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "UpdateDrug")
+// @Router /v1/foods [put]
+func (h *HandlerV1) UpdateFood(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "UpdateFood")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -199,7 +194,7 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DrugRes
+		body models.FoodRes
 	)
 
 
@@ -212,10 +207,9 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Drug.Update(ctx, &entity.Drug{
+	res, err := h.Food.Update(ctx, &entity.Food{
 		ID:          body.Id,
-		Name:        body.DrugName,
-		Status:      body.Status,
+		Name:        body.FoodName,
 		Capacity:    uint64(body.TotalCapacity),
 		Union:       body.Union,
 		Description: body.Description,
@@ -226,29 +220,28 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &models.DrugRes{
+	c.JSON(http.StatusOK, &models.FoodRes{
 		Id:            res.ID,
-		DrugName:      res.Name,
+		FoodName:      res.Name,
 		Union:         res.Union,
 		Description:   res.Description,
 		TotalCapacity: int64(res.Capacity),
-		Status:        res.Status,
 	})
 }
 
 // DELETE
-// @Summary DELETE DRUG
-// @Description Api for Delete drug by drug ID
-// @Tags DRUG
+// @Summary DELETE FOOD
+// @Description Api for Delete food by food ID
+// @Tags FOOD
 // @Accept json
 // @Produce json
-// @Param id path string true "Drug ID"
+// @Param id path string true "Food ID"
 // @Success 200 {object} models.Result
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/drugs/{id} [delete]
-func (h *HandlerV1) DeleteDrug(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "DeleteDrug")
+// @Router /v1/foods/{id} [delete]
+func (h *HandlerV1) DeleteFood(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "DeleteFood")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -257,16 +250,16 @@ func (h *HandlerV1) DeleteDrug(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Drug.Get(ctx, id)
+	_, err := h.Food.Get(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,
 		})
-		h.Logger.Error("failed to get drug in delete", l.Error(err))
+		h.Logger.Error(err.Error())
 		return
 	}
 
-	err = h.Drug.Delete(ctx, id)
+	err = h.Food.Delete(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error("failed to delete product", l.Error(err))
@@ -274,6 +267,6 @@ func (h *HandlerV1) DeleteDrug(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &models.Result{
-		Message: "Drug` has been deleted",
+		Message: "Food has been deleted",
 	})
 }
