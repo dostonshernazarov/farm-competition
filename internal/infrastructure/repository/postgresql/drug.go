@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -21,7 +22,7 @@ func NewDrug(db *postgres.PostgresDB) repo.Drug {
 	}
 }
 
-func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug, error) {
+func (d *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug, error) {
 	query := `
 	INSERT INTO drugs (
 	    id,
@@ -48,7 +49,7 @@ func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 		sqlNullDescription sql.NullString
 	)
 
-	err := a.db.QueryRow(ctx, query,
+	err := d.db.QueryRow(ctx, query,
 		drug.ID,
 		drug.Name,
 		drug.Capacity,
@@ -77,7 +78,7 @@ func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 	return &createdDrug, nil
 }
 
-func (a *drugRepo) Update(ctx context.Context, drug *entity.Drug) (*entity.Drug, error) {
+func (d *drugRepo) Update(ctx context.Context, drug *entity.Drug) (*entity.Drug, error) {
 	query := `
 	UPDATE
 		drugs
@@ -105,7 +106,7 @@ func (a *drugRepo) Update(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 		sqlNullDescription sql.NullString
 	)
 
-	err := a.db.QueryRow(ctx, query,
+	err := d.db.QueryRow(ctx, query,
 		drug.Name,
 		drug.Capacity,
 		drug.Union,
@@ -133,22 +134,22 @@ func (a *drugRepo) Update(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 	return &createdDrug, nil
 }
 
-func (a *drugRepo) Delete(ctx context.Context, drugID string) error {
+func (d *drugRepo) Delete(ctx context.Context, drugID string) error {
 	query := `UPDATE drugs SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL`
 
-	result, err := a.db.Exec(ctx, query, drugID, time.Now().Format(time.RFC3339))
+	result, err := d.db.Exec(ctx, query, time.Now().Format(time.RFC3339), drugID)
 	if err != nil {
 		return err
 	}
 
-	if result.RowsAffected() != 0 {
+	if result.RowsAffected() == 0 {
 		return sql.ErrNoRows
 	}
 
 	return nil
 }
 
-func (a *drugRepo) Get(ctx context.Context, drugID string) (*entity.Drug, error) {
+func (d *drugRepo) Get(ctx context.Context, drugID string) (*entity.Drug, error) {
 	query := `
 	SELECT
 		id,
@@ -169,7 +170,7 @@ func (a *drugRepo) Get(ctx context.Context, drugID string) (*entity.Drug, error)
 		sqlNullDescription sql.NullString
 	)
 
-	err := a.db.QueryRow(ctx, query, drugID).Scan(
+	err := d.db.QueryRow(ctx, query, drugID).Scan(
 		&drug.ID,
 		&drug.Name,
 		&drug.Capacity,
@@ -189,29 +190,27 @@ func (a *drugRepo) Get(ctx context.Context, drugID string) (*entity.Drug, error)
 	return &drug, nil
 }
 
-func (a *drugRepo) List(ctx context.Context, page, limit uint64) (*entity.ListDrugs, error) {
-	query := `
-	SELECT
-		id,
-	    name,
-		capacity,
-		product_union,
-		status,
-		description
-	FROM
-	    drugs
-	WHERE
-		deleted_at IS NULL
-	LIMIT $1
-	OFFSET $2
-	`
-
+func (d *drugRepo) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListDrugs, error) {
 	var (
-		drugs  entity.ListDrugs
 		offset = limit * (page - 1)
+		drugs  = entity.ListDrugs{}
 	)
 
-	rows, err := a.db.Query(ctx, query, limit, offset)
+	queryBuilder := d.db.Sq.Builder.Select("id, name, capacity, product_union, status, description")
+	queryBuilder = queryBuilder.From(d.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("status", "%"+cast.ToString(params["status"])+"%"))
+	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
+	queryBuilder = queryBuilder.Limit(limit)
+	queryBuilder = queryBuilder.Offset(offset)
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := d.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -240,15 +239,34 @@ func (a *drugRepo) List(ctx context.Context, page, limit uint64) (*entity.ListDr
 		drugs.Drugs = append(drugs.Drugs, &drug)
 	}
 
-	var (
-		count      = 0
-		totalQuery = `SELECT COUNT(*) FROM drugs WHERE deleted_at IS NULL`
-	)
+	totalQueryBuilder := d.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From(d.tableName)
+	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("status", "%"+cast.ToString(params["status"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
 
-	if err := a.db.QueryRow(ctx, totalQuery).Scan(&count); err != nil {
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := d.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
 		return nil, err
 	}
 	drugs.TotalCount = uint64(count)
 
 	return &drugs, nil
+}
+
+func (d *drugRepo) UniqueDrugName(ctx context.Context, drugName string) (int, error) {
+	query := `SELECT COUNT(*) FROM drugs WHERE name = $1 AND deleted_at IS NULL`
+	var count int
+
+	if err := d.db.QueryRow(ctx, query, drugName).Scan(&count); err != nil {
+		return -1, err
+	}
+
+	return count, nil
 }

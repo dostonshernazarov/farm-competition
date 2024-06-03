@@ -3,6 +3,8 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -240,31 +242,35 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 	return &animal, nil
 }
 
-func (a *animalRepo) List(ctx context.Context, page, limit uint64) (*entity.ListAnimal, error) {
-	query := `
-	SELECT
-		id,
-		name,
-		category_name,
-		gender,
-		birth_day,
-		genus,
-		weight,
-		description,
-		is_health
-	FROM
-	    animals
-	WHERE
-	    deleted_at IS NULL
-	LIMIT $1
-	OFFSET $2
-	`
-
+func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListAnimal, error) {
 	var (
-		offset  = limit * (page - 1)
-		animals = entity.ListAnimal{}
+		offset     = (page - 1) * limit
+		animals    = entity.ListAnimal{}
+		tenPercent = cast.ToInt(params["weight"]) / 10
+		weightUp   = cast.ToInt(params["weight"]) + tenPercent
+		weightDown = cast.ToInt(params["weight"]) - tenPercent
 	)
-	rows, err := a.db.Query(ctx, query, limit, offset)
+
+	queryBuilder := a.db.Sq.Builder.Select("id, name, category_name, gender, birth_day, genus, weight, description, is_health")
+	queryBuilder = queryBuilder.From(a.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("category_name", "%"+cast.ToString(params["category"])+"%"))
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("genus", "%"+cast.ToString(params["genus"])+"%"))
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("gender", "%"+cast.ToString(params["gender"])+"%"))
+	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("is_health", "%"+cast.ToString(params["is_health"])+"%"))
+	queryBuilder = queryBuilder.Where(a.db.Sq.And(
+		sq.GtOrEq{"weight": weightDown},
+		sq.LtOrEq{"weight": weightUp},
+	))
+	queryBuilder = queryBuilder.Limit(limit)
+	queryBuilder = queryBuilder.Offset(offset)
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := a.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -305,12 +311,25 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64) (*entity.List
 		animals.Animals = append(animals.Animals, &animal)
 	}
 
-	var (
-		count      = 0
-		totalQuery = `SELECT COUNT(*) FROM animals WHERE deleted_at IS NULL`
-	)
+	totalQueryBuilder := a.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From(a.tableName)
+	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("category_name", "%"+cast.ToString(params["category"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("genus", "%"+cast.ToString(params["genus"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("gender", "%"+cast.ToString(params["gender"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("is_health", "%"+cast.ToString(params["is_health"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.And(
+		sq.GtOrEq{"weight": weightDown},
+		sq.LtOrEq{"weight": weightUp},
+	))
 
-	if err := a.db.QueryRow(ctx, totalQuery).Scan(&count); err != nil {
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := a.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
 		return nil, err
 	}
 	animals.TotalCount = uint64(count)

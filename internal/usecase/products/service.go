@@ -50,6 +50,10 @@ func (p *productService) Get(ctx context.Context, productID string) (*entity.Pro
 	return p.repo.Get(ctx, productID)
 }
 
-func (p *productService) List(ctx context.Context, page, limit uint64) (*entity.ListProducts, error) {
-	return p.repo.List(ctx, page, limit)
+func (p *productService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListProducts, error) {
+	return p.repo.List(ctx, page, limit, params)
+}
+
+func (p *productService) UniqueProductName(ctx context.Context, productName string) (int, error) {
+	return p.repo.UniqueProductName(ctx, productName)
 }

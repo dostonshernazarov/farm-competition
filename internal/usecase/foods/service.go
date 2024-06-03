@@ -50,6 +50,10 @@ func (f *foodService) Get(ctx context.Context, foodID string) (*entity.Food, err
 	return f.repo.Get(ctx, foodID)
 }
 
-func (f *foodService) List(ctx context.Context, page, limit uint64) (*entity.ListFoods, error) {
-	return f.repo.List(ctx, page, limit)
+func (f *foodService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListFoods, error) {
+	return f.repo.List(ctx, page, limit, params)
+}
+
+func (f *foodService) UniqueFoodName(ctx context.Context, foodName string) (int, error) {
+	return f.repo.UniqueFoodName(ctx, foodName)
 }

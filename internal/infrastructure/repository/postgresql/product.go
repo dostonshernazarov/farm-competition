@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -128,12 +129,12 @@ func (a *productRepo) Update(ctx context.Context, product *entity.Product) (*ent
 func (a *productRepo) Delete(ctx context.Context, productID string) error {
 	query := `UPDATE products SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL`
 
-	result, err := a.db.Exec(ctx, query, productID, time.Now().Format(time.RFC3339))
+	result, err := a.db.Exec(ctx, query, time.Now().Format(time.RFC3339), productID)
 	if err != nil {
 		return err
 	}
 
-	if result.RowsAffected() != 0 {
+	if result.RowsAffected() == 0 {
 		return sql.ErrNoRows
 	}
 
@@ -179,28 +180,26 @@ func (a *productRepo) Get(ctx context.Context, productID string) (*entity.Produc
 	return &product, nil
 }
 
-func (a *productRepo) List(ctx context.Context, page, limit uint64) (*entity.ListProducts, error) {
-	query := `
-	SELECT
-		id,
-		name,
-		product_union,
-		description,
-		total_capacity
-	FROM
-	    products
-	WHERE
-	    deleted_at IS NULL
-	LIMIT $1
-	OFFSET $2
-	`
-
+func (p *productRepo) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListProducts, error) {
 	var (
 		products entity.ListProducts
 		offset   = limit * (page - 1)
 	)
 
-	rows, err := a.db.Query(ctx, query, limit, offset)
+	queryBuilder := p.db.Sq.Builder.Select("id, name, product_union, total_capacity")
+	queryBuilder = queryBuilder.From(p.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(p.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	queryBuilder = queryBuilder.Where(p.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
+	queryBuilder = queryBuilder.Limit(limit)
+	queryBuilder = queryBuilder.Offset(offset)
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := p.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -228,15 +227,34 @@ func (a *productRepo) List(ctx context.Context, page, limit uint64) (*entity.Lis
 
 		products.Products = append(products.Products, &product)
 	}
-	var (
-		count      = 0
-		totalQuery = `SELECT COUNT(*) FROM products WHERE deleted_at IS NULL`
-	)
 
-	if err := a.db.QueryRow(ctx, totalQuery).Scan(&count); err != nil {
+	totalQueryBuilder := p.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From(p.tableName)
+	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where(p.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(p.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
+
+	totalQuery, totalArgs, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := p.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
 		return nil, err
 	}
 	products.TotalCount = uint64(count)
 
 	return &products, nil
+}
+
+func (d *productRepo) UniqueProductName(ctx context.Context, productName string) (int, error) {
+	query := `SELECT COUNT(*) FROM products WHERE name = $1 AND deleted_at IS NULL`
+	var count int
+
+	if err := d.db.QueryRow(ctx, query, productName).Scan(&count); err != nil {
+		return -1, err
+	}
+
+	return count, nil
 }

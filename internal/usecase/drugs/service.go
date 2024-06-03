@@ -50,6 +50,10 @@ func (d *drugService) Get(ctx context.Context, drugID string) (*entity.Drug, err
 	return d.repo.Get(ctx, drugID)
 }
 
-func (d *drugService) List(ctx context.Context, page, limit uint64) (*entity.ListDrugs, error) {
-	return d.repo.List(ctx, page, limit)
+func (d *drugService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListDrugs, error) {
+	return d.repo.List(ctx, page, limit, params)
+}
+
+func (d *drugService) UniqueDrugName(ctx context.Context, drugName string) (int, error) {
+	return d.repo.UniqueDrugName(ctx, drugName)
 }
