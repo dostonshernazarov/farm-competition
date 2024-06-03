@@ -142,12 +142,12 @@ func (h *HandlerV1) ListFood(c *gin.Context) {
 	name := c.Query("name")
 	union := c.Query("union")
 
-	_ = map[string]interface{}{
+	mapF := map[string]interface{}{
 		"name":  name,
 		"union": union,
 	}
 
-	res, err := h.Food.List(ctx, params.Page, params.Limit)
+	res, err := h.Food.List(ctx, params.Page, params.Limit, mapF)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,

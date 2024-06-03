@@ -5,7 +5,6 @@ import (
 	"musobaqa/farm-competition/internal/entity"
 	l "musobaqa/farm-competition/internal/pkg/logger"
 	"musobaqa/farm-competition/internal/pkg/otlp"
-	"musobaqa/farm-competition/internal/pkg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -111,42 +110,42 @@ func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
 // @Produce json
 // @Param request query models.Pagination true "request"
 // @Param request query models.AnimalProductFieldValues true "request"
-// @Success 200 {object} models.ListAnimalaProductsRes
+// @Success 200 {object} models.ListAnimalProductsRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
 // @Router /v1/animals/products [get]
 func (h *HandlerV1) ListAnimalProducts(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "ListAnimalProducts")
-	span.SetAttributes(
-		attribute.Key("method").String(c.Request.Method),
-		attribute.Key("host").String(c.Request.Host),
-	)
-	defer span.End()
+	// ctx, span := otlp.Start(c, "api", "ListAnimalProducts")
+	// span.SetAttributes(
+	// 	attribute.Key("method").String(c.Request.Method),
+	// 	attribute.Key("host").String(c.Request.Host),
+	// )
+	// defer span.End()
 
-	queryParams := c.Request.URL.Query()
-	params, errStr := utils.ParseQueryParam(queryParams)
-	if errStr != nil {
-		c.JSON(http.StatusBadRequest, models.Error{
-			Message: models.WrongInfoMessage,
-		})
-		return
-	}
+	// queryParams := c.Request.URL.Query()
+	// params, errStr := utils.ParseQueryParam(queryParams)
+	// if errStr != nil {
+	// 	c.JSON(http.StatusBadRequest, models.Error{
+	// 		Message: models.WrongInfoMessage,
+	// 	})
+	// 	return
+	// }
 
 
-	animalID := c.Query("animal_id")
+	// animalID := c.Query("animal_id")
 
-	_ = map[string]interface{}{
-		"animal_id":  animalID,
-	}
+	// mapA := map[string]interface{}{
+	// 	"animal_id":  animalID,
+	// }
 
-	_, err := h.Drug.List(ctx, params.Page, params.Limit)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Error{
-			Message: models.InternalMessage,
-		})
-		h.Logger.Error(err.Error())
-		return
-	}
+	// res, err := h.Drug.List(ctx, params.Page, params.Limit, mapA)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, models.Error{
+	// 		Message: models.InternalMessage,
+	// 	})
+	// 	h.Logger.Error(err.Error())
+	// 	return
+	// }
 
 	// var resList []*models.AnimalProductRes
 	// for _, i := range res.AnimalProducts {

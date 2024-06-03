@@ -142,12 +142,12 @@ func (h *HandlerV1) ListProduct(c *gin.Context) {
 	name := c.Query("name")
 	union := c.Query("union")
 
-	_ = map[string]interface{}{
+	mapP := map[string]interface{}{
 		"name":  name,
 		"union": union,
 	}
 
-	res, err := h.Product.List(ctx, params.Page, params.Limit)
+	res, err := h.Product.List(ctx, params.Page, params.Limit, mapP)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,

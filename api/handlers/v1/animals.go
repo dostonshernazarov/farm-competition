@@ -7,7 +7,6 @@ import (
 	"musobaqa/farm-competition/internal/pkg/otlp"
 	"musobaqa/farm-competition/internal/pkg/utils"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -116,7 +115,6 @@ func (h *HandlerV1) GetAnimal(c *gin.Context) {
 		l.Error(err)
 		return
 	}
-
 
 	c.JSON(http.StatusOK, &models.AnimalRes{
 		Id:           res.ID,
@@ -232,11 +230,11 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 	weight := c.Query("weight")
 	is_health := c.Query("is_health")
 
-	if strings.ToLower(gender) != "male" || strings.ToLower(gender) != "female" {
-		gender = ""
-	}
+	// if strings.ToLower(gender) != "male" || strings.ToLower(gender) != "female" {
+	// 	gender = ""
+	// }
 
-	_ = map[string]interface{}{
+	mapA := map[string]interface{}{
 		"category":  category,
 		"genus":     genus,
 		"gender":    gender, // Empty string
@@ -244,9 +242,16 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 		"is_health": is_health,
 	}
 
-	h.Animals.List(ctx, params.Page, params.Limit)
+	res, err := h.Animals.List(ctx, params.Page, params.Limit, mapA)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{
+			Message: models.InternalMessage,
+		})
+		h.Logger.Error("failed to get list animal", l.Error(err))
+		return
+	}
 
-	c.JSON(http.StatusOK, &models.ListAnimalsRes{})
+	c.JSON(http.StatusOK, res)
 }
 
 // UPDATE
@@ -280,7 +285,6 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 		h.Logger.Error("failed to bind json", l.Error(err))
 		return
 	}
-
 
 	resAnimals, err := h.Animals.Update(ctx, &entity.Animal{
 		ID:          body.Id,
@@ -353,7 +357,6 @@ func (h *HandlerV1) DeleteAnimal(c *gin.Context) {
 		Message: "Animal has been deleted",
 	})
 }
-
 
 // LIST CATEGORY
 // @Summary LIST CATEGORY
