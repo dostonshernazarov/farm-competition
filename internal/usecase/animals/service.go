@@ -2,6 +2,7 @@ package animals
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"time"
@@ -20,6 +21,7 @@ func NewAnimalService(timeout time.Duration, repository repo.Animal) Animal {
 }
 
 func (a *animalService) beforeCreate(animal *entity.Animal) {
+	animal.ID = uuid.New().String()
 	animal.CreatedAt = time.Now().UTC()
 	animal.UpdatedAt = time.Now().UTC()
 }

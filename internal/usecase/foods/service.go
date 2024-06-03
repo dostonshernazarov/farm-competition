@@ -2,6 +2,7 @@ package foods
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"time"
@@ -20,6 +21,7 @@ func NewFoodService(timeout time.Duration, repository repo.Food) Food {
 }
 
 func (f *foodService) beforeCreate(food *entity.Food) {
+	food.ID = uuid.New().String()
 	food.CreatedAt = time.Now().UTC()
 	food.UpdatedAt = time.Now().UTC()
 }

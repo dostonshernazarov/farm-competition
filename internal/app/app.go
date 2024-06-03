@@ -73,7 +73,7 @@ func NewApp(cfg config.Config) (*App, error) {
 		return nil, err
 	}
 
-	// enforcer.SetCache(policy.NewCache(&redisdb.Client))
+	//enforcer.SetCache(policy.NewCache(&redisdb.Client))
 
 	var (
 		contextTimeout time.Duration
@@ -139,8 +139,12 @@ func (a *App) Run() error {
 		Config:         a.Config,
 		Logger:         a.Logger,
 		ContextTimeout: contextTimeout,
-		// Cache:          cache,
-		Enforcer: a.Enforcer,
+		Enforcer:       a.Enforcer,
+		Category:       a.Category,
+		Product:        a.Product,
+		Animals:        a.Animals,
+		Food:           a.Food,
+		Drug:           a.Drug,
 	})
 	err = a.Enforcer.LoadPolicy()
 	if err != nil {

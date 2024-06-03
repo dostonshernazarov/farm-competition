@@ -70,7 +70,7 @@ func NewConfig() (*Config, error) {
 	// db configuration
 	config.DB.Host = getEnv("POSTGRES_HOST", "localhost")
 	config.DB.Port = getEnv("POSTGRES_PORT", "5432")
-	config.DB.Name = getEnv("POSTGRES_DATABASE", "postgres")
+	config.DB.Name = getEnv("POSTGRES_DATABASE", "farm")
 	config.DB.User = getEnv("POSTGRES_USER", "postgres")
 	config.DB.Password = getEnv("POSTGRES_PASSWORD", "root")
 
@@ -97,7 +97,7 @@ func NewConfig() (*Config, error) {
 	}
 	config.Token.AccessTTL = accessTTl
 	config.Token.RefreshTTL = refreshTTL
-	config.Token.SignInKey = getEnv("TOKEN_SIGNIN_KEY", "debug_booking")
+	config.Token.SignInKey = getEnv("TOKEN_SIGNIN_KEY", "debug_farming")
 
 	// otlp collector configuration
 	config.OTLPCollector.Host = getEnv("OTLP_COLLECTOR_HOST", "localhost")
