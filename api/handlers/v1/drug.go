@@ -145,13 +145,13 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 	union := c.Query("union")
 	status := c.Query("status")
 
-	_ = map[string]interface{}{
+	mapD := map[string]interface{}{
 		"name":  name,
 		"union": union,
 		"status": status,
 	}
 
-	res, err := h.Drug.List(ctx, params.Page, params.Limit)
+	res, err := h.Drug.List(ctx, params.Page, params.Limit, mapD)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,

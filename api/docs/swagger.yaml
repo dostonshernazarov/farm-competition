@@ -34,6 +34,19 @@ definitions:
       product_name:
         type: string
     type: object
+  models.AnimalProductRes:
+    properties:
+      animal_id:
+        type: string
+      capacity:
+        type: integer
+      get_time:
+        type: string
+      id:
+        type: string
+      product_name:
+        type: string
+    type: object
   models.AnimalReq:
     properties:
       category_name:
@@ -83,6 +96,36 @@ definitions:
           type: string
         type: array
     type: object
+  models.DeliveryReq:
+    properties:
+      capacity:
+        type: integer
+      category:
+        type: string
+      product_name:
+        type: string
+      time:
+        example: "2024-01-01"
+        type: string
+      union:
+        type: string
+    type: object
+  models.DeliveryRes:
+    properties:
+      capacity:
+        type: integer
+      category:
+        type: string
+      id:
+        type: string
+      product_name:
+        type: string
+      time:
+        example: "2024-01-01"
+        type: string
+      union:
+        type: string
+    type: object
   models.DrugReq:
     properties:
       description:
@@ -117,6 +160,38 @@ definitions:
       message:
         type: string
     type: object
+  models.FoodReq:
+    properties:
+      description:
+        type: string
+      food_name:
+        type: string
+      total_capacity:
+        type: integer
+      union:
+        example: piece
+        type: string
+    type: object
+  models.FoodRes:
+    properties:
+      description:
+        type: string
+      food_name:
+        type: string
+      id:
+        type: string
+      total_capacity:
+        type: integer
+      union:
+        type: string
+    type: object
+  models.ListAnimalProductsRes:
+    properties:
+      animal_products:
+        items:
+          $ref: '#/definitions/models.AnimalProductRes'
+        type: array
+    type: object
   models.ListAnimalsRes:
     properties:
       animals:
@@ -124,11 +199,25 @@ definitions:
           $ref: '#/definitions/models.AnimalRes'
         type: array
     type: object
+  models.ListDeliverysRes:
+    properties:
+      deliveries:
+        items:
+          $ref: '#/definitions/models.DeliveryRes'
+        type: array
+    type: object
   models.ListDrugsRes:
     properties:
       drugs:
         items:
           $ref: '#/definitions/models.DrugRes'
+        type: array
+    type: object
+  models.ListFoodsRes:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/models.FoodRes'
         type: array
     type: object
   models.ListProductsRes:
@@ -403,6 +492,154 @@ paths:
       summary: GET ANIMAL BY ANIMAL ID WITH PRODUCTS
       tags:
       - ANIMAL
+  /v1/animals/products:
+    get:
+      consumes:
+      - application/json
+      description: Api for List products which have got from animals by page limit
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: animal_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListAnimalProductsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST ANIMAL PRODUCT
+      tags:
+      - ANIMAL-PRODUCT
+    post:
+      consumes:
+      - application/json
+      description: Api for Create product which has got from animal
+      parameters:
+      - description: createModel
+        in: body
+        name: Animal-Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.DrugReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AnimalProductRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: CREATE ANIMAL PRODUCT
+      tags:
+      - ANIMAL-PRODUCT
+    put:
+      consumes:
+      - application/json
+      description: Api for Update animal product by id
+      parameters:
+      - description: createModel
+        in: body
+        name: Animal-Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.AnimalProductRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimalProductRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE ANIMAL PRODUCT
+      tags:
+      - ANIMAL-PRODUCT
+  /v1/animals/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for Delete animal product by ID
+      parameters:
+      - description: Animal Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: DELETE ANIMAL PRODUCT
+      tags:
+      - ANIMAL-PRODUCT
+    get:
+      consumes:
+      - application/json
+      description: Api for Get animal product by ID
+      parameters:
+      - description: Animal-Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimalProductRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: GET ANIMAL PRODUCT BY ID
+      tags:
+      - ANIMAL-PRODUCT
   /v1/category:
     get:
       consumes:
@@ -433,6 +670,158 @@ paths:
       summary: LIST CATEGORY
       tags:
       - CATEGORY
+  /v1/delivery:
+    get:
+      consumes:
+      - application/json
+      description: Api for List delivery by page limit and extra values
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: union
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListDeliverysRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST DELIVERY
+      tags:
+      - DELIVERY
+    post:
+      consumes:
+      - application/json
+      description: Api for Create new delivery
+      parameters:
+      - description: createModel
+        in: body
+        name: Delivery
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeliveryReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.DeliveryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: CREATE DELIVERY
+      tags:
+      - DELIVERY
+  /v1/delivery/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for Delete delivery by delivery ID
+      parameters:
+      - description: Delivery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: DELETE DELIVERY
+      tags:
+      - DELIVERY
+    get:
+      consumes:
+      - application/json
+      description: Api for Get delivery by ID
+      parameters:
+      - description: Delivery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DeliveryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: GET DELIVERY BY FOOD ID
+      tags:
+      - DELIVERY
+  /v1/deliverys:
+    put:
+      consumes:
+      - application/json
+      description: Api for Update delivery by food id
+      parameters:
+      - description: createModel
+        in: body
+        name: Delivery
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeliveryRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DeliveryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE DELIVERY
+      tags:
+      - DELIVERY
   /v1/drugs:
     get:
       consumes:
@@ -587,6 +976,157 @@ paths:
       summary: GET DRUG BY DRUG ID
       tags:
       - DRUG
+  /v1/foods:
+    get:
+      consumes:
+      - application/json
+      description: Api for List food by page limit and extra values
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: union
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListFoodsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST FOOD
+      tags:
+      - FOOD
+    post:
+      consumes:
+      - application/json
+      description: Api for Create new food
+      parameters:
+      - description: createModel
+        in: body
+        name: Food
+        required: true
+        schema:
+          $ref: '#/definitions/models.FoodReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.FoodRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: CREATE FOOD
+      tags:
+      - FOOD
+    put:
+      consumes:
+      - application/json
+      description: Api for Update food by food id
+      parameters:
+      - description: createModel
+        in: body
+        name: Food
+        required: true
+        schema:
+          $ref: '#/definitions/models.FoodRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FoodRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE FOOD
+      tags:
+      - FOOD
+  /v1/foods/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for Delete food by food ID
+      parameters:
+      - description: Food ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: DELETE FOOD
+      tags:
+      - FOOD
+    get:
+      consumes:
+      - application/json
+      description: Api for Get food by ID
+      parameters:
+      - description: Food ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FoodRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: GET FOOD BY FOOD ID
+      tags:
+      - FOOD
   /v1/products:
     get:
       consumes:
