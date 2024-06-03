@@ -61,7 +61,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
 		})
-		l.Error(err)
+		h.Logger.Error(err.Error())
 		return
 	}
 

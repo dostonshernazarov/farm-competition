@@ -23,3 +23,8 @@ main.main.func1
 2024-06-02T19:07:54.245+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
 main.main.func1
 	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-03T13:25:50.588+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-03T13:26:22.441+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-03T13:26:22.442+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
