@@ -24,6 +24,7 @@ func NewDrug(db *postgres.PostgresDB) repo.Drug {
 func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug, error) {
 	query := `
 	INSERT INTO drugs (
+	    id,
 	    name,
 	    capacity,
 	    product_union,
@@ -32,7 +33,7 @@ func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 	    created_at,
 	    updated_at
 	)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	RETURNING
 		id,
 	    name,
@@ -48,6 +49,7 @@ func (a *drugRepo) Create(ctx context.Context, drug *entity.Drug) (*entity.Drug,
 	)
 
 	err := a.db.QueryRow(ctx, query,
+		drug.ID,
 		drug.Name,
 		drug.Capacity,
 		drug.Union,

@@ -24,6 +24,7 @@ func NewFood(db *postgres.PostgresDB) repo.Food {
 func (a *foodRepo) Create(ctx context.Context, food *entity.Food) (*entity.Food, error) {
 	query := `
 	INSERT INTO foods (
+	    id,
 		name,
 		capacity,
 		product_union,
@@ -31,7 +32,7 @@ func (a *foodRepo) Create(ctx context.Context, food *entity.Food) (*entity.Food,
 		created_at,
 		updated_at
 	)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING
 		id,
 		name,
@@ -46,6 +47,7 @@ func (a *foodRepo) Create(ctx context.Context, food *entity.Food) (*entity.Food,
 	)
 
 	err := a.db.QueryRow(ctx, query,
+		food.ID,
 		food.Name,
 		food.Capacity,
 		food.Union,

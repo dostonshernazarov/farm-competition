@@ -24,6 +24,7 @@ func NewAnimal(db *postgres.PostgresDB) repo.Animal {
 func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity.Animal, error) {
 	query := `
 	INSERT INTO animals (
+	    id,
 	    name,
 	    category_name,
 	    gender,
@@ -35,7 +36,7 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 	    created_at,
 	    updated_at
 	)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	RETURNING
 		id,
 	    name,
@@ -52,9 +53,11 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 		createdAnimal      entity.Animal
 		sqlNullGenus       sql.NullString
 		sqlNullDescription sql.NullString
+		sqlNullBirthday    sql.NullString
 	)
 
 	err := a.db.QueryRow(ctx, query,
+		animal.ID,
 		animal.Name,
 		animal.CategoryID,
 		animal.Gender,
@@ -70,7 +73,7 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 		&createdAnimal.Name,
 		&createdAnimal.CategoryID,
 		&createdAnimal.Gender,
-		&createdAnimal.BirthDay,
+		&sqlNullBirthday,
 		&sqlNullGenus,
 		&createdAnimal.Weight,
 		&sqlNullDescription,
@@ -85,6 +88,9 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 	}
 	if sqlNullDescription.Valid {
 		createdAnimal.Description = sqlNullDescription.String
+	}
+	if sqlNullBirthday.Valid {
+		createdAnimal.BirthDay = sqlNullBirthday.String
 	}
 
 	return &createdAnimal, nil
@@ -123,6 +129,7 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 		updatedAnimal      entity.Animal
 		sqlNullGenus       sql.NullString
 		sqlNullDescription sql.NullString
+		sqlNullBirthday    sql.NullString
 	)
 
 	err := a.db.QueryRow(ctx, query,
@@ -141,7 +148,7 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 		&updatedAnimal.Name,
 		&updatedAnimal.CategoryID,
 		&updatedAnimal.Gender,
-		&updatedAnimal.BirthDay,
+		&sqlNullBirthday,
 		&sqlNullGenus,
 		&updatedAnimal.Weight,
 		&sqlNullDescription,
@@ -156,6 +163,9 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 	}
 	if sqlNullDescription.Valid {
 		updatedAnimal.Description = sqlNullDescription.String
+	}
+	if sqlNullBirthday.Valid {
+		updatedAnimal.BirthDay = sqlNullBirthday.String
 	}
 
 	return &updatedAnimal, nil
@@ -199,6 +209,7 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 		animal             entity.Animal
 		sqlNullGenus       sql.NullString
 		sqlNullDescription sql.NullString
+		sqlNullBirthday    sql.NullString
 	)
 
 	err := a.db.QueryRow(ctx, query, animalID).Scan(
@@ -206,7 +217,7 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 		&animal.Name,
 		&animal.CategoryID,
 		&animal.Gender,
-		&animal.BirthDay,
+		&sqlNullBirthday,
 		&sqlNullGenus,
 		&animal.Weight,
 		&sqlNullDescription,
@@ -221,6 +232,9 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 	}
 	if sqlNullDescription.Valid {
 		animal.Description = sqlNullDescription.String
+	}
+	if sqlNullBirthday.Valid {
+		animal.BirthDay = sqlNullBirthday.String
 	}
 
 	return &animal, nil
@@ -261,13 +275,14 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64) (*entity.List
 			animal             entity.Animal
 			sqlNullGenus       sql.NullString
 			sqlNullDescription sql.NullString
+			sqlNullBirthday    sql.NullString
 		)
 		err := rows.Scan(
 			&animal.ID,
 			&animal.Name,
 			&animal.CategoryID,
 			&animal.Gender,
-			&animal.BirthDay,
+			&sqlNullBirthday,
 			&sqlNullGenus,
 			&animal.Weight,
 			&sqlNullDescription,
@@ -282,6 +297,9 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64) (*entity.List
 		}
 		if sqlNullDescription.Valid {
 			animal.Description = sqlNullDescription.String
+		}
+		if sqlNullBirthday.Valid {
+			animal.BirthDay = sqlNullBirthday.String
 		}
 
 		animals.Animals = append(animals.Animals, &animal)
