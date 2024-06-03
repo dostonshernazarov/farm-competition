@@ -2,7 +2,6 @@ package api
 
 import (
 	"musobaqa/farm-competition/internal/usecase/animals"
-	"musobaqa/farm-competition/internal/usecase/category"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
@@ -28,7 +27,6 @@ type RouteOption struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	Category       category.Category
 	Product        products.Product
 	Animals        animals.Animal
 	Food           foods.Food
@@ -54,7 +52,6 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Logger:         option.Logger,
 		ContextTimeout: option.ContextTimeout,
 		JwtHandler:     option.JwtHandler,
-		Category:       option.Category,
 		Product:        option.Product,
 		Animals:        option.Animals,
 		Food:           option.Food,

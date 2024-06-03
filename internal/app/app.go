@@ -21,7 +21,6 @@ import (
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"musobaqa/farm-competition/internal/pkg/redis"
 	"musobaqa/farm-competition/internal/usecase/animals"
-	"musobaqa/farm-competition/internal/usecase/category"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
@@ -35,7 +34,6 @@ type App struct {
 	server       *http.Server
 	Enforcer     *casbin.Enforcer
 	ShutdownOTLP func() error
-	Category     category.Category
 	Product      products.Product
 	Animals      animals.Animal
 	Food         foods.Food
@@ -85,10 +83,6 @@ func NewApp(cfg config.Config) (*App, error) {
 		return nil, err
 	}
 
-	// category
-	categoryRepo := postgresql.NewCategory(db)
-	appCategoryUseCase := category.NewCategoryService(contextTimeout, categoryRepo)
-
 	// product
 	productRepo := postgresql.NewProduct(db)
 	appProductUseCase := products.NewFoodService(contextTimeout, productRepo)
@@ -112,7 +106,6 @@ func NewApp(cfg config.Config) (*App, error) {
 		RedisDB:      redisdb,
 		Enforcer:     enforcer,
 		ShutdownOTLP: shutdownOTLP,
-		Category:     appCategoryUseCase,
 		Product:      appProductUseCase,
 		Animals:      appAnimalUseCase,
 		Drug:         appDrugUseCase,
@@ -140,7 +133,6 @@ func (a *App) Run() error {
 		Logger:         a.Logger,
 		ContextTimeout: contextTimeout,
 		Enforcer:       a.Enforcer,
-		Category:       a.Category,
 		Product:        a.Product,
 		Animals:        a.Animals,
 		Food:           a.Food,

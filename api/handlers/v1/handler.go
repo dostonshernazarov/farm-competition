@@ -9,7 +9,6 @@ import (
 	"musobaqa/farm-competition/internal/pkg/config"
 	tokens "musobaqa/farm-competition/internal/pkg/token"
 	"musobaqa/farm-competition/internal/usecase/animals"
-	"musobaqa/farm-competition/internal/usecase/category"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
@@ -20,7 +19,6 @@ type HandlerV1 struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	Category       category.Category
 	Product        products.Product
 	Animals        animals.Animal
 	Food           foods.Food
@@ -33,7 +31,6 @@ type HandlerV1Config struct {
 	Logger         *zap.Logger
 	ContextTimeout time.Duration
 	JwtHandler     tokens.JwtHandler
-	Category       category.Category
 	Product        products.Product
 	Animals        animals.Animal
 	Food           foods.Food
@@ -47,7 +44,6 @@ func New(c *HandlerV1Config) *HandlerV1 {
 		Logger:         c.Logger,
 		ContextTimeout: c.ContextTimeout,
 		JwtHandler:     c.JwtHandler,
-		Category:       c.Category,
 		Product:        c.Product,
 		Animals:        c.Animals,
 		Food:           c.Food,
