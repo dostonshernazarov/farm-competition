@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -93,6 +94,11 @@ type CategoryRes struct {
 }
 
 func (t *AnimalReq) Validate() error {
+	t.CategoryName = strings.ToLower(t.CategoryName)
+	t.DateOfBirth = strings.ToLower(t.DateOfBirth)
+	t.Description = strings.ToLower(t.Description)
+	t.Gender = strings.ToLower(t.Gender)
+	t.Genus = strings.ToLower(t.Genus)
 	return validation.ValidateStruct(t,
 		validation.Field(
 			&t.Gender,
