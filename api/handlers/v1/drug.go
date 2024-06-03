@@ -77,7 +77,7 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 // @Tags DRUG
 // @Accept json
 // @Produce json
-// @Param drug_id path string true "ID"
+// @Param id path string true "Drug ID"
 // @Success 200 {object} models.DrugRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -90,7 +90,7 @@ func (h *HandlerV1) GetDrug(c *gin.Context) {
 	)
 	defer span.End()
 
-	id := c.Param("drug_id")
+	id := c.Param("id")
 
 	res, err := h.Drug.Get(ctx, id)
 	if err != nil {
@@ -186,8 +186,7 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 // @Tags DRUG
 // @Accept json
 // @Produce json
-// @Param drug_id query string true "drug_id"
-// @Param Drug body models.DrugReq true "createModel"
+// @Param Drug body models.DrugRes true "createModel"
 // @Success 200 {object} models.DrugRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -201,10 +200,9 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DrugReq
+		body models.DrugRes
 	)
 
-	drug_id := c.Query("drug_id")
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -216,7 +214,7 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 	}
 
 	res, err := h.Drug.Update(ctx, &entity.Drug{
-		ID:          drug_id,
+		ID:          body.Id,
 		Name:        body.DrugName,
 		Status:      body.Status,
 		Capacity:    uint64(body.TotalCapacity),
@@ -245,7 +243,7 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 // @Tags DRUG
 // @Accept json
 // @Produce json
-// @Param id query string true "ID"
+// @Param id path string true "Drug ID"
 // @Success 200 {object} models.Result
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -258,7 +256,7 @@ func (h *HandlerV1) DeleteDrug(c *gin.Context) {
 	)
 	defer span.End()
 
-	id := c.Query("id")
+	id := c.Param("id")
 
 	_, err := h.Drug.Get(ctx, id)
 	if err != nil {

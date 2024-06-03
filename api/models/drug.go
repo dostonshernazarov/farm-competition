@@ -2,7 +2,7 @@ package models
 
 type DrugReq struct {
 	DrugName string `json:"drug_name"`
-	Union string `json:"union"`
+	Union string `json:"union" example:"piece"`
 	Description string `json:"description"`
 	TotalCapacity int64 `json:"total_capacity"`
 	Status string `json:"status"`

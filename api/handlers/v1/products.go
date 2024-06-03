@@ -49,7 +49,7 @@ func (h *HandlerV1) CreateProduct(c *gin.Context) {
 		ID:            uuid.New().String(),
 		Name:          body.ProductName,
 		Union:         body.Union,
-		TotalCapacity: uint64(body.TotalCapacity),
+		TotalCapacity: int64(body.TotalCapacity),
 		Description:   body.Description,
 	})
 	if err != nil {
@@ -180,8 +180,7 @@ func (h *HandlerV1) ListProduct(c *gin.Context) {
 // @Tags PRODUCT
 // @Accept json
 // @Produce json
-// @Param product_id query string true "product_id"
-// @Param Product body models.ProductReq true "createModel"
+// @Param Product body models.ProductRes true "createModel"
 // @Success 200 {object} models.ProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -195,10 +194,9 @@ func (h *HandlerV1) UpdateProduct(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.ProductReq
+		body models.ProductRes
 	)
 
-	animal_id := c.Query("product_id")
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -210,10 +208,10 @@ func (h *HandlerV1) UpdateProduct(c *gin.Context) {
 	}
 
 	res, err := h.Product.Update(ctx, &entity.Product{
-		ID:            animal_id,
+		ID:            body.Id,
 		Name:          body.ProductName,
 		Union:         body.Union,
-		TotalCapacity: uint64(body.TotalCapacity),
+		TotalCapacity: int64(body.TotalCapacity),
 		Description:   body.Description,
 	})
 	if err != nil {
