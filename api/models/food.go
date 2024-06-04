@@ -28,6 +28,7 @@ type FoodFieldValues struct {
 
 type ListFoodsRes struct {
 	Foods []*FoodRes `json:"foods"`
+	Count int64 `json:"count"`
 }
 
 func (t *FoodReq) Validate() error {

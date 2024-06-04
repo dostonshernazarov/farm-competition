@@ -1658,7 +1658,7 @@ const docTemplate = `{
                 },
                 "date_of_birth": {
                     "type": "string",
-                    "example": "1000-01-01"
+                    "example": "2024-01-01"
                 },
                 "description": {
                     "type": "string"
@@ -1670,8 +1670,9 @@ const docTemplate = `{
                 "genus": {
                     "type": "string"
                 },
-                "is_healt": {
-                    "type": "boolean"
+                "is_health": {
+                    "type": "boolean",
+                    "example": true
                 },
                 "name": {
                     "type": "string"
@@ -1702,7 +1703,7 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "is_healt": {
+                "is_health": {
                     "type": "boolean"
                 },
                 "name": {
@@ -1878,6 +1879,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.AnimalRes"
                     }
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
@@ -1895,6 +1899,9 @@ const docTemplate = `{
         "models.ListDrugsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "drugs": {
                     "type": "array",
                     "items": {
@@ -1906,6 +1913,9 @@ const docTemplate = `{
         "models.ListFoodsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "foods": {
                     "type": "array",
                     "items": {
@@ -1917,6 +1927,9 @@ const docTemplate = `{
         "models.ListProductsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "products": {
                     "type": "array",
                     "items": {

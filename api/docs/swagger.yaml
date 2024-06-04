@@ -52,7 +52,7 @@ definitions:
       category_name:
         type: string
       date_of_birth:
-        example: "1000-01-01"
+        example: "2024-01-01"
         type: string
       description:
         type: string
@@ -61,7 +61,8 @@ definitions:
         type: string
       genus:
         type: string
-      is_healt:
+      is_health:
+        example: true
         type: boolean
       name:
         type: string
@@ -82,7 +83,7 @@ definitions:
         type: string
       id:
         type: string
-      is_healt:
+      is_health:
         type: boolean
       name:
         type: string
@@ -198,6 +199,8 @@ definitions:
         items:
           $ref: '#/definitions/models.AnimalRes'
         type: array
+      count:
+        type: integer
     type: object
   models.ListDeliverysRes:
     properties:
@@ -208,6 +211,8 @@ definitions:
     type: object
   models.ListDrugsRes:
     properties:
+      count:
+        type: integer
       drugs:
         items:
           $ref: '#/definitions/models.DrugRes'
@@ -215,6 +220,8 @@ definitions:
     type: object
   models.ListFoodsRes:
     properties:
+      count:
+        type: integer
       foods:
         items:
           $ref: '#/definitions/models.FoodRes'
@@ -222,6 +229,8 @@ definitions:
     type: object
   models.ListProductsRes:
     properties:
+      count:
+        type: integer
       products:
         items:
           $ref: '#/definitions/models.ProductRes'

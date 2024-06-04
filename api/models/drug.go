@@ -31,6 +31,7 @@ type DrugFieldValues struct {
 
 type ListDrugsRes struct {
 	Drugs []*DrugRes `json:"drugs"`
+	Count int64 `json:"count"`
 }
 
 func (t *DrugReq) Validate() error {

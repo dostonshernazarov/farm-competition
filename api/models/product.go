@@ -28,6 +28,7 @@ type ProductFieldValues struct {
 
 type ListProductsRes struct {
 	Products []*ProductRes `json:"products"`
+	Count int64 `json:"count"`
 }
 
 func (t *ProductReq) Validate() error {

@@ -275,8 +275,6 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 		return nil, err
 	}
 
-	println("\n", query, "\n")
-
 	rows, err := a.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
@@ -324,7 +322,9 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("category_name", "%"+cast.ToString(params["category"])+"%"))
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("genus", "%"+cast.ToString(params["genus"])+"%"))
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("gender", "%"+cast.ToString(params["gender"])+"%"))
-	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("is_health", "%"+cast.ToString(params["is_health"])+"%"))
+	if cast.ToString(params["is_health"]) != "" {
+		totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.Equal("is_health", cast.ToString(params["is_health"])))
+	}
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.And(
 		sq.GtOrEq{"weight": weightDown},
 		sq.LtOrEq{"weight": weightUp},
