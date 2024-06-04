@@ -486,3 +486,124 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 
 	return &response, nil
 }
+
+func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64, productID string) (*entity.AnimalsWithProduct, error) {
+	queryBuilder := ap.db.Sq.Builder.Select("id, name, product_union, description, total_capacity")
+	queryBuilder = queryBuilder.From("products")
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(ap.db.Sq.Equal("id", productID))
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		response               entity.AnimalsWithProduct
+		nullProductDescription sql.NullString
+	)
+
+	err = ap.db.QueryRow(ctx, query, args...).Scan(
+		&response.Product.ID,
+		&response.Product.Name,
+		&response.Product.Union,
+		&nullProductDescription,
+		&response.Product.TotalCapacity,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if nullProductDescription.Valid {
+		response.Product.Description = nullProductDescription.String
+	}
+
+	animalQueryBuilder := ap.db.Sq.Builder.Select("a.id, a.name, a.category_name, a.gender, a.birth_day, a.genus, a.weight, a.is_health, a.description, SUM(ap.capacity) AS total_category")
+	animalQueryBuilder = animalQueryBuilder.From("animal_products AS ap")
+	animalQueryBuilder = animalQueryBuilder.Join("animals AS a ON a.id = ap.animal_id")
+	animalQueryBuilder = animalQueryBuilder.Where(ap.db.Sq.Equal("ap.product_id", productID))
+	animalQueryBuilder = animalQueryBuilder.Where("ap.deleted_at IS NULL")
+	animalQueryBuilder = animalQueryBuilder.Where("a.deleted_at IS NULL")
+	animalQueryBuilder = animalQueryBuilder.GroupBy("a.id")
+	animalQueryBuilder = animalQueryBuilder.OrderBy("a.total_category")
+	animalQueryBuilder = animalQueryBuilder.Limit(limit)
+	animalQueryBuilder = animalQueryBuilder.Offset(limit * (page - 1))
+
+	animalQuery, animalArgs, err := animalQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := ap.db.Query(ctx, animalQuery, animalArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			animal                entity.Animal
+			nullAnimalGenus       sql.NullString
+			nullAnimalWeight      sql.NullInt64
+			nullAnimalDescription sql.NullString
+			NullAnimalBirthday    sql.NullString
+			totosh                int64
+		)
+		err = rows.Scan(
+			&animal.ID,
+			&animal.Name,
+			&animal.CategoryName,
+			&animal.Gender,
+			&NullAnimalBirthday,
+			&nullAnimalGenus,
+			&nullAnimalWeight,
+			&nullAnimalDescription,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		if nullAnimalGenus.Valid {
+			animal.Genus = nullAnimalGenus.String
+		}
+		if nullAnimalWeight.Valid {
+			animal.Weight = uint64(nullAnimalWeight.Int64)
+		}
+		if nullAnimalDescription.Valid {
+			animal.Description = nullAnimalDescription.String
+		}
+		if nullProductDescription.Valid {
+			animal.Description = nullProductDescription.String
+		}
+
+		response.Animals = append(response.Animals, &struct {
+			ID            string
+			Name          string
+			CategoryName  string
+			Gender        string
+			BirthDay      string
+			Genus         string
+			Weight        uint64
+			IsHealth      string
+			Description   string
+			TotalCapacity int64
+		}{
+			ID:            animal.ID,
+			Name:          animal.Name,
+			CategoryName:  animal.CategoryName,
+			Gender:        animal.Gender,
+			BirthDay:      animal.BirthDay,
+			Genus:         animal.Genus,
+			Weight:        animal.Weight,
+			IsHealth:      animal.IsHealth,
+			Description:   animal.Description,
+			TotalCapacity: totosh,
+		})
+	}
+
+	return &response, nil
+}
+
+func (ap *animalProductRepo) ListProducts(ctx context.Context, page, limit uint64, animalID string) (*entity.ProductsWithAnimal, error) {
+	return nil, nil
+}
