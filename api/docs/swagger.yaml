@@ -36,7 +36,11 @@ definitions:
     type: object
   models.AnimalProductRes:
     properties:
+      animal_category:
+        type: string
       animal_id:
+        type: string
+      animal_name:
         type: string
       capacity:
         type: integer
@@ -45,6 +49,8 @@ definitions:
       id:
         type: string
       product_name:
+        type: string
+      union:
         type: string
     type: object
   models.AnimalReq:
@@ -201,6 +207,8 @@ definitions:
         items:
           $ref: '#/definitions/models.AnimalProductRes'
         type: array
+      count:
+        type: integer
     type: object
   models.ListAnimalsRes:
     properties:
@@ -517,6 +525,7 @@ paths:
       consumes:
       - application/json
       description: Api for List products which have got from animals by page limit
+        and extra values
       parameters:
       - in: query
         name: limit
@@ -526,6 +535,12 @@ paths:
         type: integer
       - in: query
         name: animal_id
+        type: string
+      - in: query
+        name: get_time
+        type: string
+      - in: query
+        name: product_id
         type: string
       produces:
       - application/json
@@ -577,7 +592,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: Api for Update animal product by id
+      description: Api for Update product which has got from animal
       parameters:
       - description: createModel
         in: body
@@ -607,7 +622,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Api for Delete animal product by ID
+      description: Api for Delete product which has got from animal by ID
       parameters:
       - description: Animal Product ID
         in: path
@@ -635,7 +650,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Api for Get animal product by ID
+      description: Api for Get product which has got from animal by ID
       parameters:
       - description: Animal-Product ID
         in: path
@@ -664,7 +679,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Api for ListCategory
+      description: Api for List AnimalCategory
       parameters:
       - in: query
         name: limit
@@ -687,7 +702,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.Error'
-      summary: LIST CATEGORY
+      summary: LIST ANIMAL CATEGORY
       tags:
       - CATEGORY
   /v1/delivery:

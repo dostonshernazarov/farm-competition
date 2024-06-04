@@ -43,6 +43,15 @@ func (h *HandlerV1) CreateAnimalProduct(c *gin.Context) {
 		return
 	}
 
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
 	res, err := h.Drug.Create(ctx, &entity.Drug{
 
 	})
@@ -65,7 +74,7 @@ func (h *HandlerV1) CreateAnimalProduct(c *gin.Context) {
 
 // GET DRUG
 // @Summary GET ANIMAL PRODUCT BY ID
-// @Description Api for Get animal product by ID
+// @Description Api for Get product which has got from animal by ID
 // @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
@@ -104,7 +113,7 @@ func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
 
 // LIST ANIMAL PRODUCT
 // @Summary LIST ANIMAL PRODUCT
-// @Description Api for List products which have got from animals by page limit
+// @Description Api for List products which have got from animals by page limit and extra values
 // @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
@@ -168,7 +177,7 @@ func (h *HandlerV1) ListAnimalProducts(c *gin.Context) {
 
 // UPDATE
 // @Summary UPDATE ANIMAL PRODUCT
-// @Description Api for Update animal product by id
+// @Description Api for Update product which has got from animal
 // @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
@@ -220,7 +229,7 @@ func (h *HandlerV1) UpdateAnimalProduct(c *gin.Context) {
 
 // DELETE
 // @Summary DELETE ANIMAL PRODUCT
-// @Description Api for Delete animal product by ID
+// @Description Api for Delete product which has got from animal by ID
 // @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json

@@ -377,8 +377,8 @@ func (h *HandlerV1) DeleteAnimal(c *gin.Context) {
 }
 
 // LIST CATEGORY
-// @Summary LIST CATEGORY
-// @Description Api for ListCategory
+// @Summary LIST ANIMAL CATEGORY
+// @Description Api for List AnimalCategory
 // @Tags CATEGORY
 // @Accept json
 // @Produce json
