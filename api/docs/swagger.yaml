@@ -213,6 +213,8 @@ definitions:
     type: object
   models.ListDeliverysRes:
     properties:
+      count:
+        type: integer
       deliveries:
         items:
           $ref: '#/definitions/models.DeliveryRes'
@@ -756,6 +758,35 @@ paths:
       summary: CREATE DELIVERY
       tags:
       - DELIVERY
+    put:
+      consumes:
+      - application/json
+      description: Api for Update delivery by food id
+      parameters:
+      - description: createModel
+        in: body
+        name: Delivery
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeliveryRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DeliveryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE DELIVERY
+      tags:
+      - DELIVERY
   /v1/delivery/{id}:
     delete:
       consumes:
@@ -811,36 +842,6 @@ paths:
           schema:
             $ref: '#/definitions/models.Error'
       summary: GET DELIVERY BY ID
-      tags:
-      - DELIVERY
-  /v1/deliverys:
-    put:
-      consumes:
-      - application/json
-      description: Api for Update delivery by food id
-      parameters:
-      - description: createModel
-        in: body
-        name: Delivery
-        required: true
-        schema:
-          $ref: '#/definitions/models.DeliveryRes'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.DeliveryRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.Error'
-      summary: UPDATE DELIVERY
       tags:
       - DELIVERY
   /v1/drugs:

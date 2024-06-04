@@ -144,6 +144,7 @@ func (a *App) Run() error {
 		Animals:        a.Animals,
 		Food:           a.Food,
 		Drug:           a.Drug,
+		Delivery:       a.Delivery,
 	})
 	err = a.Enforcer.LoadPolicy()
 	if err != nil {

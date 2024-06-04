@@ -705,6 +705,50 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Api for Update delivery by food id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DELIVERY"
+                ],
+                "summary": "UPDATE DELIVERY",
+                "parameters": [
+                    {
+                        "description": "createModel",
+                        "name": "Delivery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DeliveryRes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DeliveryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Api for Create new delivery",
                 "consumes": [
@@ -819,52 +863,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Result"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/deliverys": {
-            "put": {
-                "description": "Api for Update delivery by food id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DELIVERY"
-                ],
-                "summary": "UPDATE DELIVERY",
-                "parameters": [
-                    {
-                        "description": "createModel",
-                        "name": "Delivery",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.DeliveryRes"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.DeliveryRes"
                         }
                     },
                     "400": {
@@ -1907,6 +1905,9 @@ const docTemplate = `{
         "models.ListDeliverysRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "deliveries": {
                     "type": "array",
                     "items": {

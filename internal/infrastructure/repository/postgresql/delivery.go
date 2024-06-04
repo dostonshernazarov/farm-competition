@@ -3,10 +3,11 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
+
+	"github.com/spf13/cast"
 )
 
 type deliveryRepo struct {
@@ -23,14 +24,14 @@ func NewDelivery(db *postgres.PostgresDB) repo.Delivery {
 
 func (d *deliveryRepo) Create(ctx context.Context, delivery *entity.Delivery) (*entity.Delivery, error) {
 	clauses := map[string]interface{}{
-		"id":         delivery.ID,
-		"name":       delivery.Name,
-		"category":   delivery.Category,
-		"capacity":   delivery.Capacity,
-		"union":      delivery.Union,
-		"time":       delivery.Time,
-		"created_at": delivery.CreatedAt,
-		"updated_at": delivery.UpdatedAt,
+		"id":            delivery.ID,
+		"name":          delivery.Name,
+		"category":      delivery.Category,
+		"capacity":      delivery.Capacity,
+		"product_union": delivery.Union,
+		"time":          delivery.Time,
+		"created_at":    delivery.CreatedAt,
+		"updated_at":    delivery.UpdatedAt,
 	}
 
 	queryBuilder := d.db.Sq.Builder.Insert(d.tableName)
@@ -54,12 +55,12 @@ func (d *deliveryRepo) Create(ctx context.Context, delivery *entity.Delivery) (*
 
 func (d *deliveryRepo) Update(ctx context.Context, delivery *entity.Delivery) (*entity.Delivery, error) {
 	clauses := map[string]interface{}{
-		"name":       delivery.Name,
-		"category":   delivery.Category,
-		"capacity":   delivery.Capacity,
-		"union":      delivery.Union,
-		"time":       delivery.Time,
-		"updated_at": delivery.UpdatedAt,
+		"name":          delivery.Name,
+		"category":      delivery.Category,
+		"capacity":      delivery.Capacity,
+		"product_union": delivery.Union,
+		"time":          delivery.Time,
+		"updated_at":    delivery.UpdatedAt,
 	}
 
 	queryBuilder := d.db.Sq.Builder.Update(d.tableName)
@@ -106,7 +107,7 @@ func (d *deliveryRepo) Delete(ctx context.Context, deliveryID string) error {
 }
 
 func (d *deliveryRepo) Get(ctx context.Context, deliveryID string) (*entity.Delivery, error) {
-	queryBuilder := d.db.Sq.Builder.Select("id, name, category, capacity, union, time")
+	queryBuilder := d.db.Sq.Builder.Select("id, name, category, capacity, product_union, time")
 	queryBuilder = queryBuilder.From(d.tableName)
 	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
 	queryBuilder = queryBuilder.Where(d.db.Sq.Equal("id", deliveryID))
@@ -133,11 +134,12 @@ func (d *deliveryRepo) Get(ctx context.Context, deliveryID string) (*entity.Deli
 }
 
 func (d *deliveryRepo) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListDelivery, error) {
-	queryBuilder := d.db.Sq.Builder.Select("id, name, category, capacity, union, time")
+	queryBuilder := d.db.Sq.Builder.Select("id, name, category, capacity, product_union, time")
+	queryBuilder = queryBuilder.From(d.tableName)
 	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
-	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("name", params["name"]))
-	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("category", params["category"]))
-	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
+	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("category", "%"+cast.ToString(params["category"])+"%"))
+	// queryBuilder = queryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
 	queryBuilder = queryBuilder.Limit(limit)
 	queryBuilder = queryBuilder.Offset(limit * (page - 1))
 	queryBuilder = queryBuilder.OrderBy("time DESC")
@@ -172,10 +174,11 @@ func (d *deliveryRepo) List(ctx context.Context, page, limit uint64, params map[
 	}
 
 	totalQueryBuilder := d.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From(d.tableName)
 	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
-	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("name", params["name"]))
-	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("category", params["category"]))
-	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
+	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("category", "%"+cast.ToString(params["category"])+"%"))
+	// totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
 	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package api
 
 import (
 	"musobaqa/farm-competition/internal/usecase/animals"
+	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
@@ -31,6 +32,7 @@ type RouteOption struct {
 	Animals        animals.Animal
 	Food           foods.Food
 	Drug           drugs.Drug
+	Delivery delivery.Delivery
 	Enforcer       *casbin.Enforcer
 }
 
@@ -56,6 +58,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Animals:        option.Animals,
 		Food:           option.Food,
 		Drug:           option.Drug,
+		Delivery: option.Delivery,
 		Enforcer:       option.Enforcer,
 	})
 
@@ -103,6 +106,12 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.PUT("/foods", HandlerV1.UpdateFood)
 	api.DELETE("/foods/:id", HandlerV1.DeleteFood)
 
+	// DELIVERY METHODS
+	api.POST("/delivery", HandlerV1.CreateDelivery)
+	api.GET("/delivery/:id", HandlerV1.GetDelivery)
+	api.GET("/delivery", HandlerV1.ListDelivery)
+	api.PUT("/delivery", HandlerV1.UpdateDelivery)
+	api.DELETE("/delivery/:id", HandlerV1.DeleteDelivery)
 
 
 	url := ginSwagger.URL("swagger/doc.json")
