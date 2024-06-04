@@ -1,13 +1,17 @@
 package v1
 
 import (
+	"database/sql"
+	"errors"
 	"musobaqa/farm-competition/api/models"
+	"musobaqa/farm-competition/internal/entity"
 	l "musobaqa/farm-competition/internal/pkg/logger"
 	"musobaqa/farm-competition/internal/pkg/otlp"
 	"musobaqa/farm-competition/internal/pkg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -17,13 +21,13 @@ import (
 // @Tags DELIVERY
 // @Accept json
 // @Produce json
-// @Param Delivery body models.DeliveryReq true "createModel"
-// @Success 201 {object} models.DeliveryRes
+// @Param Delivery body models.DeliveryCreateReq true "createModel"
+// @Success 201 {object} models.DeliveryCreateRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
 // @Router /v1/delivery [post]
 func (h *HandlerV1) Createdelivery(c *gin.Context) {
-	_, span := otlp.Start(c, "api", "Createdelivery")
+	ctx, span := otlp.Start(c, "api", "Createdelivery")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -31,7 +35,7 @@ func (h *HandlerV1) Createdelivery(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.DeliveryReq
+		body models.DeliveryCreateReq
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -67,18 +71,116 @@ func (h *HandlerV1) Createdelivery(c *gin.Context) {
 	// 	return
 	// }
 
-	c.JSON(http.StatusCreated, &models.DeliveryRes{
-		ID:          "",
-		ProductName: "",
-		Category:    "",
-		Capacity:    0,
-		Union:       "",
-		Time:        "",
+	if body.Category == "food" {
+		foodRes, err := h.Food.Get(ctx, map[string]string{"name": body.ProductName})
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				_, err := h.Food.Create(ctx, &entity.Food{
+					ID:          uuid.New().String(),
+					Name:        body.ProductName,
+					Capacity:    uint64(body.Capacity),
+					Union:       body.Union,
+					Description: body.Description,
+				})
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, models.Error{
+						Message: models.InternalMessage,
+					})
+					h.Logger.Error(err.Error())
+					return
+				}
+				c.JSON(http.StatusCreated, &models.DeliveryCreateRes{
+					Message: "Product successfully created",
+				})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+
+		_, err = h.Food.Update(ctx, &entity.Food{
+			ID:          foodRes.ID,
+			Name:        foodRes.Name,
+			Capacity:    foodRes.Capacity + uint64(body.Capacity),
+			Union:       foodRes.Union,
+			Description: foodRes.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+		c.JSON(http.StatusCreated, &models.DeliveryCreateRes{
+			Message: "Product successfully updated",
+		})
+		return
+
+	}
+
+	if body.Category == "drug" {
+		drugRes, err := h.Drug.Get(ctx, map[string]string{"name": body.ProductName})
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows){
+				_, err := h.Drug.Create(ctx, &entity.Drug{
+					ID:          uuid.NewString(),
+					Name:        body.ProductName,
+					Status:      body.Status,
+					Capacity:    uint64(body.Capacity),
+					Union:       body.Union,
+					Description: body.Description,
+				})
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, models.Error{
+						Message: models.InternalMessage,
+					})
+					h.Logger.Error(err.Error())
+					return
+				}
+				c.JSON(http.StatusCreated, &models.DeliveryCreateRes{
+					Message: "Product successfully created",
+				})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+
+		_, err = h.Drug.Update(ctx, &entity.Drug{
+			ID:          drugRes.ID,
+			Name:        drugRes.Name,
+			Status:      drugRes.Status,
+			Capacity:    drugRes.Capacity + uint64(body.Capacity),
+			Union:       drugRes.Union,
+			Description: drugRes.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+		c.JSON(http.StatusCreated, &models.DeliveryCreateRes{
+			Message: "Product successfully updated",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, &models.DeliveryCreateRes{
+		Message: "Warning! Went wrong",
 	})
 }
 
 // GET DELIVERY
-// @Summary GET DELIVERY BY FOOD ID
+// @Summary GET DELIVERY BY ID
 // @Description Api for Get delivery by ID
 // @Tags DELIVERY
 // @Accept json
@@ -124,7 +226,7 @@ func (h *HandlerV1) GetDelivery(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request query models.Pagination true "request"
-// @Param request query models.FoodFieldValues true "request"
+// @Param request query models.DeliveryFieldValues true "request"
 // @Success 200 {object} models.ListDeliverysRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -149,11 +251,13 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 	println(params)
 
 	name := c.Query("name")
-	union := c.Query("union")
+	category := c.Query("category")
+	time := c.Query("time")
 
 	_ = map[string]interface{}{
 		"name":  name,
-		"union": union,
+		"category": category,
+		"time": time,
 	}
 
 	// res, err := h.Delivery.List(ctx, params.Page, params.Limit)
@@ -182,7 +286,6 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 	})
 }
 
-
 // UPDATE
 // @Summary UPDATE DELIVERY
 // @Description Api for Update delivery by food id
@@ -206,7 +309,6 @@ func (h *HandlerV1) UpdateDelivery(c *gin.Context) {
 		body models.DeliveryRes
 	)
 
-
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
@@ -229,9 +331,7 @@ func (h *HandlerV1) UpdateDelivery(c *gin.Context) {
 	// 	return
 	// }
 
-	c.JSON(http.StatusOK, &models.DeliveryRes{
-
-	})
+	c.JSON(http.StatusOK, &models.DeliveryRes{})
 }
 
 // DELETE
