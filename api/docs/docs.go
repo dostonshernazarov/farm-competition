@@ -670,12 +670,17 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "union",
+                        "name": "time",
                         "in": "query"
                     }
                 ],
@@ -719,7 +724,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DeliveryReq"
+                            "$ref": "#/definitions/models.DeliveryCreateReq"
                         }
                     }
                 ],
@@ -727,7 +732,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.DeliveryRes"
+                            "$ref": "#/definitions/models.DeliveryCreateRes"
                         }
                     },
                     "400": {
@@ -757,7 +762,7 @@ const docTemplate = `{
                 "tags": [
                     "DELIVERY"
                 ],
-                "summary": "GET DELIVERY BY FOOD ID",
+                "summary": "GET DELIVERY BY ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -1725,7 +1730,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DeliveryReq": {
+        "models.DeliveryCreateReq": {
             "type": "object",
             "properties": {
                 "capacity": {
@@ -1734,7 +1739,13 @@ const docTemplate = `{
                 "category": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "product_name": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 },
                 "time": {
@@ -1742,6 +1753,14 @@ const docTemplate = `{
                     "example": "2024-01-01"
                 },
                 "union": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DeliveryCreateRes": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -1763,7 +1782,7 @@ const docTemplate = `{
                 },
                 "time": {
                     "type": "string",
-                    "example": "2024-01-01"
+                    "example": "2024-01-01 12:00:00"
                 },
                 "union": {
                     "type": "string"
