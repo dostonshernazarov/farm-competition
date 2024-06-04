@@ -256,7 +256,8 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 	for _, i := range list.Animals {
 		var res models.AnimalRes
 		res.Id = i.ID
-		res.CategoryName = i.Name
+		res.Name = i.Name
+		res.CategoryName = i.CategoryName
 		res.DateOfBirth = i.BirthDay
 		res.Description = i.Description
 		res.Gender = i.Gender
