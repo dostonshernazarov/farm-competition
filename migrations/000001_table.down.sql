@@ -15,9 +15,3 @@ DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS animals;
 
 DROP TABLE IF EXISTS category;
-
-DROP TYPE IF EXISTS store_category;
-
-DROP TYPE IF EXISTS animal_gender;
-
-DROP TYPE IF EXISTS product_union;
