@@ -287,7 +287,7 @@ const docTemplate = `{
         },
         "/v1/animals/products": {
             "get": {
-                "description": "Api for List products which have got from animals by page limit",
+                "description": "Api for List products which have got from animals by page limit and extra values",
                 "consumes": [
                     "application/json"
                 ],
@@ -313,6 +313,16 @@ const docTemplate = `{
                         "type": "string",
                         "name": "animal_id",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "get_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "product_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -337,7 +347,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Api for Update animal product by id",
+                "description": "Api for Update product which has got from animal",
                 "consumes": [
                     "application/json"
                 ],
@@ -427,7 +437,7 @@ const docTemplate = `{
         },
         "/v1/animals/products/{id}": {
             "get": {
-                "description": "Api for Get animal product by ID",
+                "description": "Api for Get product which has got from animal by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -469,7 +479,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Api for Delete animal product by ID",
+                "description": "Api for Delete product which has got from animal by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -599,7 +609,7 @@ const docTemplate = `{
         },
         "/v1/category": {
             "get": {
-                "description": "Api for ListCategory",
+                "description": "Api for List AnimalCategory",
                 "consumes": [
                     "application/json"
                 ],
@@ -609,7 +619,7 @@ const docTemplate = `{
                 "tags": [
                     "CATEGORY"
                 ],
-                "summary": "LIST CATEGORY",
+                "summary": "LIST ANIMAL CATEGORY",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1636,7 +1646,13 @@ const docTemplate = `{
         "models.AnimalProductRes": {
             "type": "object",
             "properties": {
+                "animal_category": {
+                    "type": "string"
+                },
                 "animal_id": {
+                    "type": "string"
+                },
+                "animal_name": {
                     "type": "string"
                 },
                 "capacity": {
@@ -1649,6 +1665,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "product_name": {
+                    "type": "string"
+                },
+                "union": {
                     "type": "string"
                 }
             }
@@ -1885,6 +1904,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.AnimalProductRes"
                     }
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
