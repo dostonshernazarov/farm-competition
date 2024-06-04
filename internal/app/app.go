@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	animalproduct "musobaqa/farm-competition/internal/usecase/animal-product"
 	"net/http"
 	"time"
 
@@ -28,18 +29,19 @@ import (
 )
 
 type App struct {
-	Config       *config.Config
-	Logger       *zap.Logger
-	DB           *postgres.PostgresDB
-	RedisDB      *redis.RedisDB
-	server       *http.Server
-	Enforcer     *casbin.Enforcer
-	ShutdownOTLP func() error
-	Product      products.Product
-	Animals      animals.Animal
-	Food         foods.Food
-	Drug         drugs.Drug
-	Delivery     delivery.Delivery
+	Config        *config.Config
+	Logger        *zap.Logger
+	DB            *postgres.PostgresDB
+	RedisDB       *redis.RedisDB
+	server        *http.Server
+	Enforcer      *casbin.Enforcer
+	ShutdownOTLP  func() error
+	Product       products.Product
+	Animals       animals.Animal
+	Food          foods.Food
+	Drug          drugs.Drug
+	Delivery      delivery.Delivery
+	AnimalProduct animalproduct.AnimalProduct
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -105,18 +107,23 @@ func NewApp(cfg config.Config) (*App, error) {
 	deliveryRepo := postgresql.NewDelivery(db)
 	appDeliveryUseCase := delivery.NewDeliveryService(contextTimeout, deliveryRepo)
 
+	// animal-product
+	animalProductRepo := postgresql.NewAnimalProduct(db)
+	appAnimalProductUseCase := animalproduct.NewAnimalProductService(contextTimeout, animalProductRepo)
+
 	return &App{
-		Config:       &cfg,
-		Logger:       logger,
-		DB:           db,
-		RedisDB:      redisdb,
-		Enforcer:     enforcer,
-		ShutdownOTLP: shutdownOTLP,
-		Product:      appProductUseCase,
-		Animals:      appAnimalUseCase,
-		Drug:         appDrugUseCase,
-		Food:         appFoodUseCase,
-		Delivery:     appDeliveryUseCase,
+		Config:        &cfg,
+		Logger:        logger,
+		DB:            db,
+		RedisDB:       redisdb,
+		Enforcer:      enforcer,
+		ShutdownOTLP:  shutdownOTLP,
+		Product:       appProductUseCase,
+		Animals:       appAnimalUseCase,
+		Drug:          appDrugUseCase,
+		Food:          appFoodUseCase,
+		Delivery:      appDeliveryUseCase,
+		AnimalProduct: appAnimalProductUseCase,
 	}, nil
 }
 

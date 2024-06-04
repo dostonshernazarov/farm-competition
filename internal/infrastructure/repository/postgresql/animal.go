@@ -63,7 +63,7 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 	err := a.db.QueryRow(ctx, query,
 		animal.ID,
 		animal.Name,
-		animal.CategoryID,
+		animal.CategoryName,
 		animal.Gender,
 		animal.BirthDay,
 		animal.Genus,
@@ -75,7 +75,7 @@ func (a *animalRepo) Create(ctx context.Context, animal *entity.Animal) (*entity
 	).Scan(
 		&createdAnimal.ID,
 		&createdAnimal.Name,
-		&createdAnimal.CategoryID,
+		&createdAnimal.CategoryName,
 		&createdAnimal.Gender,
 		&sqlNullBirthday,
 		&sqlNullGenus,
@@ -138,7 +138,7 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 
 	err := a.db.QueryRow(ctx, query,
 		animal.Name,
-		animal.CategoryID,
+		animal.CategoryName,
 		animal.Gender,
 		animal.BirthDay,
 		animal.Genus,
@@ -150,7 +150,7 @@ func (a *animalRepo) Update(ctx context.Context, animal *entity.Animal) (*entity
 	).Scan(
 		&updatedAnimal.ID,
 		&updatedAnimal.Name,
-		&updatedAnimal.CategoryID,
+		&updatedAnimal.CategoryName,
 		&updatedAnimal.Gender,
 		&sqlNullBirthday,
 		&sqlNullGenus,
@@ -219,7 +219,7 @@ func (a *animalRepo) Get(ctx context.Context, animalID string) (*entity.Animal, 
 	err := a.db.QueryRow(ctx, query, animalID).Scan(
 		&animal.ID,
 		&animal.Name,
-		&animal.CategoryID,
+		&animal.CategoryName,
 		&animal.Gender,
 		&sqlNullBirthday,
 		&sqlNullGenus,
@@ -295,7 +295,7 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 		err := rows.Scan(
 			&animal.ID,
 			&animal.Name,
-			&animal.CategoryID,
+			&animal.CategoryName,
 			&animal.Gender,
 			&sqlNullBirthday,
 			&sqlNullGenus,
