@@ -1505,8 +1505,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "product_id",
+                        "description": "Product ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }

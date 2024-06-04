@@ -46,8 +46,8 @@ func (p *productService) Delete(ctx context.Context, productID string) error {
 	return p.repo.Delete(ctx, productID)
 }
 
-func (p *productService) Get(ctx context.Context, productID string) (*entity.Product, error) {
-	return p.repo.Get(ctx, productID)
+func (p *productService) Get(ctx context.Context, params map[string]string) (*entity.Product, error) {
+	return p.repo.Get(ctx, params)
 }
 
 func (p *productService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListProducts, error) {

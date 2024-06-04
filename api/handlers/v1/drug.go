@@ -34,6 +34,7 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 
 	var (
 		body models.DrugReq
+		res *entity.Drug
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -45,20 +46,66 @@ func (h *HandlerV1) CreateDrug(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Drug.Create(ctx, &entity.Drug{
-		ID:          uuid.New().String(),
-		Name:        body.DrugName,
-		Status:      body.Status,
-		Capacity:    uint64(body.TotalCapacity),
-		Union:       body.Union,
-		Description: body.Description,
-	})
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
+	resName, err := h.Drug.UniqueDrugName(ctx, body.DrugName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
 		})
 		h.Logger.Error(err.Error())
 		return
+	}
+
+	if resName != 0 {
+		getDrug, err := h.Drug.Get(ctx, map[string]string{"name": body.DrugName})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+
+		res, err = h.Drug.Update(ctx, &entity.Drug{
+			ID:          getDrug.ID,
+			Name:        getDrug.Name,
+			Status:      getDrug.Status,
+			Capacity:    getDrug.Capacity + uint64(body.TotalCapacity),
+			Union:       getDrug.Union,
+			Description: getDrug.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+	} else {
+
+		res, err = h.Drug.Create(ctx, &entity.Drug{
+			ID:          uuid.New().String(),
+			Name:        body.DrugName,
+			Status:      body.Status,
+			Capacity:    uint64(body.TotalCapacity),
+			Union:       body.Union,
+			Description: body.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusCreated, &models.DrugRes{
@@ -92,7 +139,7 @@ func (h *HandlerV1) GetDrug(c *gin.Context) {
 
 	id := c.Param("id")
 
-	res, err := h.Drug.Get(ctx, id)
+	res, err := h.Drug.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -140,14 +187,13 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 		return
 	}
 
-
 	name := c.Query("name")
 	union := c.Query("union")
 	status := c.Query("status")
 
 	mapD := map[string]interface{}{
-		"name":  name,
-		"union": union,
+		"name":   name,
+		"union":  union,
 		"status": status,
 	}
 
@@ -178,7 +224,6 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 	})
 }
 
-
 // UPDATE
 // @Summary UPDATE DRUG
 // @Description Api for Update drug by drug id
@@ -201,7 +246,6 @@ func (h *HandlerV1) UpdateDrug(c *gin.Context) {
 	var (
 		body models.DrugRes
 	)
-
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -257,7 +301,7 @@ func (h *HandlerV1) DeleteDrug(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Drug.Get(ctx, id)
+	_, err := h.Drug.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,

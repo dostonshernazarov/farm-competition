@@ -111,6 +111,4 @@ func (t *AnimalReq) Validate() error {
 			validation.Date(time.DateOnly),
 		),
 	)
-
-
 }

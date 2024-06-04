@@ -46,8 +46,8 @@ func (f *foodService) Delete(ctx context.Context, foodID string) error {
 	return f.repo.Delete(ctx, foodID)
 }
 
-func (f *foodService) Get(ctx context.Context, foodID string) (*entity.Food, error) {
-	return f.repo.Get(ctx, foodID)
+func (f *foodService) Get(ctx context.Context, params map[string]string) (*entity.Food, error) {
+	return f.repo.Get(ctx, params)
 }
 
 func (f *foodService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListFoods, error) {

@@ -3,12 +3,13 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	sq "github.com/Masterminds/squirrel"
-	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"time"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/spf13/cast"
 )
 
 type animalRepo struct {
@@ -257,11 +258,15 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("category_name", "%"+cast.ToString(params["category"])+"%"))
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("genus", "%"+cast.ToString(params["genus"])+"%"))
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("gender", "%"+cast.ToString(params["gender"])+"%"))
-	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("is_health", "%"+cast.ToString(params["is_health"])+"%"))
 	queryBuilder = queryBuilder.Where(a.db.Sq.And(
 		sq.GtOrEq{"weight": weightDown},
 		sq.LtOrEq{"weight": weightUp},
 	))
+
+	if cast.ToString(params["is_health"]) != "" {
+		queryBuilder = queryBuilder.Where(a.db.Sq.Equal("is_health", cast.ToString(params["is_health"])))
+	}
+
 	queryBuilder = queryBuilder.Limit(limit)
 	queryBuilder = queryBuilder.Offset(offset)
 
@@ -269,6 +274,8 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	if err != nil {
 		return nil, err
 	}
+
+	println("\n", query, "\n")
 
 	rows, err := a.db.Query(ctx, query, args...)
 	if err != nil {

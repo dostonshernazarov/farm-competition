@@ -84,7 +84,7 @@ func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
 
 	id := c.Param("id")
 
-	res, err := h.Drug.Get(ctx, id)
+	res, err := h.Drug.Get(ctx, map[string]string{"id":id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -239,7 +239,7 @@ func (h *HandlerV1) DeleteAnimalProduct(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Drug.Get(ctx, id)
+	_, err := h.Drug.Get(ctx, map[string]string{})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,

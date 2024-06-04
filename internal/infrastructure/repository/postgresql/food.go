@@ -78,7 +78,7 @@ func (a *foodRepo) Update(ctx context.Context, food *entity.Food) (*entity.Food,
 	query := `
 	UPDATE
 		foods
-	SET	
+	SET
 		name = $1,
 		capacity = $2,
 		product_union = $3,
@@ -141,27 +141,30 @@ func (a *foodRepo) Delete(ctx context.Context, foodID string) error {
 	return nil
 }
 
-func (a *foodRepo) Get(ctx context.Context, foodID string) (*entity.Food, error) {
-	query := `
-	SELECT
-		id,
-		name,
-		capacity,
-		product_union,
-		description
-	FROM
-	    foods
-	WHERE
-	    id = $1
-		AND deleted_at IS NULL
-	`
-
+func (a *foodRepo) Get(ctx context.Context, params map[string]string) (*entity.Food, error) {
 	var (
 		food               entity.Food
 		sqlNullDescription sql.NullString
 	)
 
-	err := a.db.QueryRow(ctx, query, foodID).Scan(
+	queryBuilder := a.db.Sq.Builder.Select("id, name, capacity, product_union, description")
+	queryBuilder = queryBuilder.From(a.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	for key, value := range params {
+		if key == "id" {
+			queryBuilder = queryBuilder.Where(a.db.Sq.Equal(key, value))
+		}
+		if key == "name" {
+			queryBuilder = queryBuilder.Where(a.db.Sq.Equal(key, value))
+		}
+	}
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.db.QueryRow(ctx, query, args...).Scan(
 		&food.ID,
 		&food.Name,
 		&food.Capacity,

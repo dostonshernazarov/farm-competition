@@ -32,7 +32,7 @@ func (a *productRepo) Create(ctx context.Context, product *entity.Product) (*ent
 	    total_capacity,
 		created_at,
 		updated_at
-	) 
+	)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING
 		id,
@@ -59,8 +59,8 @@ func (a *productRepo) Create(ctx context.Context, product *entity.Product) (*ent
 		&createdProduct.ID,
 		&createdProduct.Name,
 		&createdProduct.Union,
-		&createdProduct.TotalCapacity,
 		&sqlNullDescription,
+		&createdProduct.TotalCapacity,
 	)
 
 	if err != nil {
@@ -111,8 +111,8 @@ func (a *productRepo) Update(ctx context.Context, product *entity.Product) (*ent
 		&updatedProduct.ID,
 		&updatedProduct.Name,
 		&updatedProduct.Union,
-		&updatedProduct.TotalCapacity,
 		&sqlNullDescription,
+		&updatedProduct.TotalCapacity,
 	)
 
 	if err != nil {
@@ -141,32 +141,35 @@ func (a *productRepo) Delete(ctx context.Context, productID string) error {
 	return nil
 }
 
-func (a *productRepo) Get(ctx context.Context, productID string) (*entity.Product, error) {
-	query := `
-	SELECT
-		id,
-		name,
-		product_union,
-		description,
-		total_capacity
-	FROM
-	    products
-	WHERE
-	    id = $1
-		AND deleted_at IS NULL
-	`
-
+func (a *productRepo) Get(ctx context.Context, params map[string]string) (*entity.Product, error) {
 	var (
 		product            entity.Product
 		sqlNullDescription sql.NullString
 	)
 
-	err := a.db.QueryRow(ctx, query, productID).Scan(
+	queryBuilder := a.db.Sq.Builder.Select("id, name, product_union, description, total_capacity")
+	queryBuilder = queryBuilder.From(a.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	for key, value := range params {
+		if key == "id" {
+			queryBuilder = queryBuilder.Where(a.db.Sq.Equal(key, value))
+		}
+		if key == "name" {
+			queryBuilder = queryBuilder.Where(a.db.Sq.Equal(key, value))
+		}
+	}
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.db.QueryRow(ctx, query, args...).Scan(
 		&product.ID,
 		&product.Name,
 		&product.Union,
-		&product.TotalCapacity,
 		&sqlNullDescription,
+		&product.TotalCapacity,
 	)
 
 	if err != nil {
