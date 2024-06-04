@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/spf13/cast"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -62,7 +63,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 		BirthDay:    body.DateOfBirth,
 		Genus:       body.Genus,
 		Weight:      uint64(body.Weight),
-		IsHealth:    body.IsHealth,
+		IsHealth:    cast.ToString(body.IsHealth),
 		Description: body.Description,
 	})
 	if err != nil {
@@ -82,7 +83,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 		Description:  res.Description,
 		Genus:        res.Genus,
 		Weight:       float32(res.Weight),
-		IsHealth:     res.IsHealth,
+		IsHealth:     cast.ToBool(res.IsHealth),
 	})
 }
 
@@ -125,7 +126,7 @@ func (h *HandlerV1) GetAnimal(c *gin.Context) {
 		Description:  res.Description,
 		Genus:        res.Genus,
 		Weight:       float32(res.Weight),
-		IsHealth:     res.IsHealth,
+		IsHealth:     cast.ToBool(res.IsHealth),
 	})
 }
 
@@ -242,7 +243,7 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 		"is_health": is_health,
 	}
 
-	res, err := h.Animals.List(ctx, params.Page, params.Limit, mapA)
+	list, err := h.Animals.List(ctx, params.Page, params.Limit, mapA)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
@@ -251,7 +252,24 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	var reslist []*models.AnimalRes
+	for _, i := range list.Animals {
+		var res models.AnimalRes
+		res.Id = i.ID
+		res.CategoryName = i.Name
+		res.DateOfBirth = i.BirthDay
+		res.Description = i.Description
+		res.Gender = i.Gender
+		res.Genus = i.Genus
+		res.Weight = float32(i.Weight)
+		res.IsHealth = cast.ToBool(i.IsHealth)
+		reslist = append(reslist, &res)
+	}
+
+	c.JSON(http.StatusOK, &models.ListAnimalsRes{
+		Animals: reslist,
+		Count: int64(list.TotalCount),
+	})
 }
 
 // UPDATE
@@ -294,7 +312,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 		BirthDay:    body.DateOfBirth,
 		Genus:       body.Genus,
 		Weight:      uint64(body.Weight),
-		IsHealth:    body.IsHealth,
+		IsHealth:    cast.ToString(body.IsHealth),
 		Description: body.Description,
 	})
 	if err != nil {
@@ -312,7 +330,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 		Description:  resAnimals.Description,
 		Genus:        resAnimals.Genus,
 		Weight:       float32(resAnimals.Weight),
-		IsHealth:     resAnimals.IsHealth,
+		IsHealth:     cast.ToBool(resAnimals.IsHealth),
 	})
 }
 

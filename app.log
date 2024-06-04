@@ -13,3 +13,288 @@ main.main.func1
 2024-06-04T13:12:22.388+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
 main.main.func1
 	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:10:56.664+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:11:05.137+0500	ERROR	v1/animals.go:250	failed to get list animal	{"error": "ERROR: operator does not exist: boolean ~~* unknown (SQLSTATE 42883)"}
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListAnimals
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/animals.go:250
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:17:26.089+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:17:26.091+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:18:10.607+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:18:16.672+0500	ERROR	v1/animals.go:250	failed to get list animal	{"error": "can't scan into dest[8]: unable to assign to *bool"}
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListAnimals
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/animals.go:250
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:18:28.808+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:18:28.809+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:19:09.038+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:19:41.044+0500	ERROR	v1/animals.go:72	cannot convert true to Text
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).CreateAnimal
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/animals.go:72
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:20:10.264+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:20:10.266+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:22:38.582+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:22:55.560+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:22:55.562+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:23:03.579+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:23:13.392+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:23:13.394+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:24:02.466+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:25:50.855+0500	ERROR	v1/animals.go:53	gender: must be a valid value.
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).CreateAnimal
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/animals.go:53
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:26:43.004+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:26:43.006+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:26:45.250+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:27:15.951+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:27:15.952+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:40:31.886+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:41:03.947+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:41:03.948+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:46:24.932+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:49:09.701+0500	ERROR	v1/animals.go:363	failed to get animal in delete	{"error": "no rows in result set"}
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).DeleteAnimal
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/animals.go:363
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:52:02.703+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:52:02.706+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T15:56:59.136+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T15:57:35.997+0500	ERROR	v1/food.go:201	number of field descriptions must equal number of destinations, got 5 and 1
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListFood
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/food.go:201
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T15:57:43.922+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T15:57:43.923+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T16:02:54.640+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T16:02:55.564+0500	ERROR	v1/food.go:201	number of field descriptions must equal number of destinations, got 5 and 1
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListFood
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/food.go:201
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T16:03:31.726+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T16:03:31.735+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T16:03:33.800+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T16:03:34.921+0500	ERROR	v1/food.go:201	number of field descriptions must equal number of destinations, got 5 and 1
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListFood
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/food.go:201
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T16:04:15.112+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T16:04:15.114+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T16:04:17.122+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T16:04:54.762+0500	ERROR	v1/products.go:203	number of field descriptions must equal number of destinations, got 4 and 5
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListProduct
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/products.go:203
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T16:05:03.689+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T16:05:03.690+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T16:05:21.312+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T16:05:23.432+0500	ERROR	v1/products.go:203	number of field descriptions must equal number of destinations, got 4 and 5
+musobaqa/farm-competition/api/handlers/v1.(*HandlerV1).ListProduct
+	/home/doston/project/go/src/musobaqa/farm-competition/api/handlers/v1/products.go:203
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/logger.go:249
+github.com/gin-gonic/gin.(*Context).Next
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/context.go:185
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:633
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/doston/project/go/pkg/mod/github.com/gin-gonic/gin@v1.10.0/gin.go:589
+net/http.serverHandler.ServeHTTP
+	/usr/local/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/local/go/src/net/http/server.go:2039
+2024-06-04T16:05:30.314+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T16:05:30.315+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
+2024-06-04T16:06:10.232+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-04T16:06:38.128+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-04T16:06:38.128+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32

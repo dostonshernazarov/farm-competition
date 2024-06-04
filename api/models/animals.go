@@ -11,11 +11,11 @@ type AnimalReq struct {
 	Name    string `json:"name"`
 	CategoryName       string `json:"category_name"`
 	Gender    string `json:"gender" example:"male"`
-	DateOfBirth string `json:"date_of_birth" example:"1000-01-01"`
+	DateOfBirth string `json:"date_of_birth" example:"2024-01-01"`
 	Description        string `json:"description"`
 	Genus      string `json:"genus"`
 	Weight float32 `json:"weight"`
-	IsHealth bool `json:"is_healt"`
+	IsHealth bool `json:"is_health" example:"true"`
 }
 
 type AnimalRes struct {
@@ -27,7 +27,7 @@ type AnimalRes struct {
 	Description        string `json:"description"`
 	Genus      string `json:"genus"`
 	Weight float32 `json:"weight"`
-	IsHealth bool `json:"is_healt"`
+	IsHealth bool `json:"is_health"`
 }
 
 type AnimalProdactList struct {
@@ -75,6 +75,7 @@ type Pagination struct {
 
 type ListAnimalsRes struct {
 	Animals []*AnimalRes `json:"animals"`
+	Count int64 `json:"count"`
 }
 
 type AnimalFieldValues struct {
@@ -103,12 +104,16 @@ func (t *AnimalReq) Validate() error {
 		validation.Field(
 			&t.Gender,
 			validation.Required,
-			validation.In("male", "femail"),
+			validation.In("male", "female"),
 		),
 		validation.Field(
 			&t.DateOfBirth,
 			validation.Required,
 			validation.Date(time.DateOnly),
+		),
+		validation.Field(
+			&t.IsHealth,
+			validation.In(true, false),
 		),
 	)
 }

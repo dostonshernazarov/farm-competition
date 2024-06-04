@@ -189,7 +189,7 @@ func (p *productRepo) List(ctx context.Context, page, limit uint64, params map[s
 		offset   = limit * (page - 1)
 	)
 
-	queryBuilder := p.db.Sq.Builder.Select("id, name, product_union, total_capacity")
+	queryBuilder := p.db.Sq.Builder.Select("id, name, product_union, total_capacity, description")
 	queryBuilder = queryBuilder.From(p.tableName)
 	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
 	queryBuilder = queryBuilder.Where(p.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
@@ -237,7 +237,7 @@ func (p *productRepo) List(ctx context.Context, page, limit uint64, params map[s
 	totalQueryBuilder = totalQueryBuilder.Where(p.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
 	totalQueryBuilder = totalQueryBuilder.Where(p.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
 
-	totalQuery, totalArgs, err := queryBuilder.ToSql()
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err
 	}

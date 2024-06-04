@@ -218,6 +218,7 @@ func (h *HandlerV1) ListProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListProductsRes{
 		Products: resList,
+		Count: int64(res.TotalCount),
 	})
 }
 

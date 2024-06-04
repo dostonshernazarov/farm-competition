@@ -237,7 +237,7 @@ func (a *foodRepo) List(ctx context.Context, page, limit uint64, params map[stri
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
 	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.ILike("product_union", "%"+cast.ToString(params["union"])+"%"))
 
-	totalQuery, totalArgs, err := queryBuilder.ToSql()
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err
 	}

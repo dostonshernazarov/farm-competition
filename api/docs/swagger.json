@@ -1649,7 +1649,7 @@
                 },
                 "date_of_birth": {
                     "type": "string",
-                    "example": "1000-01-01"
+                    "example": "2024-01-01"
                 },
                 "description": {
                     "type": "string"
@@ -1661,8 +1661,9 @@
                 "genus": {
                     "type": "string"
                 },
-                "is_healt": {
-                    "type": "boolean"
+                "is_health": {
+                    "type": "boolean",
+                    "example": true
                 },
                 "name": {
                     "type": "string"
@@ -1693,7 +1694,7 @@
                 "id": {
                     "type": "string"
                 },
-                "is_healt": {
+                "is_health": {
                     "type": "boolean"
                 },
                 "name": {
@@ -1869,6 +1870,9 @@
                     "items": {
                         "$ref": "#/definitions/models.AnimalRes"
                     }
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
@@ -1886,6 +1890,9 @@
         "models.ListDrugsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "drugs": {
                     "type": "array",
                     "items": {
@@ -1897,6 +1904,9 @@
         "models.ListFoodsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "foods": {
                     "type": "array",
                     "items": {
@@ -1908,6 +1918,9 @@
         "models.ListProductsRes": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "products": {
                     "type": "array",
                     "items": {

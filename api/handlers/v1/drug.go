@@ -221,6 +221,7 @@ func (h *HandlerV1) ListDrug(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListDrugsRes{
 		Drugs: resList,
+		Count: int64(res.TotalCount),
 	})
 }
 

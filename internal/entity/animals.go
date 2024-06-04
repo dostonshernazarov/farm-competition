@@ -12,7 +12,7 @@ type Animal struct {
 	BirthDay    string
 	Genus       string
 	Weight      uint64
-	IsHealth    bool
+	IsHealth    string
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
