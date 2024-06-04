@@ -16,7 +16,7 @@ type animalProductRepo struct {
 
 func NewAnimalProduct(db *postgres.PostgresDB) repo.AnimalProduct {
 	return &animalProductRepo{
-		tableName: "animal_product",
+		tableName: "animal_products",
 		db:        db,
 	}
 }
@@ -61,10 +61,10 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 			"a.is_health, " +
 			"p.id, " +
 			"p.name, " +
-			"p.union, " +
+			"p.product_union, " +
 			"p.description, " +
 			"p.total_capacity, " +
-			"ap.id" +
+			"ap.id, " +
 			"ap.capacity, " +
 			"ap.get_time")
 	selectQueryBuilder = selectQueryBuilder.From(ap.tableName + " AS ap")
@@ -73,12 +73,14 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 	selectQueryBuilder = selectQueryBuilder.Where("ap.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("a.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("p.deleted_at IS NULL")
-	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("id", animalProduct.ID))
+	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("ap.id", animalProduct.ID))
 
 	selectQuery, selectArgs, err := selectQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err
 	}
+
+	println("\n", selectQuery, "\n")
 
 	var (
 		animalProductRes       entity.AnimalProductRes

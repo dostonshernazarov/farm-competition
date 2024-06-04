@@ -355,7 +355,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AnimalProductRes"
+                            "$ref": "#/definitions/models.AnimalProductUpdateReq"
                         }
                     }
                 ],
@@ -399,7 +399,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DrugReq"
+                            "$ref": "#/definitions/models.AnimalProductReq"
                         }
                     }
                 ],
@@ -1633,6 +1633,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.AnimalProductReq": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "capacity": {
+                    "type": "integer"
+                },
+                "get_time": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.AnimalProductRes": {
             "type": "object",
             "properties": {
@@ -1658,6 +1675,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "union": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimalProductUpdateReq": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "capacity": {
+                    "type": "integer"
+                },
+                "get_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "product_id": {
                     "type": "string"
                 }
             }

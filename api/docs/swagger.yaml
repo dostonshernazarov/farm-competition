@@ -34,6 +34,17 @@ definitions:
       product_name:
         type: string
     type: object
+  models.AnimalProductReq:
+    properties:
+      animal_id:
+        type: string
+      capacity:
+        type: integer
+      get_time:
+        type: string
+      product_id:
+        type: string
+    type: object
   models.AnimalProductRes:
     properties:
       animal_category:
@@ -51,6 +62,19 @@ definitions:
       product_name:
         type: string
       union:
+        type: string
+    type: object
+  models.AnimalProductUpdateReq:
+    properties:
+      animal_id:
+        type: string
+      capacity:
+        type: integer
+      get_time:
+        type: string
+      id:
+        type: string
+      product_id:
         type: string
     type: object
   models.AnimalReq:
@@ -564,7 +588,7 @@ paths:
         name: Animal-Product
         required: true
         schema:
-          $ref: '#/definitions/models.DrugReq'
+          $ref: '#/definitions/models.AnimalProductReq'
       produces:
       - application/json
       responses:
@@ -593,7 +617,7 @@ paths:
         name: Animal-Product
         required: true
         schema:
-          $ref: '#/definitions/models.AnimalProductRes'
+          $ref: '#/definitions/models.AnimalProductUpdateReq'
       produces:
       - application/json
       responses:
