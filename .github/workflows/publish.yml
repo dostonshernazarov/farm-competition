@@ -14,7 +14,7 @@ env:
   SERVER_USERNAME: ubuntu
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  jobs:
+jobs:
   build_push_deploy:
     runs-on: ubuntu-latest
     steps:
