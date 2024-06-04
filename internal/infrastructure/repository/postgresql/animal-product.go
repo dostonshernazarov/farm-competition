@@ -3,7 +3,9 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v4"
+	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -87,6 +89,7 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		nullAnimalGenus        sql.NullString
 		nullAnimalWeight       sql.NullInt64
 		nullAnimalDescription  sql.NullString
+		nullAnimalBirthday     sql.NullString
 		nullProductDescription sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
@@ -94,7 +97,7 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		&animalProductRes.Animal.Name,
 		&animalProductRes.Animal.CategoryName,
 		&animalProductRes.Animal.Gender,
-		&animalProductRes.Animal.BirthDay,
+		&nullAnimalBirthday,
 		&nullAnimalDescription,
 		&nullAnimalGenus,
 		&nullAnimalWeight,
@@ -112,6 +115,9 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		return nil, err
 	}
 
+	if nullAnimalBirthday.Valid {
+		animalProductRes.Animal.BirthDay = nullAnimalBirthday.String
+	}
 	if nullAnimalGenus.Valid {
 		animalProductRes.Animal.Genus = nullAnimalGenus.String
 	}
@@ -171,7 +177,7 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 			"p.union, " +
 			"p.description, " +
 			"p.total_capacity, " +
-			"ap.id" +
+			"ap.id, " +
 			"ap.capacity, " +
 			"ap.get_time")
 	selectQueryBuilder = selectQueryBuilder.From(ap.tableName + " AS ap")
@@ -193,13 +199,14 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 		nullAnimalWeight       sql.NullInt64
 		nullAnimalDescription  sql.NullString
 		nullProductDescription sql.NullString
+		nullAnimalBirthday     sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&animalProductRes.Animal.ID,
 		&animalProductRes.Animal.Name,
 		&animalProductRes.Animal.CategoryName,
 		&animalProductRes.Animal.Gender,
-		&animalProductRes.Animal.BirthDay,
+		&nullAnimalBirthday,
 		&nullAnimalDescription,
 		&nullAnimalGenus,
 		&nullAnimalWeight,
@@ -217,6 +224,9 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 		return nil, err
 	}
 
+	if nullAnimalBirthday.Valid {
+		animalProductRes.Animal.BirthDay = nullAnimalBirthday.String
+	}
 	if nullAnimalGenus.Valid {
 		animalProductRes.Animal.Genus = nullAnimalGenus.String
 	}
@@ -271,7 +281,7 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 			"p.union, " +
 			"p.description, " +
 			"p.total_capacity, " +
-			"ap.id" +
+			"ap.id, " +
 			"ap.capacity, " +
 			"ap.get_time")
 	selectQueryBuilder = selectQueryBuilder.From(ap.tableName + " AS ap")
@@ -293,13 +303,14 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 		nullAnimalWeight       sql.NullInt64
 		nullAnimalDescription  sql.NullString
 		nullProductDescription sql.NullString
+		nullAnimalBirthday     sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&animalProductRes.Animal.ID,
 		&animalProductRes.Animal.Name,
 		&animalProductRes.Animal.CategoryName,
 		&animalProductRes.Animal.Gender,
-		&animalProductRes.Animal.BirthDay,
+		&nullAnimalBirthday,
 		&nullAnimalDescription,
 		&nullAnimalGenus,
 		&nullAnimalWeight,
@@ -317,6 +328,9 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 		return nil, err
 	}
 
+	if nullAnimalBirthday.Valid {
+		animalProductRes.Animal.BirthDay = nullAnimalBirthday.String
+	}
 	if nullAnimalGenus.Valid {
 		animalProductRes.Animal.Genus = nullAnimalGenus.String
 	}
@@ -349,7 +363,7 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			"p.union, " +
 			"p.description, " +
 			"p.total_capacity, " +
-			"ap.id" +
+			"ap.id, " +
 			"ap.capacity, " +
 			"ap.get_time")
 	selectQueryBuilder = selectQueryBuilder.From(ap.tableName + " AS ap")
@@ -358,6 +372,12 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 	selectQueryBuilder = selectQueryBuilder.Where("ap.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("a.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("p.deleted_at IS NULL")
+	if params["get_time"] != "" {
+		selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.And(
+			sq.GtOrEq{"time": cast.ToString(params["get_time"]) + " 00:00:00______"},
+			sq.LtOrEq{"time": cast.ToString(params["get_time"]) + " 23:59:59______"},
+		))
+	}
 	selectQueryBuilder = selectQueryBuilder.Limit(limit)
 	selectQueryBuilder = selectQueryBuilder.Offset(limit * (page - 1))
 
@@ -380,13 +400,14 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			nullAnimalWeight       sql.NullInt64
 			nullAnimalDescription  sql.NullString
 			nullProductDescription sql.NullString
+			nullAnimalBirthday     sql.NullString
 		)
 		err = rows.Scan(
 			&animalProductRes.Animal.ID,
 			&animalProductRes.Animal.Name,
 			&animalProductRes.Animal.CategoryName,
 			&animalProductRes.Animal.Gender,
-			&animalProductRes.Animal.BirthDay,
+			&nullAnimalBirthday,
 			&nullAnimalDescription,
 			&nullAnimalGenus,
 			&nullAnimalWeight,
@@ -405,6 +426,9 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			return nil, err
 		}
 
+		if nullAnimalBirthday.Valid {
+			animalProductRes.Animal.BirthDay = nullAnimalBirthday.String
+		}
 		if nullAnimalGenus.Valid {
 			animalProductRes.Animal.Genus = nullAnimalGenus.String
 		}
@@ -428,6 +452,12 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 	totalCountBuilder = totalCountBuilder.Where("ap.deleted_at IS NULL")
 	totalCountBuilder = totalCountBuilder.Where("a.deleted_at IS NULL")
 	totalCountBuilder = totalCountBuilder.Where("p.deleted_at IS NULL")
+	if params["get_time"] != "" {
+		totalCountBuilder = totalCountBuilder.Where(ap.db.Sq.And(
+			sq.GtOrEq{"time": cast.ToString(params["get_time"]) + " 00:00:00______"},
+			sq.LtOrEq{"time": cast.ToString(params["get_time"]) + " 23:59:59______"},
+		))
+	}
 
 	totalQuery, totalArgs, err := totalCountBuilder.ToSql()
 	if err != nil {
@@ -442,15 +472,3 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 
 	return &response, nil
 }
-
-// page, limit, get_time(day) -> [ANIMAL, PRODUCT]
-
-/*  page, limit animal_id
-Animal model
-Products(unique) + capacity (*new)
-*/
-
-/* page, limit, product_id
-Product model
-Animals models + capacity (*new)
-*/
