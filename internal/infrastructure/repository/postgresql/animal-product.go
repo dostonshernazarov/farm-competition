@@ -188,7 +188,7 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 	selectQueryBuilder = selectQueryBuilder.Where("ap.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("a.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("p.deleted_at IS NULL")
-	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("id", animalProduct.ID))
+	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("ap.id", animalProduct.ID))
 
 	selectQuery, selectArgs, err := selectQueryBuilder.ToSql()
 	if err != nil {
@@ -296,7 +296,7 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 	selectQueryBuilder = selectQueryBuilder.Where("ap.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("a.deleted_at IS NULL")
 	selectQueryBuilder = selectQueryBuilder.Where("p.deleted_at IS NULL")
-	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("id", animalProductID))
+	selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.Equal("ap.id", animalProductID))
 
 	selectQuery, selectArgs, err := selectQueryBuilder.ToSql()
 	if err != nil {
@@ -329,7 +329,7 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 		&animalProductRes.Product.TotalCapacity,
 		&animalProductRes.ID,
 		&animalProductRes.Capacity,
-		&animalProductRes.GetTime,
+		&nullGetTime,
 	)
 	if err != nil {
 		return nil, err
@@ -384,8 +384,8 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 	selectQueryBuilder = selectQueryBuilder.Where("p.deleted_at IS NULL")
 	if params["get_time"] != "" {
 		selectQueryBuilder = selectQueryBuilder.Where(ap.db.Sq.And(
-			sq.GtOrEq{"time": cast.ToString(params["get_time"]) + " 00:00:00______"},
-			sq.LtOrEq{"time": cast.ToString(params["get_time"]) + " 23:59:59______"},
+			sq.GtOrEq{"ap.get_time": cast.ToString(params["get_time"]) + " 00:00:00______"},
+			sq.LtOrEq{"ap.get_time": cast.ToString(params["get_time"]) + " 23:59:59______"},
 		))
 	}
 	selectQueryBuilder = selectQueryBuilder.Limit(limit)
@@ -468,8 +468,8 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 	totalCountBuilder = totalCountBuilder.Where("p.deleted_at IS NULL")
 	if params["get_time"] != "" {
 		totalCountBuilder = totalCountBuilder.Where(ap.db.Sq.And(
-			sq.GtOrEq{"time": cast.ToString(params["get_time"]) + " 00:00:00______"},
-			sq.LtOrEq{"time": cast.ToString(params["get_time"]) + " 23:59:59______"},
+			sq.GtOrEq{"ap.get_time": cast.ToString(params["get_time"]) + " 00:00:00______"},
+			sq.LtOrEq{"ap.get_time": cast.ToString(params["get_time"]) + " 23:59:59______"},
 		))
 	}
 
