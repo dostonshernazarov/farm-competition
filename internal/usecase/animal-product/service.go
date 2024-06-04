@@ -53,3 +53,11 @@ func (ap *animalProductService) Get(ctx context.Context, animalProductID string)
 func (ap *animalProductService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListAnimalProduct, error) {
 	return ap.repo.List(ctx, page, limit, params)
 }
+
+func (ap *animalProductService) ListAnimals(ctx context.Context, page, limit uint64, productID string) (*entity.AnimalsWithProduct, error) {
+	return ap.repo.ListAnimals(ctx, page, limit, productID)
+}
+
+func (ap *animalProductService) ListProducts(ctx context.Context, page, limit uint64, productID string) (*entity.ProductsWithAnimal, error) {
+	return ap.repo.ListProducts(ctx, page, limit, productID)
+}

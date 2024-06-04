@@ -34,6 +34,7 @@ type ProductsWithAnimal struct {
 		Description   string
 		TotalCapacity int64
 	}
+	TotalCount uint64
 }
 
 type AnimalsWithProduct struct {
@@ -50,4 +51,5 @@ type AnimalsWithProduct struct {
 		Description   string
 		TotalCapacity int64
 	}
+	TotalCount uint64
 }
