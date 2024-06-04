@@ -534,13 +534,7 @@ paths:
         name: page
         type: integer
       - in: query
-        name: animal_id
-        type: string
-      - in: query
         name: get_time
-        type: string
-      - in: query
-        name: product_id
         type: string
       produces:
       - application/json

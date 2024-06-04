@@ -25,9 +25,17 @@ type AnimalProductRes struct {
 }
 
 type AnimalProductFieldValues struct {
-	AnimalID string `json:"animal_id"`
-	ProductID string `json:"product_id"`
 	GetTime string `json:"get_time"`
+}
+
+type AnimalProductByAnimalIdFieldValues struct {
+	GetTime string `json:"get_time"`
+	AnimalID string `json:"animal_id"`
+}
+
+type AnimalProductByProductIdFieldValues struct {
+	GetTime string `json:"get_time"`
+	ProductID string `json:"product_id"`
 }
 
 type ListAnimalProductsRes struct {
