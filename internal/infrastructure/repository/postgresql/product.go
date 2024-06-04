@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
@@ -135,7 +136,7 @@ func (a *productRepo) Delete(ctx context.Context, productID string) error {
 	}
 
 	if result.RowsAffected() == 0 {
-		return sql.ErrNoRows
+		return pgx.ErrNoRows
 	}
 
 	return nil

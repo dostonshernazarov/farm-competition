@@ -3,6 +3,8 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v4"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
@@ -100,7 +102,7 @@ func (d *deliveryRepo) Delete(ctx context.Context, deliveryID string) error {
 	}
 
 	if result.RowsAffected() == 0 {
-		return sql.ErrNoRows
+		return pgx.ErrNoRows
 	}
 
 	return nil
@@ -117,17 +119,23 @@ func (d *deliveryRepo) Get(ctx context.Context, deliveryID string) (*entity.Deli
 		return nil, err
 	}
 
-	var delivery entity.Delivery
+	var (
+		nullTimeValue sql.NullString
+		delivery      entity.Delivery
+	)
 	err = d.db.QueryRow(ctx, query, args...).Scan(
 		&delivery.ID,
 		&delivery.Name,
 		&delivery.Category,
 		&delivery.Capacity,
 		&delivery.Union,
-		&delivery.Time,
+		&nullTimeValue,
 	)
 	if err != nil {
 		return nil, err
+	}
+	if nullTimeValue.Valid {
+		delivery.Time = nullTimeValue.String
 	}
 
 	return &delivery, nil
@@ -139,7 +147,12 @@ func (d *deliveryRepo) List(ctx context.Context, page, limit uint64, params map[
 	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
 	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
 	queryBuilder = queryBuilder.Where(d.db.Sq.ILike("category", "%"+cast.ToString(params["category"])+"%"))
-	// queryBuilder = queryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
+	if params["time"] != "" {
+		queryBuilder = queryBuilder.Where(d.db.Sq.And(
+			sq.GtOrEq{"time": cast.ToString(params["time"]) + " 00:00:00______"},
+			sq.LtOrEq{"time": cast.ToString(params["time"]) + " 23:59:59______"},
+		))
+	}
 	queryBuilder = queryBuilder.Limit(limit)
 	queryBuilder = queryBuilder.Offset(limit * (page - 1))
 	queryBuilder = queryBuilder.OrderBy("time DESC")
@@ -157,6 +170,7 @@ func (d *deliveryRepo) List(ctx context.Context, page, limit uint64, params map[
 
 	deliveryList := entity.ListDelivery{}
 	for rows.Next() {
+		var nullTimeValue sql.NullString
 		delivery := entity.Delivery{}
 		err := rows.Scan(
 			&delivery.ID,
@@ -164,21 +178,29 @@ func (d *deliveryRepo) List(ctx context.Context, page, limit uint64, params map[
 			&delivery.Category,
 			&delivery.Capacity,
 			&delivery.Union,
-			&delivery.Time,
+			&nullTimeValue,
 		)
 		if err != nil {
 			return nil, err
+		}
+		if nullTimeValue.Valid {
+			delivery.Time = nullTimeValue.String
 		}
 
 		deliveryList.Deliveries = append(deliveryList.Deliveries, &delivery)
 	}
 
-	totalQueryBuilder := d.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder := d.db.Sq.Builder.Select("COUNT(id)")
 	totalQueryBuilder = totalQueryBuilder.From(d.tableName)
 	totalQueryBuilder = totalQueryBuilder.Where("deleted_at IS NULL")
 	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("name", "%"+cast.ToString(params["name"])+"%"))
 	totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("category", "%"+cast.ToString(params["category"])+"%"))
-	// totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.ILike("time", cast.ToString(params["time"])+"%"))
+	if params["time"] != "" {
+		totalQueryBuilder = totalQueryBuilder.Where(d.db.Sq.And(
+			sq.GtOrEq{"time": cast.ToString(params["time"]) + " 00:00:00______"},
+			sq.LtOrEq{"time": cast.ToString(params["time"]) + " 23:59:59______"},
+		))
+	}
 	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err

@@ -284,7 +284,7 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListDeliverysRes{
 		Delivery: resList,
-		Count: res.TotalCount,
+		Count:    res.TotalCount,
 	})
 }
 
@@ -300,7 +300,7 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 // @Failure 500 {object} models.Error
 // @Router /v1/delivery [put]
 func (h *HandlerV1) UpdateDelivery(c *gin.Context) {
-	_, span := otlp.Start(c, "api", "UpdateDelivery")
+	ctx, span := otlp.Start(c, "api", "UpdateDelivery")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -320,20 +320,27 @@ func (h *HandlerV1) UpdateDelivery(c *gin.Context) {
 		return
 	}
 
-	// res, err := h.Delivery.Update(ctx, &entity.Delivery{
-	// 	ID:          body.Id,
-	// 	Name:        body.DeliveryName,
-	// 	Capacity:    uint64(body.TotalCapacity),
-	// 	Union:       body.Union,
-	// 	Description: body.Description,
-	// })
-	// if err != nil {
-	// 	c.JSON(500, models.InternalMessage)
-	// 	h.Logger.Error(err.Error())
-	// 	return
-	// }
+	res, err := h.Delivery.Update(ctx, &entity.Delivery{
+		ID:       body.ID,
+		Name:     body.ProductName,
+		Capacity: body.Capacity,
+		Union:    body.Union,
+		Time:     body.Time,
+	})
+	if err != nil {
+		c.JSON(500, models.InternalMessage)
+		h.Logger.Error(err.Error())
+		return
+	}
 
-	c.JSON(http.StatusOK, &models.DeliveryRes{})
+	c.JSON(http.StatusOK, &models.DeliveryRes{
+		ID:          res.ID,
+		ProductName: res.Name,
+		Category:    res.Category,
+		Capacity:    res.Capacity,
+		Union:       res.Union,
+		Time:        res.Time,
+	})
 }
 
 // DELETE
@@ -357,7 +364,7 @@ func (h *HandlerV1) DeleteDelivery(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Food.Get(ctx, map[string]string{})
+	_, err := h.Delivery.Get(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,
@@ -366,7 +373,7 @@ func (h *HandlerV1) DeleteDelivery(c *gin.Context) {
 		return
 	}
 
-	err = h.Food.Delete(ctx, id)
+	err = h.Delivery.Delete(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error("failed to delete product", l.Error(err))
