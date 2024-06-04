@@ -652,7 +652,7 @@ paths:
       - application/json
       description: Api for Get product which has got from animal by ID
       parameters:
-      - description: Animal-Product ID
+      - description: Animal Product ID
         in: path
         name: id
         required: true
