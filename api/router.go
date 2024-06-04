@@ -1,6 +1,7 @@
 package api
 
 import (
+	animalproduct "musobaqa/farm-competition/internal/usecase/animal-product"
 	"musobaqa/farm-competition/internal/usecase/animals"
 	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
@@ -33,6 +34,7 @@ type RouteOption struct {
 	Food           foods.Food
 	Drug           drugs.Drug
 	Delivery delivery.Delivery
+	AnimalProduct animalproduct.AnimalProduct
 	Enforcer       *casbin.Enforcer
 }
 
@@ -59,6 +61,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Food:           option.Food,
 		Drug:           option.Drug,
 		Delivery: option.Delivery,
+		AnimalProduct: option.AnimalProduct,
 		Enforcer:       option.Enforcer,
 	})
 

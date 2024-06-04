@@ -13,6 +13,14 @@ type AnimalProductReq struct {
 	GetTime string `json:"get_time"`
 }
 
+type AnimalProductUpdateReq struct{
+	ID string `json:"id"`
+	AnimalID string `json:"animal_id"`
+	ProductID string `json:"product_id"`
+	Capacity int64 `json:"capacity"`
+	GetTime string `json:"get_time"`
+}
+
 type AnimalProductRes struct {
 	Id string `json:"id"`
 	AnimalID string `json:"animal_id"`
@@ -29,12 +37,10 @@ type AnimalProductFieldValues struct {
 }
 
 type AnimalProductByAnimalIdFieldValues struct {
-	GetTime string `json:"get_time"`
 	AnimalID string `json:"animal_id"`
 }
 
 type AnimalProductByProductIdFieldValues struct {
-	GetTime string `json:"get_time"`
 	ProductID string `json:"product_id"`
 }
 

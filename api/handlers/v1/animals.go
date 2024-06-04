@@ -58,7 +58,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 	res, err := h.Animals.Create(ctx, &entity.Animal{
 		ID:          uuid.NewString(),
 		Name:        body.Name,
-		CategoryID:  body.CategoryName,
+		CategoryName:  body.CategoryName,
 		Gender:      body.Gender,
 		BirthDay:    body.DateOfBirth,
 		Genus:       body.Genus,
@@ -77,7 +77,7 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 	c.JSON(http.StatusCreated, &models.AnimalRes{
 		Id:           res.ID,
 		Name:         res.Name,
-		CategoryName: res.CategoryID,
+		CategoryName: res.CategoryName,
 		Gender:       res.Gender,
 		DateOfBirth:  res.BirthDay,
 		Description:  res.Description,
@@ -120,7 +120,7 @@ func (h *HandlerV1) GetAnimal(c *gin.Context) {
 	c.JSON(http.StatusOK, &models.AnimalRes{
 		Id:           res.ID,
 		Name:         res.Name,
-		CategoryName: res.CategoryID,
+		CategoryName: res.CategoryName,
 		Gender:       res.Gender,
 		DateOfBirth:  res.BirthDay,
 		Description:  res.Description,
@@ -307,7 +307,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 	resAnimals, err := h.Animals.Update(ctx, &entity.Animal{
 		ID:          body.Id,
 		Name:        body.Name,
-		CategoryID:  body.CategoryName,
+		CategoryName:  body.CategoryName,
 		Gender:      body.Gender,
 		BirthDay:    body.DateOfBirth,
 		Genus:       body.Genus,
@@ -324,7 +324,7 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 	c.JSON(http.StatusOK, &models.AnimalRes{
 		Id:           resAnimals.ID,
 		Name:         resAnimals.Name,
-		CategoryName: resAnimals.CategoryID,
+		CategoryName: resAnimals.CategoryName,
 		Gender:       resAnimals.Gender,
 		DateOfBirth:  resAnimals.BirthDay,
 		Description:  resAnimals.Description,
