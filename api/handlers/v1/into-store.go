@@ -43,6 +43,15 @@ func (h *HandlerV1) Createdelivery(c *gin.Context) {
 		return
 	}
 
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
 	// res, err := h.Delivery.Create(ctx, &entity.Food{
 	// 	ID:          uuid.New().String(),
 	// 	Name:        body.DeliveryName,
@@ -89,7 +98,7 @@ func (h *HandlerV1) GetDelivery(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Food.Get(ctx, id)
+	_, err := h.Food.Get(ctx, map[string]string{})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -246,7 +255,7 @@ func (h *HandlerV1) DeleteDelivery(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Food.Get(ctx, id)
+	_, err := h.Food.Get(ctx, map[string]string{})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,

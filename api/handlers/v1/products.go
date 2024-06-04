@@ -34,6 +34,7 @@ func (h *HandlerV1) CreateProduct(c *gin.Context) {
 
 	var (
 		body models.ProductReq
+		res  *entity.Product
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -45,19 +46,64 @@ func (h *HandlerV1) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Product.Create(ctx, &entity.Product{
-		ID:            uuid.New().String(),
-		Name:          body.ProductName,
-		Union:         body.Union,
-		TotalCapacity: int64(body.TotalCapacity),
-		Description:   body.Description,
-	})
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
+	checkRes, err := h.Product.UniqueProductName(ctx, body.ProductName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
 		})
 		h.Logger.Error(err.Error())
 		return
+	}
+
+	if checkRes != 0 {
+		getProduct, err := h.Product.Get(ctx, map[string]string{"name": body.ProductName})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+
+		res, err = h.Product.Update(ctx, &entity.Product{
+			ID:            getProduct.ID,
+			Name:          getProduct.Name,
+			TotalCapacity: int64(getProduct.TotalCapacity) + int64(body.TotalCapacity),
+			Union:         getProduct.Union,
+			Description:   getProduct.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+	} else {
+
+		res, err = h.Product.Create(ctx, &entity.Product{
+			ID:            uuid.New().String(),
+			Name:          body.ProductName,
+			Union:         body.Union,
+			TotalCapacity: int64(body.TotalCapacity),
+			Description:   body.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusCreated, &models.ProductRes{
@@ -75,7 +121,7 @@ func (h *HandlerV1) CreateProduct(c *gin.Context) {
 // @Tags PRODUCT
 // @Accept json
 // @Produce json
-// @Param product_id path string true "ID"
+// @Param id path string true "Product ID"
 // @Success 200 {object} models.ProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -88,9 +134,11 @@ func (h *HandlerV1) GetProduct(c *gin.Context) {
 	)
 	defer span.End()
 
-	id := c.Param("product_id")
+	id := c.Param("id")
 
-	res, err := h.Product.Get(ctx, id)
+	println("\n", id, "\n")
+
+	res, err := h.Product.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -173,7 +221,6 @@ func (h *HandlerV1) ListProduct(c *gin.Context) {
 	})
 }
 
-
 // UPDATE
 // @Summary UPDATE PRODUCT
 // @Description Api for Update product by product id
@@ -196,7 +243,6 @@ func (h *HandlerV1) UpdateProduct(c *gin.Context) {
 	var (
 		body models.ProductRes
 	)
-
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -250,7 +296,7 @@ func (h *HandlerV1) DeleteProduct(c *gin.Context) {
 
 	id := c.Query("id")
 
-	_, err := h.Product.Get(ctx, id)
+	_, err := h.Product.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,

@@ -46,8 +46,8 @@ func (d *drugService) Delete(ctx context.Context, drugID string) error {
 	return d.repo.Delete(ctx, drugID)
 }
 
-func (d *drugService) Get(ctx context.Context, drugID string) (*entity.Drug, error) {
-	return d.repo.Get(ctx, drugID)
+func (d *drugService) Get(ctx context.Context, params map[string]string) (*entity.Drug, error) {
+	return d.repo.Get(ctx, params)
 }
 
 func (d *drugService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListDrugs, error) {

@@ -96,6 +96,14 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.PUT("/drugs", HandlerV1.UpdateDrug)
 	api.DELETE("/drugs/:id", HandlerV1.DeleteDrug)
 
+	// FOOD METHODS
+	api.POST("/foods", HandlerV1.CreateFood)
+	api.GET("/foods/:id", HandlerV1.GetFood)
+	api.GET("/foods", HandlerV1.ListFood)
+	api.PUT("/foods", HandlerV1.UpdateFood)
+	api.DELETE("/foods/:id", HandlerV1.DeleteFood)
+
+
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

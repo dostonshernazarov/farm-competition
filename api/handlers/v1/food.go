@@ -34,6 +34,7 @@ func (h *HandlerV1) CreateFood(c *gin.Context) {
 
 	var (
 		body models.FoodReq
+		res  *entity.Food
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -45,19 +46,64 @@ func (h *HandlerV1) CreateFood(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Food.Create(ctx, &entity.Food{
-		ID:          uuid.New().String(),
-		Name:        body.FoodName,
-		Capacity:    uint64(body.TotalCapacity),
-		Union:       body.Union,
-		Description: body.Description,
-	})
+	err = body.Validate()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{
+			Message: models.NotAvailable,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
+	checkRes, err := h.Food.UniqueFoodName(ctx, body.FoodName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
 			Message: models.InternalMessage,
 		})
 		h.Logger.Error(err.Error())
 		return
+	}
+
+	if checkRes != 0 {
+		getFood, err := h.Food.Get(ctx, map[string]string{"name": body.FoodName})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+
+		res, err = h.Food.Update(ctx, &entity.Food{
+			ID:          getFood.ID,
+			Name:        getFood.Name,
+			Capacity:    getFood.Capacity + uint64(body.TotalCapacity),
+			Union:       getFood.Union,
+			Description: getFood.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
+	} else {
+
+		res, err = h.Food.Create(ctx, &entity.Food{
+			ID:          uuid.New().String(),
+			Name:        body.FoodName,
+			Capacity:    uint64(body.TotalCapacity),
+			Union:       body.Union,
+			Description: body.Description,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Error{
+				Message: models.InternalMessage,
+			})
+			h.Logger.Error(err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusCreated, &models.FoodRes{
@@ -90,7 +136,7 @@ func (h *HandlerV1) GetFood(c *gin.Context) {
 
 	id := c.Param("id")
 
-	res, err := h.Food.Get(ctx, id)
+	res, err := h.Food.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -173,7 +219,6 @@ func (h *HandlerV1) ListFood(c *gin.Context) {
 	})
 }
 
-
 // UPDATE
 // @Summary UPDATE FOOD
 // @Description Api for Update food by food id
@@ -196,7 +241,6 @@ func (h *HandlerV1) UpdateFood(c *gin.Context) {
 	var (
 		body models.FoodRes
 	)
-
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -250,7 +294,7 @@ func (h *HandlerV1) DeleteFood(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Food.Get(ctx, id)
+	_, err := h.Food.Get(ctx, map[string]string{"id": id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.NotAvailable,

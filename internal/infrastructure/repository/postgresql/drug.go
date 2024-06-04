@@ -149,28 +149,30 @@ func (d *drugRepo) Delete(ctx context.Context, drugID string) error {
 	return nil
 }
 
-func (d *drugRepo) Get(ctx context.Context, drugID string) (*entity.Drug, error) {
-	query := `
-	SELECT
-		id,
-	    name,
-		capacity,
-		product_union,
-		status,
-		description
-	FROM
-	    drugs
-	WHERE
-	    id = $1
-		AND deleted_at IS NULL
-	`
-
+func (d *drugRepo) Get(ctx context.Context, params map[string]string) (*entity.Drug, error) {
 	var (
 		drug               entity.Drug
 		sqlNullDescription sql.NullString
 	)
 
-	err := d.db.QueryRow(ctx, query, drugID).Scan(
+	queryBuilder := d.db.Sq.Builder.Select("id, name, capacity, product_union, status, description")
+	queryBuilder = queryBuilder.From(d.tableName)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	for key, value := range params {
+		if key == "id" {
+			queryBuilder = queryBuilder.Where(d.db.Sq.Equal(key, value))
+		}
+		if key == "name" {
+			queryBuilder = queryBuilder.Where(d.db.Sq.Equal(key, value))
+		}
+	}
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = d.db.QueryRow(ctx, query, args...).Scan(
 		&drug.ID,
 		&drug.Name,
 		&drug.Capacity,
