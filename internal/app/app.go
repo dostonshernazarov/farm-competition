@@ -17,10 +17,11 @@ import (
 	"musobaqa/farm-competition/internal/pkg/config"
 	"musobaqa/farm-competition/internal/pkg/logger"
 	"musobaqa/farm-competition/internal/pkg/otlp"
-
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"musobaqa/farm-competition/internal/pkg/redis"
+
 	"musobaqa/farm-competition/internal/usecase/animals"
+	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
@@ -38,6 +39,7 @@ type App struct {
 	Animals      animals.Animal
 	Food         foods.Food
 	Drug         drugs.Drug
+	Delivery     delivery.Delivery
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -99,6 +101,10 @@ func NewApp(cfg config.Config) (*App, error) {
 	foodRepo := postgresql.NewFood(db)
 	appFoodUseCase := foods.NewFoodService(contextTimeout, foodRepo)
 
+	// delivery
+	deliveryRepo := postgresql.NewDelivery(db)
+	appDeliveryUseCase := delivery.NewDeliveryService(contextTimeout, deliveryRepo)
+
 	return &App{
 		Config:       &cfg,
 		Logger:       logger,
@@ -110,6 +116,7 @@ func NewApp(cfg config.Config) (*App, error) {
 		Animals:      appAnimalUseCase,
 		Drug:         appDrugUseCase,
 		Food:         appFoodUseCase,
+		Delivery:     appDeliveryUseCase,
 	}, nil
 }
 

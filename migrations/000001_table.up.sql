@@ -1,20 +1,3 @@
-CREATE TYPE "product_union" AS ENUM (
-    'kilogram',
-    'liter',
-    'piece'
-);
-
-CREATE TYPE "animal_gender" AS ENUM (
-    'male',
-    'female'
-);
-
-CREATE TYPE "store_category" AS ENUM (
-    'drug',
-    'food',
-    'water'
-);
-
 CREATE TABLE IF NOT EXISTS animals (
     id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,

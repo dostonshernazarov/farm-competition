@@ -258,10 +258,13 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("category_name", "%"+cast.ToString(params["category"])+"%"))
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("genus", "%"+cast.ToString(params["genus"])+"%"))
 	queryBuilder = queryBuilder.Where(a.db.Sq.ILike("gender", "%"+cast.ToString(params["gender"])+"%"))
-	queryBuilder = queryBuilder.Where(a.db.Sq.And(
-		sq.GtOrEq{"weight": weightDown},
-		sq.LtOrEq{"weight": weightUp},
-	))
+	if cast.ToInt(params["weight"]) != 0 {
+		queryBuilder = queryBuilder.Where(a.db.Sq.And(
+			sq.GtOrEq{"weight": weightDown},
+			sq.LtOrEq{"weight": weightUp},
+		))
+		queryBuilder = queryBuilder.OrderBy("weight DESC")
+	}
 
 	if cast.ToString(params["is_health"]) != "" {
 		queryBuilder = queryBuilder.Where(a.db.Sq.Equal("is_health", cast.ToString(params["is_health"])))
@@ -325,10 +328,12 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	if cast.ToString(params["is_health"]) != "" {
 		totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.Equal("is_health", cast.ToString(params["is_health"])))
 	}
-	totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.And(
-		sq.GtOrEq{"weight": weightDown},
-		sq.LtOrEq{"weight": weightUp},
-	))
+	if cast.ToInt(params["weight"]) != 0 {
+		totalQueryBuilder = totalQueryBuilder.Where(a.db.Sq.And(
+			sq.GtOrEq{"weight": weightDown},
+			sq.LtOrEq{"weight": weightUp},
+		))
+	}
 
 	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
