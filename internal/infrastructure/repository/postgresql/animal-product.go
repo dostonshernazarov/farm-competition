@@ -82,8 +82,6 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		return nil, err
 	}
 
-	println("\n", selectQuery, "\n")
-
 	var (
 		animalProductRes       entity.AnimalProductRes
 		nullAnimalGenus        sql.NullString
@@ -91,6 +89,7 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		nullAnimalDescription  sql.NullString
 		nullAnimalBirthday     sql.NullString
 		nullProductDescription sql.NullString
+		nullGetTime            sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&animalProductRes.Animal.ID,
@@ -109,7 +108,7 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 		&animalProductRes.Product.TotalCapacity,
 		&animalProductRes.ID,
 		&animalProductRes.Capacity,
-		&animalProductRes.GetTime,
+		&nullGetTime,
 	)
 	if err != nil {
 		return nil, err
@@ -129,6 +128,9 @@ func (ap *animalProductRepo) Create(ctx context.Context, animalProduct *entity.A
 	}
 	if nullProductDescription.Valid {
 		animalProductRes.Product.Description = nullProductDescription.String
+	}
+	if nullGetTime.Valid {
+		animalProductRes.GetTime = nullGetTime.String
 	}
 
 	return &animalProductRes, nil
@@ -174,7 +176,7 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 			"a.is_health, " +
 			"p.id, " +
 			"p.name, " +
-			"p.union, " +
+			"p.product_union, " +
 			"p.description, " +
 			"p.total_capacity, " +
 			"ap.id, " +
@@ -200,6 +202,7 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 		nullAnimalDescription  sql.NullString
 		nullProductDescription sql.NullString
 		nullAnimalBirthday     sql.NullString
+		nullGetTime            sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&animalProductRes.Animal.ID,
@@ -218,7 +221,7 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 		&animalProductRes.Product.TotalCapacity,
 		&animalProductRes.ID,
 		&animalProductRes.Capacity,
-		&animalProductRes.GetTime,
+		&nullGetTime,
 	)
 	if err != nil {
 		return nil, err
@@ -238,6 +241,9 @@ func (ap *animalProductRepo) Update(ctx context.Context, animalProduct *entity.A
 	}
 	if nullProductDescription.Valid {
 		animalProductRes.Product.Description = nullProductDescription.String
+	}
+	if nullGetTime.Valid {
+		animalProductRes.GetTime = nullGetTime.String
 	}
 
 	return &animalProductRes, nil
@@ -278,7 +284,7 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 			"a.is_health, " +
 			"p.id, " +
 			"p.name, " +
-			"p.union, " +
+			"p.product_union, " +
 			"p.description, " +
 			"p.total_capacity, " +
 			"ap.id, " +
@@ -304,6 +310,7 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 		nullAnimalDescription  sql.NullString
 		nullProductDescription sql.NullString
 		nullAnimalBirthday     sql.NullString
+		nullGetTime            sql.NullString
 	)
 	err = ap.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&animalProductRes.Animal.ID,
@@ -343,6 +350,9 @@ func (ap *animalProductRepo) Get(ctx context.Context, animalProductID string) (*
 	if nullProductDescription.Valid {
 		animalProductRes.Product.Description = nullProductDescription.String
 	}
+	if nullGetTime.Valid {
+		animalProductRes.GetTime = nullGetTime.String
+	}
 
 	return &animalProductRes, nil
 }
@@ -360,7 +370,7 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			"a.is_health, " +
 			"p.id, " +
 			"p.name, " +
-			"p.union, " +
+			"p.product_union, " +
 			"p.description, " +
 			"p.total_capacity, " +
 			"ap.id, " +
@@ -401,6 +411,7 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			nullAnimalDescription  sql.NullString
 			nullProductDescription sql.NullString
 			nullAnimalBirthday     sql.NullString
+			nullGetTime            sql.NullString
 		)
 		err = rows.Scan(
 			&animalProductRes.Animal.ID,
@@ -419,7 +430,7 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 			&animalProductRes.Product.TotalCapacity,
 			&animalProductRes.ID,
 			&animalProductRes.Capacity,
-			&animalProductRes.GetTime,
+			&nullGetTime,
 		)
 
 		if err != nil {
@@ -440,6 +451,9 @@ func (ap *animalProductRepo) List(ctx context.Context, page, limit uint64, param
 		}
 		if nullProductDescription.Valid {
 			animalProductRes.Product.Description = nullProductDescription.String
+		}
+		if nullGetTime.Valid {
+			animalProductRes.GetTime = nullGetTime.String
 		}
 
 		response.AnimalProducts = append(response.AnimalProducts, &animalProductRes)
