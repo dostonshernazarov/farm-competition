@@ -311,17 +311,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "animal_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "get_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "product_id",
                         "in": "query"
                     }
                 ],

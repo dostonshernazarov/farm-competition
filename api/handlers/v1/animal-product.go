@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"musobaqa/farm-competition/api/models"
 	"musobaqa/farm-competition/internal/entity"
 	l "musobaqa/farm-competition/internal/pkg/logger"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v4"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -61,6 +63,13 @@ func (h *HandlerV1) CreateAnimalProduct(c *gin.Context) {
 		})
 		h.Logger.Error(err.Error())
 		return
+	}
+
+	gerProd, err := h.Product.Get(ctx, map[string]string{"id":body.ProductID})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			
+		}
 	}
 
 	c.JSON(http.StatusCreated, &models.AnimalProductRes{
@@ -270,5 +279,3 @@ func (h *HandlerV1) DeleteAnimalProduct(c *gin.Context) {
 		Message: "Product from animal has been deleted",
 	})
 }
-
-
