@@ -72,13 +72,13 @@ func (h *HandlerV1) CreateAnimalProduct(c *gin.Context) {
 	})
 }
 
-// GET DRUG
+// GET ANIMAL PRODUCT
 // @Summary GET ANIMAL PRODUCT BY ID
 // @Description Api for Get product which has got from animal by ID
 // @Tags ANIMAL-PRODUCT
 // @Accept json
 // @Produce json
-// @Param id path string true "Animal-Product ID"
+// @Param id path string true "Animal Product ID"
 // @Success 200 {object} models.AnimalProductRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -93,7 +93,7 @@ func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
 
 	id := c.Param("id")
 
-	res, err := h.Drug.Get(ctx, map[string]string{"id":id})
+	_, err := h.Drug.Get(ctx, map[string]string{"id":id})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -103,11 +103,14 @@ func (h *HandlerV1) GetAnimalProduct(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &models.AnimalProductRes{
-		Id:          id,
-		AnimalID:    res.ID,
-		ProductName: "",
-		Capacity:    0,
-		GetTime:     "",
+		Id:             id,
+		AnimalID:       id,
+		AnimalName:     "",
+		AnimalCategory: "",
+		ProductName:    "",
+		Capacity:       0,
+		Union:          "",
+		GetTime:        "",
 	})
 }
 
@@ -174,8 +177,7 @@ func (h *HandlerV1) ListAnimalProducts(c *gin.Context) {
 	})
 }
 
-
-// UPDATE
+// UPDATE ANIMAL PRODUCT
 // @Summary UPDATE ANIMAL PRODUCT
 // @Description Api for Update product which has got from animal
 // @Tags ANIMAL-PRODUCT
@@ -227,7 +229,7 @@ func (h *HandlerV1) UpdateAnimalProduct(c *gin.Context) {
 	})
 }
 
-// DELETE
+// DELETE ANIMAL PRODUCT
 // @Summary DELETE ANIMAL PRODUCT
 // @Description Api for Delete product which has got from animal by ID
 // @Tags ANIMAL-PRODUCT
@@ -268,3 +270,5 @@ func (h *HandlerV1) DeleteAnimalProduct(c *gin.Context) {
 		Message: "Product from animal has been deleted",
 	})
 }
+
+

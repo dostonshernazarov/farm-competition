@@ -451,7 +451,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Animal-Product ID",
+                        "description": "Animal Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
