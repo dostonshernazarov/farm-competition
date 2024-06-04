@@ -41,6 +41,7 @@ type DeliveryRes struct {
 
 type ListDeliverysRes struct {
 	Delivery []*DeliveryRes `json:"deliveries"`
+	Count int64 `json:"count"`
 }
 
 type DeliveryFieldValues struct {

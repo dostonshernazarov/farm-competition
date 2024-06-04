@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"database/sql"
 	"errors"
 	"musobaqa/farm-competition/api/models"
 	"musobaqa/farm-competition/internal/entity"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -26,7 +26,7 @@ import (
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
 // @Router /v1/delivery [post]
-func (h *HandlerV1) Createdelivery(c *gin.Context) {
+func (h *HandlerV1) CreateDelivery(c *gin.Context) {
 	ctx, span := otlp.Start(c, "api", "Createdelivery")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
@@ -56,25 +56,27 @@ func (h *HandlerV1) Createdelivery(c *gin.Context) {
 		return
 	}
 
-	// res, err := h.Delivery.Create(ctx, &entity.Food{
-	// 	ID:          uuid.New().String(),
-	// 	Name:        body.DeliveryName,
-	// 	Capacity:    uint64(body.TotalCapacity),
-	// 	Union:       body.Union,
-	// 	Description: body.Description,
-	// })
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, models.Error{
-	// 		Message: models.InternalMessage,
-	// 	})
-	// 	h.Logger.Error(err.Error())
-	// 	return
-	// }
+	_, err = h.Delivery.Create(ctx, &entity.Delivery{
+		Name:     body.ProductName,
+		Category: body.Category,
+		Capacity: body.Capacity,
+		Union:    body.Union,
+		Time:     body.Time,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{
+			Message: models.InternalMessage,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
 
 	if body.Category == "food" {
 		foodRes, err := h.Food.Get(ctx, map[string]string{"name": body.ProductName})
+
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
+			if errors.Is(err, pgx.ErrNoRows) {
+				println("\n check \n")
 				_, err := h.Food.Create(ctx, &entity.Food{
 					ID:          uuid.New().String(),
 					Name:        body.ProductName,
@@ -125,7 +127,7 @@ func (h *HandlerV1) Createdelivery(c *gin.Context) {
 	if body.Category == "drug" {
 		drugRes, err := h.Drug.Get(ctx, map[string]string{"name": body.ProductName})
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows){
+			if errors.Is(err, pgx.ErrNoRows) {
 				_, err := h.Drug.Create(ctx, &entity.Drug{
 					ID:          uuid.NewString(),
 					Name:        body.ProductName,
@@ -200,7 +202,7 @@ func (h *HandlerV1) GetDelivery(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.Food.Get(ctx, map[string]string{})
+	res, err := h.Delivery.Get(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.Error{
 			Message: models.WrongInfoMessage,
@@ -210,12 +212,12 @@ func (h *HandlerV1) GetDelivery(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &models.DeliveryRes{
-		ID:          id,
-		ProductName: "",
-		Category:    "",
-		Capacity:    0,
-		Union:       "",
-		Time:        "",
+		ID:          res.ID,
+		ProductName: res.Name,
+		Category:    res.Category,
+		Capacity:    res.Capacity,
+		Union:       res.Union,
+		Time:        res.Time,
 	})
 }
 
@@ -232,7 +234,7 @@ func (h *HandlerV1) GetDelivery(c *gin.Context) {
 // @Failure 500 {object} models.Error
 // @Router /v1/delivery [get]
 func (h *HandlerV1) ListDelivery(c *gin.Context) {
-	_, span := otlp.Start(c, "api", "ListDelivery")
+	ctx, span := otlp.Start(c, "api", "ListDelivery")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -248,41 +250,41 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 		return
 	}
 
-	println(params)
-
 	name := c.Query("name")
 	category := c.Query("category")
 	time := c.Query("time")
 
-	_ = map[string]interface{}{
-		"name":  name,
+	mapD := map[string]interface{}{
+		"name":     name,
 		"category": category,
-		"time": time,
+		"time":     time,
 	}
 
-	// res, err := h.Delivery.List(ctx, params.Page, params.Limit)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, models.Error{
-	// 		Message: models.InternalMessage,
-	// 	})
-	// 	h.Logger.Error(err.Error())
-	// 	return
-	// }
+	res, err := h.Delivery.List(ctx, params.Page, params.Limit, mapD)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{
+			Message: models.InternalMessage,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
 
-	// var resList []*models.DeliveryRes
-	// for _, i := range res.Deliverys {
-	// 	var resItem models.DeliveryRes
-	// 	resItem.Id = i.ID
-	// 	resItem.DeliveryName = i.Name
-	// 	resItem.Description = i.Description
-	// 	resItem.Union = i.Union
-	// 	resItem.TotalCapacity = int64(i.Capacity)
+	var resList []*models.DeliveryRes
+	for _, i := range res.Deliveries {
+		var resItem models.DeliveryRes
+		resItem.ID = i.ID
+		resItem.ProductName = i.Name
+		resItem.Category = i.Category
+		resItem.Union = i.Union
+		resItem.Capacity = int64(i.Capacity)
+		resItem.Time = i.Time
 
-	// 	resList = append(resList, &resItem)
-	// }
+		resList = append(resList, &resItem)
+	}
 
 	c.JSON(http.StatusOK, &models.ListDeliverysRes{
-		Delivery: []*models.DeliveryRes{},
+		Delivery: resList,
+		Count: res.TotalCount,
 	})
 }
 
@@ -296,7 +298,7 @@ func (h *HandlerV1) ListDelivery(c *gin.Context) {
 // @Success 200 {object} models.DeliveryRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/deliverys [put]
+// @Router /v1/delivery [put]
 func (h *HandlerV1) UpdateDelivery(c *gin.Context) {
 	_, span := otlp.Start(c, "api", "UpdateDelivery")
 	span.SetAttributes(
