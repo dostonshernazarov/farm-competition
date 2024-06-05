@@ -12,6 +12,7 @@ import (
 	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/eatables"
+	"musobaqa/farm-competition/internal/usecase/feeding"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
 )
@@ -28,6 +29,7 @@ type HandlerV1 struct {
 	Delivery       delivery.Delivery
 	AnimalProduct  animalproduct.AnimalProduct
 	EatablesInfo eatables.Eatable
+	Feeding feeding.Feeding
 }
 
 type HandlerV1Config struct {
@@ -42,6 +44,7 @@ type HandlerV1Config struct {
 	Delivery       delivery.Delivery
 	AnimalProduct  animalproduct.AnimalProduct
 	EatablesInfo eatables.Eatable
+	Feeding feeding.Feeding
 }
 
 func New(c *HandlerV1Config) *HandlerV1 {
@@ -57,5 +60,6 @@ func New(c *HandlerV1Config) *HandlerV1 {
 		Delivery:       c.Delivery,
 		AnimalProduct:  c.AnimalProduct,
 		EatablesInfo: c.EatablesInfo,
+		Feeding: c.Feeding,
 	}
 }

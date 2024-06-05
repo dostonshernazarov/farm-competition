@@ -2,13 +2,15 @@ package postgresql
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
-	"github.com/jackc/pgx/v4"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"time"
+
+	"github.com/jackc/pgx/v4"
 )
 
 type feedingRepo struct {
@@ -34,6 +36,8 @@ func (f *feedingRepo) Create(ctx context.Context, feeding *entity.Feeding) (*ent
 		"created_at":  feeding.CreatedAt,
 		"updated_at":  feeding.UpdatedAt,
 	}
+
+	var dayNull sql.NullString
 
 	queryBuilder := f.db.Sq.Builder.Insert(f.tableName)
 	queryBuilder = queryBuilder.SetMap(clauses)
@@ -71,11 +75,15 @@ func (f *feedingRepo) Create(ctx context.Context, feeding *entity.Feeding) (*ent
 		&response.AnimalID,
 		&response.Eatables.ID,
 		&response.Category,
-		&response.Day,
+		&dayNull,
 		&dailyJson,
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	if dayNull.Valid {
+		response.Day = dayNull.String
 	}
 
 	err = json.Unmarshal(dailyJson, &response.Daily)
@@ -175,17 +183,22 @@ func (f *feedingRepo) Update(ctx context.Context, feeding *entity.Feeding) (*ent
 	var (
 		dailyJson []byte
 		response  entity.FeedingRes
+		dayNull sql.NullString
 	)
 	err = f.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
 		&response.ID,
 		&response.AnimalID,
 		&response.Eatables.ID,
 		&response.Category,
-		&response.Day,
+		&dayNull,
 		&dailyJson,
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	if dayNull.Valid {
+		response.Day = dayNull.String
 	}
 
 	err = json.Unmarshal(dailyJson, &response.Daily)

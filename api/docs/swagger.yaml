@@ -42,6 +42,38 @@ definitions:
       id:
         type: string
     type: object
+  models.AnimaGivenEatablesReq:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      day:
+        type: string
+      eatables_id:
+        type: string
+    type: object
+  models.AnimaGivenEatablesRes:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      day:
+        type: string
+      eatables_id:
+        type: string
+      id:
+        type: string
+    type: object
   models.AnimalCapRes:
     properties:
       category_name:
@@ -825,6 +857,94 @@ paths:
       summary: GET ANIMAL BY ANIMAL ID WITH FOODS
       tags:
       - ANIMAL
+  /v1/animals/given-eatables:
+    post:
+      consumes:
+      - application/json
+      description: Api for Create animal given eatables
+      parameters:
+      - description: createModel
+        in: body
+        name: Given-Eatables
+        required: true
+        schema:
+          $ref: '#/definitions/models.AnimaGivenEatablesReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AnimaGivenEatablesRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: CREATE ANIMAL GIVEN EATABLES
+      tags:
+      - GIVEN-EATABLES
+    put:
+      consumes:
+      - application/json
+      description: Api for Update animal given eatables
+      parameters:
+      - description: UpdateModel
+        in: body
+        name: Given-Eatables
+        required: true
+        schema:
+          $ref: '#/definitions/models.AnimaGivenEatablesRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimaGivenEatablesRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE ANIMAL GIVEN EATABLES
+      tags:
+      - GIVEN-EATABLES
+  /v1/animals/given-eatables/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for Delete animal given eatables
+      parameters:
+      - description: Animal Given Eatables ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: DELETE ANIMAL GIVEN EATABLES
+      tags:
+      - GIVEN-EATABLES
   /v1/animals/product/{id}:
     get:
       consumes:

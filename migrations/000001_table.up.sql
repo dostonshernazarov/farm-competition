@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS animals (
     gender VARCHAR(100) NOT NULL,
     birth_day DATE NOT NULL DEFAULT CURRENT_DATE,
     genus VARCHAR(100),
-    weight FLOAT NOT NULL,
+    weight integer NOT NULL,
     description TEXT,
     is_health VARCHAR(100) NOT NULL DEFAULT 'true',
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
