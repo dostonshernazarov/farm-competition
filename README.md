@@ -2,6 +2,7 @@
 
 
 <h2>Clone project</h2>
+<a href="https://github.com/dostonshernazarov/farm-competition">Github</a>
 ```
 git clone https://github.com/dostonshernazarov/farm-competition.git
 ```
