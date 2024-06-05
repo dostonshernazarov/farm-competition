@@ -2,9 +2,8 @@
 
 
 <h2>Clone project</h2>
-```
-"git clone https://github.com/dostonshernazarov/farm-competition.git"
-```
+<a href="https://github.com/dostonshernazarov/farm-competition">Github</a>
+
 <h2>Create .env file. </h2>
 <h3>Example: <a href="./.env">.example.env</a> </h3>
 
