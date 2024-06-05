@@ -1411,7 +1411,7 @@ const docTemplate = `{
                 "tags": [
                     "ANIMAL-PRODUCT"
                 ],
-                "summary": "LIST  PRODUCT ANIMALs BY PRODUCT ID",
+                "summary": "LIST  PRODUCT ANIMALS BY PRODUCT ID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1684,6 +1684,41 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AnimalCapRes": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "genus": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_health": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "total_capacity": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "models.AnimalProdactList": {
             "type": "object",
             "properties": {
@@ -1760,7 +1795,7 @@ const docTemplate = `{
                 "animals": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.AnimalRes"
+                        "$ref": "#/definitions/models.AnimalCapRes"
                     }
                 },
                 "count": {

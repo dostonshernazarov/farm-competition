@@ -370,7 +370,7 @@ func (h *HandlerV1) ListAnimalProductsByAnimalID(c *gin.Context) {
 }
 
 // LIST PRODUCT ANIMALS BY PRODUCT ID
-// @Summary LIST  PRODUCT ANIMALs BY PRODUCT ID
+// @Summary LIST  PRODUCT ANIMALS BY PRODUCT ID
 // @Description Api for List animals with product which have got from animals by product ID
 // @Tags ANIMAL-PRODUCT
 // @Accept json
@@ -408,9 +408,9 @@ func (h *HandlerV1) ListAnimalProductsByProductID(c *gin.Context) {
 	}
 
 
-	var resList []*models.AnimalRes
+	var resList []*models.AnimalCapRes
 	for _, i := range res.Animals {
-		var resItem models.AnimalRes
+		var resItem models.AnimalCapRes
 		resItem.Id = i.ID
 		resItem.Name = i.Name
 		resItem.CategoryName = i.CategoryName
@@ -420,6 +420,7 @@ func (h *HandlerV1) ListAnimalProductsByProductID(c *gin.Context) {
 		resItem.Genus = i.Genus
 		resItem.Weight = float32(i.Weight)
 		resItem.IsHealth = cast.ToBool(i.IsHealth)
+		resItem.TotalCapacity = i.TotalCapacity
 
 		resList = append(resList, &resItem)
 	}

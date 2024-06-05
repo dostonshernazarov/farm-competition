@@ -1,4 +1,27 @@
 definitions:
+  models.AnimalCapRes:
+    properties:
+      category_name:
+        type: string
+      date_of_birth:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      genus:
+        type: string
+      id:
+        type: string
+      is_health:
+        type: boolean
+      name:
+        type: string
+      total_capacity:
+        type: integer
+      weight:
+        type: number
+    type: object
   models.AnimalProdactList:
     properties:
       category_name:
@@ -49,7 +72,7 @@ definitions:
     properties:
       animals:
         items:
-          $ref: '#/definitions/models.AnimalRes'
+          $ref: '#/definitions/models.AnimalCapRes'
         type: array
       count:
         type: integer
@@ -1269,7 +1292,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.Error'
-      summary: LIST  PRODUCT ANIMALs BY PRODUCT ID
+      summary: LIST  PRODUCT ANIMALS BY PRODUCT ID
       tags:
       - ANIMAL-PRODUCT
   /v1/products:
