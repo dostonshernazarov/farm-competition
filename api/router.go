@@ -35,7 +35,7 @@ type RouteOption struct {
 	Drug           drugs.Drug
 	Delivery       delivery.Delivery
 	AnimalProduct  animalproduct.AnimalProduct
-	Eatables eatables.Eatable
+	Eatables       eatables.Eatable
 }
 
 // NewRoute
@@ -59,7 +59,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Drug:           option.Drug,
 		Delivery:       option.Delivery,
 		AnimalProduct:  option.AnimalProduct,
-		EatablesInfo: option.Eatables,
+		EatablesInfo:   option.Eatables,
 	})
 
 	corsConfig := cors.DefaultConfig()
@@ -119,6 +119,13 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.DELETE("/animals/products/:id", HandlerV1.DeleteAnimalProduct)
 	api.GET("/animal-products", HandlerV1.ListAnimalProductsByAnimalID)
 	api.GET("/product-animals", HandlerV1.ListAnimalProductsByProductID)
+
+	// ANIMAL EATABLES
+	api.POST("/animals/eatables", HandlerV1.CreateEatablesInfo)
+	api.PUT("/animals/eatables", HandlerV1.UpdateEatablesInfo)
+	api.DELETE("//animals/eatables/:id", HandlerV1.DeleteEatablesInfo)
+	api.GET("/animals/food-info", HandlerV1.ListFoodInfoByAnimalID)
+	api.GET("/animals/drug-info", HandlerV1.ListDrugInfoByAnimalID)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

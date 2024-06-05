@@ -31,8 +31,6 @@ type EatablesRes struct {
 		Capacity int64  `json:"capacity"`
 		Time     string `json:"time"`
 	} `json:"daily"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
 }
 
 type EatablesFoodRes struct {

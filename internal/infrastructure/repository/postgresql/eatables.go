@@ -8,6 +8,7 @@ import (
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
+	"time"
 )
 
 type eatableRepo struct {
@@ -17,7 +18,7 @@ type eatableRepo struct {
 
 func NewEatable(db *postgres.PostgresDB) repo.Eatable {
 	return &eatableRepo{
-		tableName: "animal_eatables_info",
+		tableName: "animal_eatable_info",
 		db:        db,
 	}
 }
@@ -89,7 +90,7 @@ func (e *eatableRepo) Create(ctx context.Context, eatable *entity.Eatables) (*en
 		selectFoodBuilder := e.db.Sq.Builder.Select("id, name, capacity, description, product_union")
 		selectFoodBuilder = selectFoodBuilder.From("foods")
 		selectFoodBuilder = selectFoodBuilder.Where("deleted_at IS NULL")
-		selectFoodBuilder = selectFoodBuilder.Where(e.db.Sq.Equal("id", eatable.ID))
+		selectFoodBuilder = selectFoodBuilder.Where(e.db.Sq.Equal("id", eatable.EatableID))
 
 		selectFoodQuery, selectFoodArgs, err := selectFoodBuilder.ToSql()
 		if err != nil {
@@ -110,7 +111,7 @@ func (e *eatableRepo) Create(ctx context.Context, eatable *entity.Eatables) (*en
 		selectDrugBuilder := e.db.Sq.Builder.Select("id, name, status, capacity, description, product_union")
 		selectDrugBuilder = selectDrugBuilder.From("drugs")
 		selectDrugBuilder = selectDrugBuilder.Where("deleted_at IS NULL")
-		selectDrugBuilder = selectDrugBuilder.Where(e.db.Sq.Equal("id", eatable.ID))
+		selectDrugBuilder = selectDrugBuilder.Where(e.db.Sq.Equal("id", eatable.EatableID))
 
 		selectFoodQuery, selectFoodArgs, err := selectDrugBuilder.ToSql()
 		if err != nil {
@@ -201,7 +202,7 @@ func (e *eatableRepo) Update(ctx context.Context, eatable *entity.Eatables) (*en
 		selectFoodBuilder := e.db.Sq.Builder.Select("id, name, capacity, description, product_union")
 		selectFoodBuilder = selectFoodBuilder.From("foods")
 		selectFoodBuilder = selectFoodBuilder.Where("deleted_at IS NULL")
-		selectFoodBuilder = selectFoodBuilder.Where(e.db.Sq.Equal("id", eatable.ID))
+		selectFoodBuilder = selectFoodBuilder.Where(e.db.Sq.Equal("id", eatable.EatableID))
 
 		selectFoodQuery, selectFoodArgs, err := selectFoodBuilder.ToSql()
 		if err != nil {
@@ -222,7 +223,7 @@ func (e *eatableRepo) Update(ctx context.Context, eatable *entity.Eatables) (*en
 		selectDrugBuilder := e.db.Sq.Builder.Select("id, name, status, capacity, description, product_union")
 		selectDrugBuilder = selectDrugBuilder.From("drugs")
 		selectDrugBuilder = selectDrugBuilder.Where("deleted_at IS NULL")
-		selectDrugBuilder = selectDrugBuilder.Where(e.db.Sq.Equal("id", eatable.ID))
+		selectDrugBuilder = selectDrugBuilder.Where(e.db.Sq.Equal("id", eatable.EatableID))
 
 		selectFoodQuery, selectFoodArgs, err := selectDrugBuilder.ToSql()
 		if err != nil {
@@ -249,6 +250,9 @@ func (e *eatableRepo) Update(ctx context.Context, eatable *entity.Eatables) (*en
 
 func (e *eatableRepo) Delete(ctx context.Context, eatablesID string) error {
 	queryBuilder := e.db.Sq.Builder.Update(e.tableName)
+	queryBuilder = queryBuilder.SetMap(map[string]interface{}{
+		"deleted_at": time.Now().Format(time.RFC3339),
+	})
 	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
 	queryBuilder = queryBuilder.Where(e.db.Sq.Equal("id", eatablesID))
 
@@ -406,16 +410,7 @@ func (e *eatableRepo) GetDrugs(ctx context.Context, page, limit uint64, animalID
 		response.Eatables = append(response.Eatables, &eatables)
 	}
 
-	countBuilder := e.db.Sq.Builder.Select(
-		"e.id, " +
-			"e.animal_id, " +
-			"e.daily, " +
-			"d.id, " +
-			"d.name, " +
-			"d.status, " +
-			"d.capacity, " +
-			"d.description, " +
-			"d.product_union")
+	countBuilder := e.db.Sq.Builder.Select("COUNT(*)")
 	countBuilder = countBuilder.From(e.tableName + " AS e")
 	countBuilder = countBuilder.Join("drugs AS d ON d.id = e.eatables_id")
 	countBuilder = countBuilder.Where("d.deleted_at IS NULL")
