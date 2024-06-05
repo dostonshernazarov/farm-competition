@@ -41,9 +41,6 @@ type RouteOption struct {
 // NewRoute
 // @title Welcome To Farmish API
 // @Description API for Farmer
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
 func NewRoute(option RouteOption) *gin.Engine {
 
 	router := gin.New()
@@ -120,6 +117,8 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.GET("/animals/products", HandlerV1.ListAnimalProducts)
 	api.PUT("/animals/products", HandlerV1.UpdateAnimalProduct)
 	api.DELETE("/animals/products/:id", HandlerV1.DeleteAnimalProduct)
+	api.GET("/animal-products", HandlerV1.ListAnimalProductsByAnimalID)
+	api.GET("/product-animals", HandlerV1.ListAnimalProductsByProductID)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

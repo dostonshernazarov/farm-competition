@@ -61,6 +61,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/animal-products": {
+            "get": {
+                "description": "Api for List products with animal which have got from animals by animal ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ANIMAL-PRODUCT"
+                ],
+                "summary": "LIST ANIMAL PRODUCTS BY ANIMAL ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "animal_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimalProductByAnimalIdRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/animals": {
             "get": {
                 "description": "Api for List Animals by page limit and extra values",
@@ -1347,6 +1399,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/product-animals": {
+            "get": {
+                "description": "Api for List animals with product which have got from animals by product ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ANIMAL-PRODUCT"
+                ],
+                "summary": "LIST  PRODUCT ANIMALs BY PRODUCT ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "product_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimalProductByProductIdRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/products": {
             "get": {
                 "description": "Api for List Product by page limit and extra values",
@@ -1630,6 +1734,40 @@ const docTemplate = `{
                 },
                 "product_name": {
                     "type": "string"
+                }
+            }
+        },
+        "models.AnimalProductByAnimalIdRes": {
+            "type": "object",
+            "properties": {
+                "animal": {
+                    "$ref": "#/definitions/models.AnimalRes"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductRes"
+                    }
+                }
+            }
+        },
+        "models.AnimalProductByProductIdRes": {
+            "type": "object",
+            "properties": {
+                "animals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AnimalRes"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/models.ProductRes"
                 }
             }
         },
@@ -2051,13 +2189,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "BearerAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }`

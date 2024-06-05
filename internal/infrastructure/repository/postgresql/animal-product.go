@@ -3,12 +3,13 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v4"
-	"github.com/spf13/cast"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v4"
+	"github.com/spf13/cast"
 )
 
 type animalProductRepo struct {
@@ -525,7 +526,7 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 	animalQueryBuilder = animalQueryBuilder.Where("ap.deleted_at IS NULL")
 	animalQueryBuilder = animalQueryBuilder.Where("a.deleted_at IS NULL")
 	animalQueryBuilder = animalQueryBuilder.GroupBy("a.id")
-	animalQueryBuilder = animalQueryBuilder.OrderBy("a.total_category")
+	animalQueryBuilder = animalQueryBuilder.OrderBy("a.name")
 	animalQueryBuilder = animalQueryBuilder.Limit(limit)
 	animalQueryBuilder = animalQueryBuilder.Offset(limit * (page - 1))
 
@@ -547,6 +548,7 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 			nullAnimalWeight      sql.NullInt64
 			nullAnimalDescription sql.NullString
 			NullAnimalBirthday    sql.NullString
+			nullIsHealth          sql.NullString
 			totosh                int64
 		)
 		err = rows.Scan(
@@ -557,7 +559,9 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 			&NullAnimalBirthday,
 			&nullAnimalGenus,
 			&nullAnimalWeight,
+			&nullIsHealth,
 			&nullAnimalDescription,
+			&totosh,
 		)
 
 		if err != nil {
