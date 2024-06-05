@@ -49,6 +49,20 @@ type ListAnimalProductsRes struct {
 	Count int64 `json:"count"`
 }
 
+type AnimalProductByAnimalIdRes struct {
+	Animal   *AnimalRes `json:"animal"`
+	Products []*ProductRes  `json:"products"`
+	Count int64 `json:"count"`
+
+}
+
+type AnimalProductByProductIdRes struct {
+	Product ProductRes `json:"product"`
+	Animals []*AnimalRes `json:"animals"`
+	Count int64 `json:"count"`
+}
+
+
 func (t *AnimalProductReq) Validate() error {
 	return validation.ValidateStruct(t,
 		validation.Field(

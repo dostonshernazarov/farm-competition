@@ -34,6 +34,28 @@ definitions:
       product_name:
         type: string
     type: object
+  models.AnimalProductByAnimalIdRes:
+    properties:
+      animal:
+        $ref: '#/definitions/models.AnimalRes'
+      count:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/models.ProductRes'
+        type: array
+    type: object
+  models.AnimalProductByProductIdRes:
+    properties:
+      animals:
+        items:
+          $ref: '#/definitions/models.AnimalRes'
+        type: array
+      count:
+        type: integer
+      product:
+        $ref: '#/definitions/models.ProductRes'
+    type: object
   models.AnimalProductReq:
     properties:
       animal_id:
@@ -343,6 +365,40 @@ paths:
       summary: CREATE ANIMAL
       tags:
       - ANIMAL
+  /v1/animal-products:
+    get:
+      consumes:
+      - application/json
+      description: Api for List products with animal which have got from animals by
+        animal ID
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: animal_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimalProductByAnimalIdRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST ANIMAL PRODUCTS BY ANIMAL ID
+      tags:
+      - ANIMAL-PRODUCT
   /v1/animals:
     get:
       consumes:
@@ -1182,6 +1238,40 @@ paths:
       summary: GET FOOD BY FOOD ID
       tags:
       - FOOD
+  /v1/product-animals:
+    get:
+      consumes:
+      - application/json
+      description: Api for List animals with product which have got from animals by
+        product ID
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: product_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimalProductByProductIdRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST  PRODUCT ANIMALs BY PRODUCT ID
+      tags:
+      - ANIMAL-PRODUCT
   /v1/products:
     get:
       consumes:
@@ -1333,9 +1423,4 @@ paths:
       summary: GET PRODUCT BY PRODUCT ID
       tags:
       - PRODUCT
-securityDefinitions:
-  BearerAuth:
-    in: header
-    name: Authorization
-    type: apiKey
 swagger: "2.0"
