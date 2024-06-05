@@ -519,14 +519,24 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 		response.Product.Description = nullProductDescription.String
 	}
 
-	animalQueryBuilder := ap.db.Sq.Builder.Select("a.id, a.name, a.category_name, a.gender, a.birth_day, a.genus, a.weight, a.is_health, a.description, SUM(ap.capacity) AS total_category")
+	animalQueryBuilder := ap.db.Sq.Builder.Select(
+		"a.id, " +
+			"a.name, " +
+			"a.category_name, " +
+			"a.gender, " +
+			"a.birth_day, " +
+			"a.genus, " +
+			"a.weight, " +
+			"a.is_health, " +
+			"a.description, " +
+			"SUM(ap.capacity) AS total_capacity")
 	animalQueryBuilder = animalQueryBuilder.From("animal_products AS ap")
 	animalQueryBuilder = animalQueryBuilder.Join("animals AS a ON a.id = ap.animal_id")
 	animalQueryBuilder = animalQueryBuilder.Where(ap.db.Sq.Equal("ap.product_id", productID))
 	animalQueryBuilder = animalQueryBuilder.Where("ap.deleted_at IS NULL")
 	animalQueryBuilder = animalQueryBuilder.Where("a.deleted_at IS NULL")
 	animalQueryBuilder = animalQueryBuilder.GroupBy("a.id")
-	animalQueryBuilder = animalQueryBuilder.OrderBy("a.name")
+	animalQueryBuilder = animalQueryBuilder.OrderBy("total_capacity DESC")
 	animalQueryBuilder = animalQueryBuilder.Limit(limit)
 	animalQueryBuilder = animalQueryBuilder.Offset(limit * (page - 1))
 
@@ -549,7 +559,7 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 			nullAnimalDescription sql.NullString
 			NullAnimalBirthday    sql.NullString
 			nullIsHealth          sql.NullString
-			totosh                int64
+			total                 int64
 		)
 		err = rows.Scan(
 			&animal.ID,
@@ -561,7 +571,7 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 			&nullAnimalWeight,
 			&nullIsHealth,
 			&nullAnimalDescription,
-			&totosh,
+			&total,
 		)
 
 		if err != nil {
@@ -601,13 +611,158 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 			Weight:        animal.Weight,
 			IsHealth:      animal.IsHealth,
 			Description:   animal.Description,
-			TotalCapacity: totosh,
+			TotalCapacity: total,
 		})
 	}
+
+	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From("animal_products AS ap")
+	totalQueryBuilder = totalQueryBuilder.Join("animals AS a ON a.id = ap.animal_id")
+	totalQueryBuilder = totalQueryBuilder.Where(ap.db.Sq.Equal("ap.product_id", productID))
+	totalQueryBuilder = totalQueryBuilder.Where("ap.deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where("a.deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.GroupBy("a.id")
+
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := ap.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
+		return nil, err
+	}
+	response.TotalCount = uint64(count)
 
 	return &response, nil
 }
 
 func (ap *animalProductRepo) ListProducts(ctx context.Context, page, limit uint64, animalID string) (*entity.ProductsWithAnimal, error) {
-	return nil, nil
+	queryBuilder := ap.db.Sq.Builder.Select("id, name, category_name, gender, birth_day, description, genus, weight, is_health")
+	queryBuilder = queryBuilder.From("animals")
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(ap.db.Sq.Equal("id", animalID))
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		response              entity.ProductsWithAnimal
+		nullAnimalBirthDay    sql.NullString
+		nullAnimalDescription sql.NullString
+		nullAnimalGenus       sql.NullString
+		nullAnimalWeight      sql.NullInt64
+	)
+
+	err = ap.db.QueryRow(ctx, query, args...).Scan(
+		&response.Animal.ID,
+		&response.Animal.Name,
+		&response.Animal.CategoryName,
+		&response.Animal.Gender,
+		&nullAnimalBirthDay,
+		&nullAnimalGenus,
+		&nullAnimalWeight,
+		&nullAnimalDescription,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if nullAnimalBirthDay.Valid {
+		response.Animal.BirthDay = nullAnimalBirthDay.String
+	}
+	if nullAnimalGenus.Valid {
+		response.Animal.Genus = nullAnimalGenus.String
+	}
+	if nullAnimalWeight.Valid {
+		response.Animal.Weight = uint64(nullAnimalWeight.Int64)
+	}
+	if nullAnimalDescription.Valid {
+		response.Animal.Description = nullAnimalDescription.String
+	}
+
+	productQueryBuilder := ap.db.Sq.Builder.Select(
+		"p.id, " +
+			"p.name, " +
+			"p.product_union, " +
+			"p.description, " +
+			"SUM(ap.capacity) AS total_capacity")
+	productQueryBuilder = productQueryBuilder.From("animal_products AS ap")
+	productQueryBuilder = productQueryBuilder.Join("products AS p ON p.id = ap.product_id")
+	productQueryBuilder = productQueryBuilder.Where(ap.db.Sq.Equal("ap.animal_id", animalID))
+	productQueryBuilder = productQueryBuilder.Where("ap.deleted_at IS NULL")
+	productQueryBuilder = productQueryBuilder.Where("p.deleted_at IS NULL")
+	productQueryBuilder = productQueryBuilder.GroupBy("p.id")
+	productQueryBuilder = productQueryBuilder.OrderBy("total_capacity DESC")
+	productQueryBuilder = productQueryBuilder.Limit(limit)
+	productQueryBuilder = productQueryBuilder.Offset(limit * (page - 1))
+
+	animalQuery, animalArgs, err := productQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := ap.db.Query(ctx, animalQuery, animalArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			product                entity.Product
+			nullProductDescription sql.NullString
+			total                  int64
+		)
+		err = rows.Scan(
+			&product.ID,
+			&product.Name,
+			&product.Union,
+			&nullProductDescription,
+			&total,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		if nullProductDescription.Valid {
+			product.Description = nullProductDescription.String
+		}
+
+		response.Products = append(response.Products, &struct {
+			ID            string
+			Name          string
+			Union         string
+			Description   string
+			TotalCapacity int64
+		}{
+			ID:            product.ID,
+			Name:          product.Name,
+			Union:         product.Union,
+			Description:   product.Description,
+			TotalCapacity: total},
+		)
+	}
+
+	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(*)")
+	totalQueryBuilder = totalQueryBuilder.From("animal_products AS ap")
+	totalQueryBuilder = totalQueryBuilder.Join("products AS p ON p.id = ap.product_id")
+	totalQueryBuilder = totalQueryBuilder.Where(ap.db.Sq.Equal("ap.animal_id", animalID))
+	totalQueryBuilder = totalQueryBuilder.Where("ap.deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.Where("p.deleted_at IS NULL")
+	totalQueryBuilder = totalQueryBuilder.GroupBy("p.id")
+	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var count = 0
+	if err := ap.db.QueryRow(ctx, totalQuery, totalArgs...).Scan(&count); err != nil {
+		return nil, err
+	}
+	response.TotalCount = uint64(count)
+
+	return &response, nil
 }
