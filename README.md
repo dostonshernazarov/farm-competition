@@ -3,7 +3,7 @@
 
 <h2>Clone project</h2>
 ```
-"git clone https://github.com/dostonshernazarov/farm-competition.git"
+git clone https://github.com/dostonshernazarov/farm-competition.git
 ```
 <h2>Create .env file. </h2>
 <h3>Example: <a href="./.env">.example.env</a> </h3>
