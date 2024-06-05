@@ -131,3 +131,63 @@ func TestProductCRUD(t *testing.T) {
 	err = repo.Delete(ctx, productID)
 	assert.NoError(t, err)
 }
+
+func TestDeliveryCRUD(t *testing.T) {
+	cfg, err := config.NewConfig()
+	require.NoError(t, err)
+	db, err := postgres.New(cfg)
+	require.NoError(t, err)
+	defer db.Close()
+
+	repo := postgresql.NewDelivery(db)
+	ctx := context.Background()
+	deliveryID := uuid.New().String()
+
+	// create
+	delivery := &entity.Delivery{
+		ID:        deliveryID,
+		Name:      "Test Product",
+		Union:     "Test Union",
+		Category:  "Test category",
+		Capacity:  0,
+		Time:      time.Now().Format(time.RFC3339),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	createdDelivery, err := repo.Create(ctx, delivery)
+	require.NoError(t, err)
+	assert.Equal(t, delivery.Name, createdDelivery.Name)
+	assert.Equal(t, delivery.Union, createdDelivery.Union)
+	assert.Equal(t, delivery.ID, createdDelivery.ID)
+	assert.Equal(t, delivery.Capacity, createdDelivery.Capacity)
+
+	// update
+	updatedDeliveryReq := &entity.Delivery{
+		ID:        deliveryID,
+		Name:      "New Test Product",
+		Union:     "Test Union",
+		Category:  "Test category",
+		Capacity:  0,
+		Time:      time.Now().Format(time.RFC3339),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+	updatedDelivery, err := repo.Update(ctx, updatedDeliveryReq)
+	require.NoError(t, err)
+	assert.Equal(t, updatedDelivery.ID, updatedDeliveryReq.ID)
+	assert.Equal(t, updatedDelivery.Name, updatedDeliveryReq.Name)
+	assert.Equal(t, updatedDelivery.Union, updatedDeliveryReq.Union)
+
+	// get
+	getProduct, err := repo.Get(ctx, deliveryID)
+	assert.NoError(t, err)
+	assert.Equal(t, getProduct.Name, updatedDelivery.Name)
+	assert.Equal(t, getProduct.ID, updatedDelivery.ID)
+	assert.Equal(t, getProduct.Capacity, updatedDelivery.Capacity)
+	assert.Equal(t, getProduct.Union, updatedDelivery.UpdatedAt)
+
+	// delete
+	err = repo.Delete(ctx, deliveryID)
+	assert.NoError(t, err)
+}
