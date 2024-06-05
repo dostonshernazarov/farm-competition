@@ -615,13 +615,8 @@ func (ap *animalProductRepo) ListAnimals(ctx context.Context, page, limit uint64
 		})
 	}
 
-	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(*)")
-	totalQueryBuilder = totalQueryBuilder.From("animal_products AS ap")
-	totalQueryBuilder = totalQueryBuilder.Join("animals AS a ON a.id = ap.animal_id")
-	totalQueryBuilder = totalQueryBuilder.Where(ap.db.Sq.Equal("ap.product_id", productID))
-	totalQueryBuilder = totalQueryBuilder.Where("ap.deleted_at IS NULL")
-	totalQueryBuilder = totalQueryBuilder.Where("a.deleted_at IS NULL")
-	totalQueryBuilder = totalQueryBuilder.GroupBy("a.id")
+	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(DISTINCT animal_id)")
+	totalQueryBuilder = totalQueryBuilder.From("animal_products ")
 
 	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
@@ -654,6 +649,7 @@ func (ap *animalProductRepo) ListProducts(ctx context.Context, page, limit uint6
 		nullAnimalDescription sql.NullString
 		nullAnimalGenus       sql.NullString
 		nullAnimalWeight      sql.NullInt64
+		nullIsHealth          sql.NullString
 	)
 
 	err = ap.db.QueryRow(ctx, query, args...).Scan(
@@ -662,9 +658,10 @@ func (ap *animalProductRepo) ListProducts(ctx context.Context, page, limit uint6
 		&response.Animal.CategoryName,
 		&response.Animal.Gender,
 		&nullAnimalBirthDay,
+		&nullAnimalDescription,
 		&nullAnimalGenus,
 		&nullAnimalWeight,
-		&nullAnimalDescription,
+		&nullIsHealth,
 	)
 	if err != nil {
 		return nil, err
@@ -746,13 +743,8 @@ func (ap *animalProductRepo) ListProducts(ctx context.Context, page, limit uint6
 		)
 	}
 
-	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(*)")
-	totalQueryBuilder = totalQueryBuilder.From("animal_products AS ap")
-	totalQueryBuilder = totalQueryBuilder.Join("products AS p ON p.id = ap.product_id")
-	totalQueryBuilder = totalQueryBuilder.Where(ap.db.Sq.Equal("ap.animal_id", animalID))
-	totalQueryBuilder = totalQueryBuilder.Where("ap.deleted_at IS NULL")
-	totalQueryBuilder = totalQueryBuilder.Where("p.deleted_at IS NULL")
-	totalQueryBuilder = totalQueryBuilder.GroupBy("p.id")
+	totalQueryBuilder := ap.db.Sq.Builder.Select("COUNT(DISTINCT product_id)")
+	totalQueryBuilder = totalQueryBuilder.From("animal_products ")
 	totalQuery, totalArgs, err := totalQueryBuilder.ToSql()
 	if err != nil {
 		return nil, err

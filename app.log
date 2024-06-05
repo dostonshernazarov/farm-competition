@@ -1,0 +1,5 @@
+2024-06-05T06:16:59.255+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:8080"}
+2024-06-05T06:17:00.505+0500	INFO	app/main.go:41	api gateway service stops
+2024-06-05T06:17:00.506+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/doston/project/go/src/musobaqa/farm-competition/cmd/app/main.go:32
