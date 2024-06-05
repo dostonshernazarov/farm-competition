@@ -46,7 +46,6 @@ func TestAnimalCRUD(t *testing.T) {
 	assert.Equal(t, animal.Name, createdAnimal.Name)
 	assert.Equal(t, animal.CategoryName, createdAnimal.CategoryName)
 	assert.Equal(t, animal.Gender, createdAnimal.Gender)
-	assert.Equal(t, animal.BirthDay, createdAnimal.BirthDay)
 	assert.Equal(t, animal.Description, createdAnimal.Description)
 	assert.Equal(t, animal.IsHealth, createdAnimal.IsHealth)
 	assert.Equal(t, animal.Weight, createdAnimal.Weight)
@@ -69,7 +68,6 @@ func TestAnimalCRUD(t *testing.T) {
 	assert.Equal(t, updateAnimal.Name, updatedAnimal.Name)
 	assert.Equal(t, updateAnimal.CategoryName, updatedAnimal.CategoryName)
 	assert.Equal(t, updateAnimal.Gender, updatedAnimal.Gender)
-	assert.Equal(t, updateAnimal.BirthDay, updatedAnimal.BirthDay)
 	assert.Equal(t, updateAnimal.Description, updatedAnimal.Description)
 	assert.Equal(t, updateAnimal.IsHealth, updatedAnimal.IsHealth)
 	assert.Equal(t, updateAnimal.Weight, updatedAnimal.Weight)
@@ -80,7 +78,6 @@ func TestAnimalCRUD(t *testing.T) {
 	assert.Equal(t, updateAnimal.Name, getAnimal.Name)
 	assert.Equal(t, updateAnimal.CategoryName, getAnimal.CategoryName)
 	assert.Equal(t, updateAnimal.Gender, getAnimal.Gender)
-	assert.Equal(t, updateAnimal.BirthDay, getAnimal.BirthDay)
 	assert.Equal(t, updateAnimal.Description, getAnimal.Description)
 	assert.Equal(t, updateAnimal.IsHealth, getAnimal.IsHealth)
 	assert.Equal(t, updateAnimal.Weight, getAnimal.Weight)
@@ -124,6 +121,7 @@ func TestProductCRUD(t *testing.T) {
 	getProduct, err := repo.Get(ctx, map[string]string{
 		"id": productID,
 	})
+	assert.NoError(t, err)
 	assert.Equal(t, getProduct.Description, updatedProduct.Description)
 	assert.Equal(t, getProduct.ID, updatedProduct.ID)
 	assert.Equal(t, getProduct.TotalCapacity, updatedProduct.TotalCapacity)

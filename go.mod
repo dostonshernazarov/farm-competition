@@ -20,6 +20,7 @@ require (
 	github.com/pckhoi/casbin-pgx-adapter/v2 v2.2.2
 	github.com/redis/go-redis/v9 v9.5.2
 	github.com/spf13/cast v1.6.0
+	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.3
@@ -32,6 +33,11 @@ require (
 	golang.org/x/crypto v0.23.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157
 	google.golang.org/grpc v1.64.0
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
 
 require (
