@@ -2,6 +2,8 @@ package postgresql
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"github.com/jackc/pgx/v4"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
@@ -50,10 +52,85 @@ func (f *feedingRepo) Create(ctx context.Context, feeding *entity.Feeding) (*ent
 		return nil, pgx.ErrNoRows
 	}
 
-	selectQueryBuilder := f.db.Sq.Builder.Select("")
-	selectQueryBuilder = selectQueryBuilder.From(f.tableName)
+	selectFeedingBuilder := f.db.Sq.Builder.Select("id, animal_id, eatables_id, category, day, daily")
+	selectFeedingBuilder = selectFeedingBuilder.From(f.tableName)
+	selectFeedingBuilder = selectFeedingBuilder.Where("deleted_at IS NULL")
+	selectFeedingBuilder = selectFeedingBuilder.Where(f.db.Sq.Equal("id", feeding.ID))
 
-	return nil, nil
+	selectQuery, selectArgs, err := selectFeedingBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		dailyJson []byte
+		response  entity.FeedingRes
+	)
+	err = f.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
+		&response.ID,
+		&response.AnimalID,
+		&response.Eatables.ID,
+		&response.Category,
+		&response.Day,
+		&dailyJson,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(dailyJson, &response.Daily)
+	if err != nil {
+		return nil, err
+	}
+
+	if feeding.Category == "food" {
+		selectFoodBuilder := f.db.Sq.Builder.Select("id, name, capacity, description, product_union")
+		selectFoodBuilder = selectFoodBuilder.From("foods")
+		selectFoodBuilder = selectFoodBuilder.Where("deleted_at IS NULL")
+		selectFoodBuilder = selectFoodBuilder.Where(f.db.Sq.Equal("id", feeding.EatablesID))
+
+		selectFoodQuery, selectFoodArgs, err := selectFoodBuilder.ToSql()
+		if err != nil {
+			return nil, err
+		}
+
+		err = f.db.QueryRow(ctx, selectFoodQuery, selectFoodArgs...).Scan(
+			&response.Eatables.ID,
+			&response.Eatables.Name,
+			&response.Eatables.Capacity,
+			&response.Eatables.Description,
+			&response.Eatables.Union,
+		)
+		if err != nil {
+			return nil, err
+		}
+	} else if feeding.Category == "drug" {
+		selectDrugBuilder := f.db.Sq.Builder.Select("id, name, status, capacity, description, product_union")
+		selectDrugBuilder = selectDrugBuilder.From("drugs")
+		selectDrugBuilder = selectDrugBuilder.Where("deleted_at IS NULL")
+		selectDrugBuilder = selectDrugBuilder.Where(f.db.Sq.Equal("id", feeding.EatablesID))
+
+		selectFoodQuery, selectFoodArgs, err := selectDrugBuilder.ToSql()
+		if err != nil {
+			return nil, err
+		}
+
+		err = f.db.QueryRow(ctx, selectFoodQuery, selectFoodArgs...).Scan(
+			&response.Eatables.ID,
+			&response.Eatables.Name,
+			&response.Eatables.Status,
+			&response.Eatables.Capacity,
+			&response.Eatables.Description,
+			&response.Eatables.Union,
+		)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("unknown feeding category")
+	}
+
+	return &response, nil
 }
 
 func (f *feedingRepo) Update(ctx context.Context, feeding *entity.Feeding) (*entity.FeedingRes, error) {
@@ -66,8 +143,10 @@ func (f *feedingRepo) Update(ctx context.Context, feeding *entity.Feeding) (*ent
 		"updated_at":  feeding.UpdatedAt,
 	}
 
-	queryBuilder := f.db.Sq.Builder.Insert(f.tableName)
+	queryBuilder := f.db.Sq.Builder.Update(f.tableName)
 	queryBuilder = queryBuilder.SetMap(clauses)
+	queryBuilder = queryBuilder.Where("deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where(f.db.Sq.Equal("id", feeding.ID))
 
 	query, args, err := queryBuilder.ToSql()
 	if err != nil {
@@ -83,7 +162,85 @@ func (f *feedingRepo) Update(ctx context.Context, feeding *entity.Feeding) (*ent
 		return nil, pgx.ErrNoRows
 	}
 
-	return nil, nil
+	selectFeedingBuilder := f.db.Sq.Builder.Select("id, animal_id, eatables_id, category, day, daily")
+	selectFeedingBuilder = selectFeedingBuilder.From(f.tableName)
+	selectFeedingBuilder = selectFeedingBuilder.Where("deleted_at IS NULL")
+	selectFeedingBuilder = selectFeedingBuilder.Where(f.db.Sq.Equal("id", feeding.ID))
+
+	selectQuery, selectArgs, err := selectFeedingBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		dailyJson []byte
+		response  entity.FeedingRes
+	)
+	err = f.db.QueryRow(ctx, selectQuery, selectArgs...).Scan(
+		&response.ID,
+		&response.AnimalID,
+		&response.Eatables.ID,
+		&response.Category,
+		&response.Day,
+		&dailyJson,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(dailyJson, &response.Daily)
+	if err != nil {
+		return nil, err
+	}
+
+	if feeding.Category == "food" {
+		selectFoodBuilder := f.db.Sq.Builder.Select("id, name, capacity, description, product_union")
+		selectFoodBuilder = selectFoodBuilder.From("foods")
+		selectFoodBuilder = selectFoodBuilder.Where("deleted_at IS NULL")
+		selectFoodBuilder = selectFoodBuilder.Where(f.db.Sq.Equal("id", feeding.EatablesID))
+
+		selectFoodQuery, selectFoodArgs, err := selectFoodBuilder.ToSql()
+		if err != nil {
+			return nil, err
+		}
+
+		err = f.db.QueryRow(ctx, selectFoodQuery, selectFoodArgs...).Scan(
+			&response.Eatables.ID,
+			&response.Eatables.Name,
+			&response.Eatables.Capacity,
+			&response.Eatables.Description,
+			&response.Eatables.Union,
+		)
+		if err != nil {
+			return nil, err
+		}
+	} else if feeding.Category == "drug" {
+		selectDrugBuilder := f.db.Sq.Builder.Select("id, name, status, capacity, description, product_union")
+		selectDrugBuilder = selectDrugBuilder.From("drugs")
+		selectDrugBuilder = selectDrugBuilder.Where("deleted_at IS NULL")
+		selectDrugBuilder = selectDrugBuilder.Where(f.db.Sq.Equal("id", feeding.EatablesID))
+
+		selectFoodQuery, selectFoodArgs, err := selectDrugBuilder.ToSql()
+		if err != nil {
+			return nil, err
+		}
+
+		err = f.db.QueryRow(ctx, selectFoodQuery, selectFoodArgs...).Scan(
+			&response.Eatables.ID,
+			&response.Eatables.Name,
+			&response.Eatables.Status,
+			&response.Eatables.Capacity,
+			&response.Eatables.Description,
+			&response.Eatables.Union,
+		)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("unknown feeding category")
+	}
+
+	return &response, nil
 }
 
 func (f *feedingRepo) Delete(ctx context.Context, feedingID string) error {
