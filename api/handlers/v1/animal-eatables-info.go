@@ -53,12 +53,34 @@ func (h *HandlerV1) CreateEatablesInfo(c *gin.Context) {
 		return
 	}
 
+	var dailyReq []struct {
+		Capacity int64  `json:"capacity"`
+		Time     string `json:"time"`
+	}
+
+	for _, value := range body.Daily {
+		dailyReq = append(dailyReq, struct {
+			Capacity int64  "json:\"capacity\""
+			Time     string "json:\"time\""
+		}{
+			Time:     value.Time,
+			Capacity: value.Capacity,
+		})
+	}
+
+	res, err := h.EatablesInfo.Create(ctx, &entity.Eatables{
+		AnimalID:  body.AnimalID,
+		EatableID: body.EatablesID,
+		Category:  body.Category,
+		Daily:     dailyReq,
+	})
+
 	c.JSON(http.StatusCreated, &models.AnimaEatablesInfoRes{
-		ID:         "",
-		AnimalID:   "",
-		EatablesID: "",
-		Daily:      []*models.Daily{},
-		Category:   "",
+		ID:         res.ID,
+		AnimalID:   res.AnimalID,
+		EatablesID: res.Eatable.ID,
+		Daily:      ,
+		Category:   res.Category,
 	})
 }
 
@@ -214,10 +236,9 @@ func (h *HandlerV1) ListFoodInfoByAnimalID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListFootInfoByAnimalRes{
 		Eatables: []*models.AnimaFoodInfoRes{},
-		Count: 21,
+		Count:    21,
 	})
 }
-
 
 // LIST ANIMAL DRUG INFO ANIMAL ID
 // @Summary LIST ANIMAL DRUG INFO ANIMAL ID
@@ -275,6 +296,6 @@ func (h *HandlerV1) ListDrugInfoByAnimalID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListDrugInfoByAnimalRes{
 		Eatables: []*models.AnimaDrugInfoRes{},
-		Count: 21,
+		Count:    21,
 	})
 }

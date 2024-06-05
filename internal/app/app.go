@@ -137,6 +137,7 @@ func (a *App) Run() error {
 		Drug:           a.Drug,
 		Delivery:       a.Delivery,
 		AnimalProduct:  a.AnimalProduct,
+		Eatables: a.Eatable,
 	})
 
 	// server init

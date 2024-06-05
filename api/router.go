@@ -5,6 +5,7 @@ import (
 	"musobaqa/farm-competition/internal/usecase/animals"
 	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
+	"musobaqa/farm-competition/internal/usecase/eatables"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
 	"time"
@@ -12,7 +13,6 @@ import (
 	_ "musobaqa/farm-competition/api/docs"
 	v1 "musobaqa/farm-competition/api/handlers/v1"
 
-	"github.com/casbin/casbin/v2"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,9 +33,9 @@ type RouteOption struct {
 	Animals        animals.Animal
 	Food           foods.Food
 	Drug           drugs.Drug
-	Delivery delivery.Delivery
-	AnimalProduct animalproduct.AnimalProduct
-	Enforcer       *casbin.Enforcer
+	Delivery       delivery.Delivery
+	AnimalProduct  animalproduct.AnimalProduct
+	Eatables eatables.Eatable
 }
 
 // NewRoute
@@ -57,9 +57,9 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Animals:        option.Animals,
 		Food:           option.Food,
 		Drug:           option.Drug,
-		Delivery: option.Delivery,
-		AnimalProduct: option.AnimalProduct,
-		Enforcer:       option.Enforcer,
+		Delivery:       option.Delivery,
+		AnimalProduct:  option.AnimalProduct,
+		EatablesInfo: option.Eatables,
 	})
 
 	corsConfig := cors.DefaultConfig()

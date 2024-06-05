@@ -3,7 +3,6 @@ package v1
 import (
 	"time"
 
-	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
 
 	"musobaqa/farm-competition/internal/pkg/config"
@@ -12,6 +11,7 @@ import (
 	"musobaqa/farm-competition/internal/usecase/animals"
 	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
+	"musobaqa/farm-competition/internal/usecase/eatables"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
 )
@@ -26,8 +26,8 @@ type HandlerV1 struct {
 	Food           foods.Food
 	Drug           drugs.Drug
 	Delivery       delivery.Delivery
-	AnimalProduct animalproduct.AnimalProduct
-	Enforcer       *casbin.Enforcer
+	AnimalProduct  animalproduct.AnimalProduct
+	EatablesInfo eatables.Eatable
 }
 
 type HandlerV1Config struct {
@@ -40,8 +40,8 @@ type HandlerV1Config struct {
 	Food           foods.Food
 	Drug           drugs.Drug
 	Delivery       delivery.Delivery
-	AnimalProduct animalproduct.AnimalProduct
-	Enforcer       *casbin.Enforcer
+	AnimalProduct  animalproduct.AnimalProduct
+	EatablesInfo eatables.Eatable
 }
 
 func New(c *HandlerV1Config) *HandlerV1 {
@@ -55,7 +55,7 @@ func New(c *HandlerV1Config) *HandlerV1 {
 		Food:           c.Food,
 		Drug:           c.Drug,
 		Delivery:       c.Delivery,
-		AnimalProduct: c.AnimalProduct,
-		Enforcer:       c.Enforcer,
+		AnimalProduct:  c.AnimalProduct,
+		EatablesInfo: c.EatablesInfo,
 	}
 }

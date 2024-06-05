@@ -18,30 +18,38 @@ type Daily struct {
 	Capacity int64  `json:"capacity"`
 }
 
-type AnimaDrugInfoRes struct {
-	ID       string   `json:"id"`
-	AnimalID string   `json:"animal_id"`
-	Eatables DrugRes  `json:"eatables"`
-	Daily    []*Daily `json:"daily"`
-	Category string   `json:"category"`
+type AnimalDrugInfoRes struct {
+	ID       string  `json:"id"`
+	AnimalID string  `json:"animal_id"`
+	Eatables DrugRes `json:"eatables"`
+	Daily    []Daily `json:"daily"`
+	Category string  `json:"category"`
+}
+
+type AnimaEatablesInfoRes struct {
+	ID         string   `json:"id"`
+	AnimalID   string   `json:"animal_id"`
+	EatablesID string   `json:"eatables_id"`
+	Daily      []*Daily `json:"daily"`
+	Category   string   `json:"category"`
 }
 
 type AnimaFoodInfoRes struct {
-	ID       string   `json:"id"`
-	AnimalID string   `json:"animal_id"`
-	Eatables FoodRes  `json:"eatables"`
-	Daily    []*Daily `json:"daily"`
-	Category string   `json:"category"`
+	ID       string  `json:"id"`
+	AnimalID string  `json:"animal_id"`
+	Eatables FoodRes `json:"eatables"`
+	Daily    []Daily `json:"daily"`
+	Category string  `json:"category"`
 }
 
 type ListDrugInfoByAnimalRes struct {
-	Eatables []*AnimaDrugInfoRes `json:"eatables"`
-	Count int64 `json:"count"`
+	Eatables []*AnimalDrugInfoRes `json:"eatables"`
+	Count    int64                `json:"count"`
 }
 
 type ListFootInfoByAnimalRes struct {
 	Eatables []*AnimaFoodInfoRes `json:"eatables"`
-	Count int64 `json:"count"`
+	Count    int64               `json:"count"`
 }
 
 type ListEatablesInfoByAnimalReq struct {
