@@ -4,7 +4,6 @@ go 1.22.1
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/casbin/casbin v1.9.1
 	github.com/casbin/casbin/v2 v2.89.0
 	github.com/casbin/redis-watcher/v2 v2.5.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
