@@ -7,11 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/casbin/casbin/util"
-	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
-
-	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
 
 	"musobaqa/farm-competition/api"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql"
@@ -34,7 +30,6 @@ type App struct {
 	DB            *postgres.PostgresDB
 	RedisDB       *redis.RedisDB
 	server        *http.Server
-	Enforcer      *casbin.Enforcer
 	ShutdownOTLP  func() error
 	Product       products.Product
 	Animals       animals.Animal
@@ -68,14 +63,6 @@ func NewApp(cfg config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// initialization enforcer
-	enforcer, err := casbin.NewEnforcer("auth.conf", "auth.csv")
-	if err != nil {
-		return nil, err
-	}
-
-	//enforcer.SetCache(policy.NewCache(&redisdb.Client))
 
 	var (
 		contextTimeout time.Duration
@@ -116,7 +103,6 @@ func NewApp(cfg config.Config) (*App, error) {
 		Logger:        logger,
 		DB:            db,
 		RedisDB:       redisdb,
-		Enforcer:      enforcer,
 		ShutdownOTLP:  shutdownOTLP,
 		Product:       appProductUseCase,
 		Animals:       appAnimalUseCase,
@@ -133,36 +119,19 @@ func (a *App) Run() error {
 		return fmt.Errorf("error while parsing context timeout: %v", err)
 	}
 
-	// initialize cache
-	// cache := redisrepo.NewCache(a.RedisDB)
-
-	// tokenRepo := postgresql.NewRefreshTokenRepo(a.DB)
-
-	// initialize token service
-	// refreshTokenService := refresh_token.NewRefreshTokenService(contextTimeout, tokenRepo)
-
 	// api init
 	handler := api.NewRoute(api.RouteOption{
 		Config:         a.Config,
 		Logger:         a.Logger,
 		ContextTimeout: contextTimeout,
-		Enforcer:       a.Enforcer,
 		Product:        a.Product,
 		Animals:        a.Animals,
 		Food:           a.Food,
 		Drug:           a.Drug,
 		Delivery:       a.Delivery,
-		AnimalProduct: a.AnimalProduct,
+		AnimalProduct:  a.AnimalProduct,
 	})
-	err = a.Enforcer.LoadPolicy()
-	if err != nil {
-		return err
-	}
-	roleManager := a.Enforcer.GetRoleManager().(*defaultrolemanager.RoleManagerImpl)
-
-	roleManager.AddMatchingFunc("keyMatch", util.KeyMatch)
-	roleManager.AddMatchingFunc("keyMatch3", util.KeyMatch3)
-
+	
 	// server init
 	a.server, err = api.NewServer(a.Config, handler)
 	if err != nil {
