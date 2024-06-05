@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	animalproduct "musobaqa/farm-competition/internal/usecase/animal-product"
+	"musobaqa/farm-competition/internal/usecase/eatables"
 	"net/http"
 	"time"
 
@@ -37,6 +38,7 @@ type App struct {
 	Drug          drugs.Drug
 	Delivery      delivery.Delivery
 	AnimalProduct animalproduct.AnimalProduct
+	Eatable       eatables.Eatable
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -98,6 +100,10 @@ func NewApp(cfg config.Config) (*App, error) {
 	animalProductRepo := postgresql.NewAnimalProduct(db)
 	appAnimalProductUseCase := animalproduct.NewAnimalProductService(contextTimeout, animalProductRepo)
 
+	// eatable
+	eatableRepo := postgresql.NewEatable(db)
+	appEatableUseCase := eatables.NewEatableService(contextTimeout, eatableRepo)
+
 	return &App{
 		Config:        &cfg,
 		Logger:        logger,
@@ -110,6 +116,7 @@ func NewApp(cfg config.Config) (*App, error) {
 		Food:          appFoodUseCase,
 		Delivery:      appDeliveryUseCase,
 		AnimalProduct: appAnimalProductUseCase,
+		Eatable:       appEatableUseCase,
 	}, nil
 }
 
@@ -131,7 +138,7 @@ func (a *App) Run() error {
 		Delivery:       a.Delivery,
 		AnimalProduct:  a.AnimalProduct,
 	})
-	
+
 	// server init
 	a.server, err = api.NewServer(a.Config, handler)
 	if err != nil {
