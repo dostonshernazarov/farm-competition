@@ -58,10 +58,22 @@ type AnimalProductByAnimalIdRes struct {
 
 type AnimalProductByProductIdRes struct {
 	Product ProductRes `json:"product"`
-	Animals []*AnimalRes `json:"animals"`
+	Animals []*AnimalCapRes `json:"animals"`
 	Count int64 `json:"count"`
 }
 
+type AnimalCapRes struct {
+	Id           string  `json:"id"`
+	Name         string  `json:"name"`
+	CategoryName string  `json:"category_name"`
+	Gender       string  `json:"gender"`
+	DateOfBirth  string  `json:"date_of_birth"`
+	Description  string  `json:"description"`
+	Genus        string  `json:"genus"`
+	Weight       float32 `json:"weight"`
+	IsHealth     bool    `json:"is_health"`
+	TotalCapacity int64 `json:"total_capacity"`
+}
 
 func (t *AnimalProductReq) Validate() error {
 	return validation.ValidateStruct(t,
