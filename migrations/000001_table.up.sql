@@ -65,9 +65,8 @@ CREATE TABLE IF NOT EXISTS animal_eatable_info (
     id UUID PRIMARY KEY,
     animal_id UUID NOT NULL,
     eatables_id UUID NOT NULL,
-    time TIME[],
-    category VARCHAR(100) NOT NULL,
-    capacity BIGINT NOT NULL DEFAULT 1,
+    category VARCHAR(100) NOT NULL, -- drug, food, water
+    daily JSONB NOT NULL, -- [{"capacity":3, "time":14:00}, {}]
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
@@ -79,8 +78,8 @@ CREATE TABLE IF NOT EXISTS animal_given_eatables (
     animal_id UUID NOT NULL,
     eatables_id UUID NOT NULL,
     category VARCHAR(255) NOT NULL,
-    capacity BIGINT NOT NULL,
-    given_time TIMESTAMP NOT NULL,
+    day DATE NOT NULL DEFAULT CURRENT_DATE,
+    daily JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
