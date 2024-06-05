@@ -68,19 +68,34 @@ func (h *HandlerV1) CreateEatablesInfo(c *gin.Context) {
 		})
 	}
 
-	res, err := h.EatablesInfo.Create(ctx, &entity.Eatables{
+	eatablesRes, err := h.EatablesInfo.Create(ctx, &entity.Eatables{
 		AnimalID:  body.AnimalID,
 		EatableID: body.EatablesID,
 		Category:  body.Category,
 		Daily:     dailyReq,
 	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{
+			Message: models.InternalMessage,
+		})
+		h.Logger.Error(err.Error())
+		return
+	}
+
+	var res []*models.Daily
+	for _, value := range eatablesRes.Daily {
+		res = append(res, &models.Daily{
+			Time:     value.Time,
+			Capacity: value.Capacity,
+		})
+	}
 
 	c.JSON(http.StatusCreated, &models.AnimaEatablesInfoRes{
-		ID:         res.ID,
-		AnimalID:   res.AnimalID,
-		EatablesID: res.Eatable.ID,
-		Daily:      ,
-		Category:   res.Category,
+		ID:         eatablesRes.ID,
+		AnimalID:   eatablesRes.AnimalID,
+		EatablesID: eatablesRes.Eatable.ID,
+		Daily:      res,
+		Category:   eatablesRes.Category,
 	})
 }
 
@@ -90,7 +105,7 @@ func (h *HandlerV1) CreateEatablesInfo(c *gin.Context) {
 // @Tags EATABLES-INFO
 // @Accept json
 // @Produce json
-// @Param Animal-Eatables body models.AnimaEatablesInfoReq true "createModel"
+// @Param Animal-Eatables body models.AnimaEatablesInfoRes true "UpdateModel"
 // @Success 200 {object} models.AnimaEatablesInfoRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
@@ -104,7 +119,7 @@ func (h *HandlerV1) UpdateEatablesInfo(c *gin.Context) {
 	defer span.End()
 
 	var (
-		body models.AnimaEatablesInfoReq
+		body models.AnimaEatablesInfoRes
 	)
 
 	err := c.ShouldBindJSON(&body)
@@ -116,25 +131,48 @@ func (h *HandlerV1) UpdateEatablesInfo(c *gin.Context) {
 		return
 	}
 
-	res, err := h.AnimalProduct.Update(ctx, &entity.AnimalProductReq{
+	var dailyReq []struct {
+		Capacity int64  `json:"capacity"`
+		Time     string `json:"time"`
+	}
+
+	for _, value := range body.Daily {
+		dailyReq = append(dailyReq, struct {
+			Capacity int64  `json:"capacity"`
+			Time     string `json:"time"`
+		}{
+			Capacity: value.Capacity,
+			Time:     value.Time,
+		})
+	}
+
+	res, err := h.EatablesInfo.Update(ctx, &entity.Eatables{
 		ID:        body.ID,
 		AnimalID:  body.AnimalID,
-		ProductID: body.ProductID,
-		Capacity:  body.Capacity,
-		GetTime:   body.GetTime,
+		EatableID: body.EatablesID,
+		Category:  body.Category,
+		Daily:     dailyReq,
 	})
 	if err != nil {
-		c.JSON(500, models.InternalMessage)
+		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error(err.Error())
 		return
 	}
 
+	var resDaily []*models.Daily
+	for _, value := range res.Daily {
+		resDaily = append(resDaily, &models.Daily{
+			Time:     value.Time,
+			Capacity: value.Capacity,
+		})
+	}
+
 	c.JSON(http.StatusOK, &models.AnimaEatablesInfoRes{
-		ID:         "",
-		AnimalID:   "",
-		EatablesID: "",
-		Daily:      []*models.Daily{},
-		Category:   "",
+		ID:         res.ID,
+		AnimalID:   res.AnimalID,
+		EatablesID: res.Eatable.ID,
+		Daily:      resDaily,
+		Category:   res.Category,
 	})
 }
 
@@ -159,16 +197,7 @@ func (h *HandlerV1) DeleteEatablesInfo(c *gin.Context) {
 
 	id := c.Param("id")
 
-	_, err := h.AnimalProduct.Get(ctx, id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, models.Error{
-			Message: models.NotAvailable,
-		})
-		h.Logger.Error("failed to get animal product in delete", l.Error(err))
-		return
-	}
-
-	err = h.AnimalProduct.Delete(ctx, id)
+	err := h.EatablesInfo.Delete(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error("failed to delete animal product", l.Error(err))
@@ -188,7 +217,7 @@ func (h *HandlerV1) DeleteEatablesInfo(c *gin.Context) {
 // @Produce json
 // @Param request query models.Pagination true "request"
 // @Param request query models.ListEatablesInfoByAnimalReq true "request"
-// @Success 200 {object} models.ListFoodInfoByAnimalRes
+// @Success 200 {object} models.ListFootInfoByAnimalRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
 // @Router /v1/animals/food-info [get]
@@ -209,34 +238,49 @@ func (h *HandlerV1) ListFoodInfoByAnimalID(c *gin.Context) {
 		return
 	}
 
-	animal_id := c.Query("animal_id")
-	if animal_id == "" {
+	animalID := c.Query("animal_id")
+	if animalID == "" {
 		c.JSON(http.StatusBadGateway, models.WrongInfoMessage)
 		h.Logger.Error("empty animal id")
 		return
 	}
 
-	res, err := h.AnimalProduct.ListProducts(ctx, params.Page, params.Limit, animal_id)
+	res, err := h.EatablesInfo.GetFoods(ctx, params.Page, params.Limit, animalID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error("failed to list animal eatables info by animal id", l.Error(err))
 		return
 	}
 
-	var resList []*models.ProductRes
-	for _, i := range res.Products {
-		var resItem models.ProductRes
-		resItem.Id = i.ID
-		resItem.ProductName = i.Name
-		resItem.Union = i.Union
-		resItem.Description = i.Description
-		resItem.TotalCapacity = i.TotalCapacity
-		resList = append(resList, &resItem)
+	var resList models.ListFootInfoByAnimalRes
+	for _, i := range res.Eatables {
+		var (
+			dailyInfo []*models.Daily
+			resItem   models.AnimaFoodInfoRes
+		)
+
+		for _, value := range i.Daily {
+			dailyInfo = append(dailyInfo, &models.Daily{
+				Time:     value.Time,
+				Capacity: value.Capacity,
+			})
+		}
+		resItem.ID = i.ID
+		resItem.Eatables.Id = i.Food.ID
+		resItem.Eatables.FoodName = i.Food.Name
+		resItem.Eatables.Union = i.Food.Union
+		resItem.Eatables.Description = i.Food.Description
+		resItem.Eatables.TotalCapacity = int64(i.Food.Capacity)
+		resItem.AnimalID = i.AnimalID
+		resItem.Category = "food"
+		resItem.Daily = dailyInfo
+		resList.Eatables = append(resList.Eatables, &resItem)
 	}
+	resList.Count = int64(res.TotalCount)
 
 	c.JSON(http.StatusOK, &models.ListFootInfoByAnimalRes{
-		Eatables: []*models.AnimaFoodInfoRes{},
-		Count:    21,
+		Eatables: resList.Eatables,
+		Count:    resList.Count,
 	})
 }
 
@@ -269,33 +313,49 @@ func (h *HandlerV1) ListDrugInfoByAnimalID(c *gin.Context) {
 		return
 	}
 
-	animal_id := c.Query("animal_id")
-	if animal_id == "" {
+	animalID := c.Query("animal_id")
+	if animalID == "" {
 		c.JSON(http.StatusBadGateway, models.WrongInfoMessage)
 		h.Logger.Error("empty animal id")
 		return
 	}
 
-	res, err := h.AnimalProduct.ListProducts(ctx, params.Page, params.Limit, animal_id)
+	res, err := h.EatablesInfo.GetDrugs(ctx, params.Page, params.Limit, animalID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.InternalMessage)
 		h.Logger.Error("failed to list animal eatables info by animal id", l.Error(err))
 		return
 	}
 
-	var resList []*models.ProductRes
-	for _, i := range res.Products {
-		var resItem models.ProductRes
-		resItem.Id = i.ID
-		resItem.ProductName = i.Name
-		resItem.Union = i.Union
-		resItem.Description = i.Description
-		resItem.TotalCapacity = i.TotalCapacity
-		resList = append(resList, &resItem)
+	var resList models.ListDrugInfoByAnimalRes
+	for _, i := range res.Eatables {
+		var (
+			dailyInfo []*models.Daily
+			resItem   models.AnimalDrugInfoRes
+		)
+
+		for _, value := range i.Daily {
+			dailyInfo = append(dailyInfo, &models.Daily{
+				Time:     value.Time,
+				Capacity: value.Capacity,
+			})
+		}
+		resItem.ID = i.ID
+		resItem.Eatables.Id = i.Drug.ID
+		resItem.Eatables.DrugName = i.Drug.Name
+		resItem.Eatables.Status = i.Drug.Status
+		resItem.Eatables.Union = i.Drug.Union
+		resItem.Eatables.Description = i.Drug.Description
+		resItem.Eatables.TotalCapacity = int64(i.Drug.Capacity)
+		resItem.AnimalID = i.AnimalID
+		resItem.Category = "drug"
+		resItem.Daily = dailyInfo
+		resList.Eatables = append(resList.Eatables, &resItem)
 	}
+	resList.Count = int64(res.TotalCount)
 
 	c.JSON(http.StatusOK, &models.ListDrugInfoByAnimalRes{
-		Eatables: []*models.AnimaDrugInfoRes{},
-		Count:    21,
+		Eatables: resList.Eatables,
+		Count:    resList.Count,
 	})
 }

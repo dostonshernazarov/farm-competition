@@ -19,11 +19,11 @@ type Daily struct {
 }
 
 type AnimalDrugInfoRes struct {
-	ID       string  `json:"id"`
-	AnimalID string  `json:"animal_id"`
-	Eatables DrugRes `json:"eatables"`
-	Daily    []Daily `json:"daily"`
-	Category string  `json:"category"`
+	ID       string   `json:"id"`
+	AnimalID string   `json:"animal_id"`
+	Eatables DrugRes  `json:"eatables"`
+	Daily    []*Daily `json:"daily"`
+	Category string   `json:"category"`
 }
 
 type AnimaEatablesInfoRes struct {
@@ -35,11 +35,11 @@ type AnimaEatablesInfoRes struct {
 }
 
 type AnimaFoodInfoRes struct {
-	ID       string  `json:"id"`
-	AnimalID string  `json:"animal_id"`
-	Eatables FoodRes `json:"eatables"`
-	Daily    []Daily `json:"daily"`
-	Category string  `json:"category"`
+	ID       string   `json:"id"`
+	AnimalID string   `json:"animal_id"`
+	Eatables FoodRes  `json:"eatables"`
+	Daily    []*Daily `json:"daily"`
+	Category string   `json:"category"`
 }
 
 type ListDrugInfoByAnimalRes struct {

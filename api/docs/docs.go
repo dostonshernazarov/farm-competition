@@ -229,6 +229,244 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/animals/drug-info": {
+            "get": {
+                "description": "Api for List animal drug info by animal ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EATABLES-INFO"
+                ],
+                "summary": "LIST ANIMAL DRUG INFO ANIMAL ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "animal_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListDrugInfoByAnimalRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/animals/eatables": {
+            "put": {
+                "description": "Api for Update animal eatables info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EATABLES-INFO"
+                ],
+                "summary": "UPDATE ANIMAL EATABLES INFO",
+                "parameters": [
+                    {
+                        "description": "UpdateModel",
+                        "name": "Animal-Eatables",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaEatablesInfoRes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaEatablesInfoRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api for Create animal eatables info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EATABLES-INFO"
+                ],
+                "summary": "CREATE ANIMAL EATABLES INFO",
+                "parameters": [
+                    {
+                        "description": "createModel",
+                        "name": "Animal-Eatables",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaEatablesInfoReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaEatablesInfoRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/animals/eatables/{id}": {
+            "delete": {
+                "description": "Api for Delete animal eatables info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EATABLES-INFO"
+                ],
+                "summary": "DELETE ANIMAL EATABLES INFO",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal Eatables ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/animals/food-info": {
+            "get": {
+                "description": "Api for List animal food info by animal ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EATABLES-INFO"
+                ],
+                "summary": "LIST ANIMAL FOOD INFO ANIMAL ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "animal_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListFootInfoByAnimalRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/animals/food/{id}": {
             "get": {
                 "description": "Api for Get Animal by animal id with foods",
@@ -1684,6 +1922,72 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AnimaEatablesInfoReq": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "eatables_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimaEatablesInfoRes": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "eatables_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimaFoodInfoRes": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "eatables": {
+                    "$ref": "#/definitions/models.FoodRes"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.AnimalCapRes": {
             "type": "object",
             "properties": {
@@ -1716,6 +2020,29 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
+                }
+            }
+        },
+        "models.AnimalDrugInfoRes": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "eatables": {
+                    "$ref": "#/definitions/models.DrugRes"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -1947,6 +2274,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Daily": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DeliveryCreateReq": {
             "type": "object",
             "properties": {
@@ -2138,6 +2476,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ListDrugInfoByAnimalRes": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "eatables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AnimalDrugInfoRes"
+                    }
+                }
+            }
+        },
         "models.ListDrugsRes": {
             "type": "object",
             "properties": {
@@ -2162,6 +2514,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.FoodRes"
+                    }
+                }
+            }
+        },
+        "models.ListFootInfoByAnimalRes": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "eatables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AnimaFoodInfoRes"
                     }
                 }
             }

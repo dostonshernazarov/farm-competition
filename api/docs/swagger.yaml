@@ -1,4 +1,47 @@
 definitions:
+  models.AnimaEatablesInfoReq:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      eatables_id:
+        type: string
+    type: object
+  models.AnimaEatablesInfoRes:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      eatables_id:
+        type: string
+      id:
+        type: string
+    type: object
+  models.AnimaFoodInfoRes:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      eatables:
+        $ref: '#/definitions/models.FoodRes'
+      id:
+        type: string
+    type: object
   models.AnimalCapRes:
     properties:
       category_name:
@@ -21,6 +64,21 @@ definitions:
         type: integer
       weight:
         type: number
+    type: object
+  models.AnimalDrugInfoRes:
+    properties:
+      animal_id:
+        type: string
+      category:
+        type: string
+      daily:
+        items:
+          $ref: '#/definitions/models.Daily'
+        type: array
+      eatables:
+        $ref: '#/definitions/models.DrugRes'
+      id:
+        type: string
     type: object
   models.AnimalProdactList:
     properties:
@@ -172,6 +230,13 @@ definitions:
           type: string
         type: array
     type: object
+  models.Daily:
+    properties:
+      capacity:
+        type: integer
+      time:
+        type: string
+    type: object
   models.DeliveryCreateReq:
     properties:
       capacity:
@@ -297,6 +362,15 @@ definitions:
           $ref: '#/definitions/models.DeliveryRes'
         type: array
     type: object
+  models.ListDrugInfoByAnimalRes:
+    properties:
+      count:
+        type: integer
+      eatables:
+        items:
+          $ref: '#/definitions/models.AnimalDrugInfoRes'
+        type: array
+    type: object
   models.ListDrugsRes:
     properties:
       count:
@@ -313,6 +387,15 @@ definitions:
       foods:
         items:
           $ref: '#/definitions/models.FoodRes'
+        type: array
+    type: object
+  models.ListFootInfoByAnimalRes:
+    properties:
+      count:
+        type: integer
+      eatables:
+        items:
+          $ref: '#/definitions/models.AnimaFoodInfoRes'
         type: array
     type: object
   models.ListProductsRes:
@@ -553,6 +636,160 @@ paths:
       summary: GET ANIMAL BY ANIMAL ID
       tags:
       - ANIMAL
+  /v1/animals/drug-info:
+    get:
+      consumes:
+      - application/json
+      description: Api for List animal drug info by animal ID
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: animal_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListDrugInfoByAnimalRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST ANIMAL DRUG INFO ANIMAL ID
+      tags:
+      - EATABLES-INFO
+  /v1/animals/eatables:
+    post:
+      consumes:
+      - application/json
+      description: Api for Create animal eatables info
+      parameters:
+      - description: createModel
+        in: body
+        name: Animal-Eatables
+        required: true
+        schema:
+          $ref: '#/definitions/models.AnimaEatablesInfoReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AnimaEatablesInfoRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: CREATE ANIMAL EATABLES INFO
+      tags:
+      - EATABLES-INFO
+    put:
+      consumes:
+      - application/json
+      description: Api for Update animal eatables info
+      parameters:
+      - description: UpdateModel
+        in: body
+        name: Animal-Eatables
+        required: true
+        schema:
+          $ref: '#/definitions/models.AnimaEatablesInfoRes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AnimaEatablesInfoRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: UPDATE ANIMAL EATABLES INFO
+      tags:
+      - EATABLES-INFO
+  /v1/animals/eatables/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for Delete animal eatables info
+      parameters:
+      - description: Animal Eatables ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: DELETE ANIMAL EATABLES INFO
+      tags:
+      - EATABLES-INFO
+  /v1/animals/food-info:
+    get:
+      consumes:
+      - application/json
+      description: Api for List animal food info by animal ID
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: animal_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListFootInfoByAnimalRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST ANIMAL FOOD INFO ANIMAL ID
+      tags:
+      - EATABLES-INFO
   /v1/animals/food/{id}:
     get:
       consumes:
