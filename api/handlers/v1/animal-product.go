@@ -333,6 +333,11 @@ func (h *HandlerV1) ListAnimalProductsByAnimalID(c *gin.Context) {
 	}
 
 	animal_id := c.Query("animal_id")
+	if animal_id == "" {
+		c.JSON(http.StatusBadGateway, models.WrongInfoMessage)
+		h.Logger.Error("empty animal id",)
+		return
+	}
 
 	res, err := h.AnimalProduct.ListProducts(ctx, params.Page, params.Limit, animal_id)
 	if err != nil {
@@ -399,6 +404,11 @@ func (h *HandlerV1) ListAnimalProductsByProductID(c *gin.Context) {
 	}
 
 	product_id := c.Query("product_id")
+	if product_id == "" {
+		c.JSON(http.StatusBadGateway, models.WrongInfoMessage)
+		h.Logger.Error("empty product id",)
+		return
+	}
 
 	res, err := h.AnimalProduct.ListAnimals(ctx, params.Page, params.Limit, product_id)
 	if err != nil {
