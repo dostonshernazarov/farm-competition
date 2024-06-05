@@ -34,6 +34,15 @@ type AnimaFoodGivenEatablesRes struct {
 	Day      string   `json:"day"`
 }
 
+type AnimaGivenEatablesRes struct {
+	ID         string   `json:"id"`
+	AnimalID   string   `json:"animal_id"`
+	EatablesID string   `json:"eatables_id"`
+	Daily      []*Daily `json:"daily"`
+	Category   string   `json:"category"`
+	Day      string   `json:"day"`
+}
+
 func (t *AnimaGivenEatablesReq) Validate() error {
 	t.Category = strings.ToLower(t.Category)
 	_, err := time.Parse(time.DateOnly, t.Day)

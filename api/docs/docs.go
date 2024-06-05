@@ -521,6 +521,140 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/animals/given-eatables": {
+            "put": {
+                "description": "Api for Update animal given eatables",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GIVEN-EATABLES"
+                ],
+                "summary": "UPDATE ANIMAL GIVEN EATABLES",
+                "parameters": [
+                    {
+                        "description": "UpdateModel",
+                        "name": "Given-Eatables",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaGivenEatablesRes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaGivenEatablesRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api for Create animal given eatables",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GIVEN-EATABLES"
+                ],
+                "summary": "CREATE ANIMAL GIVEN EATABLES",
+                "parameters": [
+                    {
+                        "description": "createModel",
+                        "name": "Given-Eatables",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaGivenEatablesReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.AnimaGivenEatablesRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/animals/given-eatables/{id}": {
+            "delete": {
+                "description": "Api for Delete animal given eatables",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GIVEN-EATABLES"
+                ],
+                "summary": "DELETE ANIMAL GIVEN EATABLES",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal Given Eatables ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/animals/product/{id}": {
             "get": {
                 "description": "Api for Get Animal with products",
@@ -1982,6 +2116,55 @@ const docTemplate = `{
                 },
                 "eatables": {
                     "$ref": "#/definitions/models.FoodRes"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimaGivenEatablesReq": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "day": {
+                    "type": "string"
+                },
+                "eatables_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AnimaGivenEatablesRes": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "daily": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Daily"
+                    }
+                },
+                "day": {
+                    "type": "string"
+                },
+                "eatables_id": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"

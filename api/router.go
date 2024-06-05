@@ -6,6 +6,7 @@ import (
 	"musobaqa/farm-competition/internal/usecase/delivery"
 	"musobaqa/farm-competition/internal/usecase/drugs"
 	"musobaqa/farm-competition/internal/usecase/eatables"
+	"musobaqa/farm-competition/internal/usecase/feeding"
 	"musobaqa/farm-competition/internal/usecase/foods"
 	"musobaqa/farm-competition/internal/usecase/products"
 	"time"
@@ -36,6 +37,7 @@ type RouteOption struct {
 	Delivery       delivery.Delivery
 	AnimalProduct  animalproduct.AnimalProduct
 	Eatables       eatables.Eatable
+	Feeding feeding.Feeding
 }
 
 // NewRoute
@@ -60,6 +62,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 		Delivery:       option.Delivery,
 		AnimalProduct:  option.AnimalProduct,
 		EatablesInfo:   option.Eatables,
+		Feeding: option.Feeding,
 	})
 
 	corsConfig := cors.DefaultConfig()
@@ -126,6 +129,11 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.DELETE("//animals/eatables/:id", HandlerV1.DeleteEatablesInfo)
 	api.GET("/animals/food-info", HandlerV1.ListFoodInfoByAnimalID)
 	api.GET("/animals/drug-info", HandlerV1.ListDrugInfoByAnimalID)
+
+	// ANIMAL GIVEN EATABLES
+	api.POST("/animals/given-eatables", HandlerV1.CreateGivenEatables)
+	api.PUT("/animals/given-eatables", HandlerV1.UpdateGivenEatables)
+	api.DELETE("//animals/given-eatables/:id", HandlerV1.DeleteGivenEatables)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
