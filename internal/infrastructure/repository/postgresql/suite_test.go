@@ -185,7 +185,7 @@ func TestDeliveryCRUD(t *testing.T) {
 	assert.Equal(t, getProduct.Name, updatedDelivery.Name)
 	assert.Equal(t, getProduct.ID, updatedDelivery.ID)
 	assert.Equal(t, getProduct.Capacity, updatedDelivery.Capacity)
-	assert.Equal(t, getProduct.Union, updatedDelivery.UpdatedAt)
+	assert.Equal(t, getProduct.Union, updatedDelivery.Union)
 
 	// delete
 	err = repo.Delete(ctx, deliveryID)
