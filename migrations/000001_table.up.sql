@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS animal_eatable_info (
     animal_id UUID NOT NULL,
     eatables_id UUID NOT NULL,
     category VARCHAR(100) NOT NULL,
-    daily JSONB NOT NULL, -- [{"capacity":3, "time":14:00}, {}]
+    daily JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS animal_given_eatables (
     eatables_id UUID NOT NULL,
     category VARCHAR(255) NOT NULL,
     day DATE NOT NULL DEFAULT CURRENT_DATE,
-    daily JSONB NOT NULL, -- [{"capacity":3, "time":14:00}, {}]
+    daily JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
