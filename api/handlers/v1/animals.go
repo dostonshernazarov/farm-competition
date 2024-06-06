@@ -56,15 +56,15 @@ func (h *HandlerV1) CreateAnimal(c *gin.Context) {
 	}
 
 	res, err := h.Animals.Create(ctx, &entity.Animal{
-		ID:          uuid.NewString(),
-		Name:        body.Name,
-		CategoryName:  body.CategoryName,
-		Gender:      body.Gender,
-		BirthDay:    body.DateOfBirth,
-		Genus:       body.Genus,
-		Weight:      uint64(body.Weight),
-		IsHealth:    cast.ToString(body.IsHealth),
-		Description: body.Description,
+		ID:           uuid.NewString(),
+		Name:         body.Name,
+		CategoryName: body.CategoryName,
+		Gender:       body.Gender,
+		BirthDay:     body.DateOfBirth,
+		Genus:        body.Genus,
+		Weight:       uint64(body.Weight),
+		IsHealth:     cast.ToString(body.IsHealth),
+		Description:  body.Description,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{
@@ -223,8 +223,6 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 		return
 	}
 
-	println(params)
-
 	category := c.Query("category")
 	genus := c.Query("genus")
 	gender := c.Query("gender")
@@ -269,7 +267,7 @@ func (h *HandlerV1) ListAnimals(c *gin.Context) {
 
 	c.JSON(http.StatusOK, &models.ListAnimalsRes{
 		Animals: reslist,
-		Count: int64(list.TotalCount),
+		Count:   int64(list.TotalCount),
 	})
 }
 
@@ -306,15 +304,15 @@ func (h *HandlerV1) UpdateAnimal(c *gin.Context) {
 	}
 
 	resAnimals, err := h.Animals.Update(ctx, &entity.Animal{
-		ID:          body.Id,
-		Name:        body.Name,
-		CategoryName:  body.CategoryName,
-		Gender:      body.Gender,
-		BirthDay:    body.DateOfBirth,
-		Genus:       body.Genus,
-		Weight:      uint64(body.Weight),
-		IsHealth:    cast.ToString(body.IsHealth),
-		Description: body.Description,
+		ID:           body.Id,
+		Name:         body.Name,
+		CategoryName: body.CategoryName,
+		Gender:       body.Gender,
+		BirthDay:     body.DateOfBirth,
+		Genus:        body.Genus,
+		Weight:       uint64(body.Weight),
+		IsHealth:     cast.ToString(body.IsHealth),
+		Description:  body.Description,
 	})
 	if err != nil {
 		c.JSON(500, models.InternalMessage)
@@ -377,19 +375,19 @@ func (h *HandlerV1) DeleteAnimal(c *gin.Context) {
 	})
 }
 
-// LIST CATEGORY
-// @Summary LIST ANIMAL CATEGORY
-// @Description Api for List AnimalCategory
-// @Tags CATEGORY
+// LIST HUNGRY ANIMALS
+// @Summary LIST HUNGRY ANIMALS
+// @Description Api for List hungry Animals by page limit
+// @Tags ANIMAL
 // @Accept json
 // @Produce json
 // @Param request query models.Pagination true "request"
-// @Success 200 {object} models.CategoryRes
+// @Success 200 {object} models.ListAnimalsRes
 // @Failure 400 {object} models.Error
 // @Failure 500 {object} models.Error
-// @Router /v1/category [get]
-func (h *HandlerV1) ListCategory(c *gin.Context) {
-	ctx, span := otlp.Start(c, "api", "ListAnimals")
+// @Router /v1/animals/hungry [get]
+func (h *HandlerV1) HungryAnimals(c *gin.Context) {
+	ctx, span := otlp.Start(c, "api", "ListHungryAnimals")
 	span.SetAttributes(
 		attribute.Key("method").String(c.Request.Method),
 		attribute.Key("host").String(c.Request.Host),
@@ -404,6 +402,32 @@ func (h *HandlerV1) ListCategory(c *gin.Context) {
 		})
 		return
 	}
+	list, err := h.Animals.HungryAnimals(ctx, params.Page, params.Limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{
+			Message: models.InternalMessage,
+		})
+		h.Logger.Error("failed to get list animal", l.Error(err))
+		return
+	}
 
-	println(params, ctx)
+	var reslist []*models.AnimalRes
+	for _, i := range list.Animals {
+		var res models.AnimalRes
+		res.Id = i.ID
+		res.Name = i.Name
+		res.CategoryName = i.CategoryName
+		res.DateOfBirth = i.BirthDay
+		res.Description = i.Description
+		res.Gender = i.Gender
+		res.Genus = i.Genus
+		res.Weight = float32(i.Weight)
+		res.IsHealth = cast.ToBool(i.IsHealth)
+		reslist = append(reslist, &res)
+	}
+
+	c.JSON(http.StatusOK, &models.ListAnimalsRes{
+		Animals: reslist,
+		Count:   int64(list.TotalCount),
+	})
 }
