@@ -32,6 +32,6 @@ docker compose up
 ```
 
 <h2><a href="https://www.postgresql.org/docs/current/datatype-json.html">*JSONB</a> type in project</h2>
-```shell
+
 [{"capacity":1, "time":14:00}, {"capacity":2, "time":15:00}, {"capacity":3, "time":16:00}]
-```
+
