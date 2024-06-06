@@ -255,13 +255,6 @@ definitions:
       weight:
         type: number
     type: object
-  models.CategoryRes:
-    properties:
-      categories:
-        items:
-          type: string
-        type: array
-    type: object
   models.Daily:
     properties:
       capacity:
@@ -945,6 +938,36 @@ paths:
       summary: DELETE ANIMAL GIVEN EATABLES
       tags:
       - GIVEN-EATABLES
+  /v1/animals/hungry:
+    get:
+      consumes:
+      - application/json
+      description: Api for List hungry Animals by page limit
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListAnimalsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: LIST HUNGRY ANIMALS
+      tags:
+      - ANIMAL
   /v1/animals/product/{id}:
     get:
       consumes:
@@ -1129,36 +1152,6 @@ paths:
       summary: GET ANIMAL PRODUCT BY ID
       tags:
       - ANIMAL-PRODUCT
-  /v1/category:
-    get:
-      consumes:
-      - application/json
-      description: Api for List AnimalCategory
-      parameters:
-      - in: query
-        name: limit
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.CategoryRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.Error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.Error'
-      summary: LIST ANIMAL CATEGORY
-      tags:
-      - CATEGORY
   /v1/delivery:
     get:
       consumes:

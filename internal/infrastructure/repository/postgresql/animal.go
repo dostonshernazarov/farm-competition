@@ -3,25 +3,31 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	"github.com/jackc/pgx/v4"
+	"encoding/json"
 	"musobaqa/farm-competition/internal/entity"
 	"musobaqa/farm-competition/internal/infrastructure/repository/postgresql/repo"
 	"musobaqa/farm-competition/internal/pkg/postgres"
 	"time"
+
+	"github.com/jackc/pgx/v4"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/spf13/cast"
 )
 
 type animalRepo struct {
-	tableName string
-	db        *postgres.PostgresDB
+	tableName        string
+	infoTableName    string
+	feedingTableName string
+	db               *postgres.PostgresDB
 }
 
 func NewAnimal(db *postgres.PostgresDB) repo.Animal {
 	return &animalRepo{
-		tableName: "animals",
-		db:        db,
+		tableName:        "animals",
+		infoTableName:    "animal_eatable_info",
+		feedingTableName: "animal_given_eatables",
+		db:               db,
 	}
 }
 
@@ -348,4 +354,144 @@ func (a *animalRepo) List(ctx context.Context, page, limit uint64, params map[st
 	animals.TotalCount = uint64(count)
 
 	return &animals, nil
+}
+func (a animalRepo) HungryAnimals(ctx context.Context, page, limit uint64) (*entity.ListAnimal, error) {
+	array := []string{}
+	var (
+		animalsList entity.ListAnimal
+		resMap      = make(map[string]time.Time)
+		count int64 = 0
+	)
+	queryBuilder := a.db.Sq.Builder.Select(
+		"e.id, " +
+			"e.animal_id, " +
+			"e.daily, " +
+			"f.id, " +
+			"f.name, " +
+			"f.capacity, " +
+			"f.description, " +
+			"f.product_union")
+	queryBuilder = queryBuilder.From(a.infoTableName + " AS e")
+	queryBuilder = queryBuilder.Join("foods AS f ON f.id = e.eatables_id")
+	queryBuilder = queryBuilder.Where("f.deleted_at IS NULL")
+	queryBuilder = queryBuilder.Where("e.deleted_at IS NULL")
+	queryBuilder = queryBuilder.Limit(limit)
+	queryBuilder = queryBuilder.Offset(limit * (page - 1))
+
+	query, args, err := queryBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := a.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	timeNow := time.Now().Hour()
+
+	var response entity.ListFoodEatables
+	for rows.Next() {
+		var (
+			eatableDailyByte []byte
+			eatables         entity.EatablesFoodRes
+		)
+		err = rows.Scan(
+			&eatables.ID,
+			&eatables.AnimalID,
+			&eatableDailyByte,
+			&eatables.Food.ID,
+			&eatables.Food.Name,
+			&eatables.Food.Capacity,
+			&eatables.Food.Description,
+			&eatables.Food.Union,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(eatableDailyByte, &eatables.Daily)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, i := range eatables.Daily {
+			parseTime, err := time.Parse(time.TimeOnly, i.Time)
+			if err != nil {
+				return nil, err
+			}
+
+			if parseTime.Hour() > timeNow {
+
+
+				resMap[eatables.AnimalID] = parseTime
+			}
+
+		}
+		response.Eatables = append(response.Eatables, &eatables)
+	}
+	for key, value := range resMap {
+		queryBuilderFeeding := a.db.Sq.Builder.Select(
+			"animal_id, " +
+				"daily")
+		queryBuilderFeeding = queryBuilderFeeding.From(a.feedingTableName)
+		queryBuilderFeeding = queryBuilderFeeding.Where(a.db.Sq.Equal("animal_id", key))
+
+		query, args, err := queryBuilderFeeding.ToSql()
+		if err != nil {
+			return nil, err
+		}
+
+		rows, err := a.db.Query(ctx, query, args...)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var (
+				eatableDailyByte []byte
+				eatables         entity.EatablesFoodRes
+			)
+			err = rows.Scan(
+				&eatables.AnimalID,
+				&eatableDailyByte,
+			)
+			if err != nil {
+				return nil, err
+			}
+			err = json.Unmarshal(eatableDailyByte, &eatables.Daily)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, i := range eatables.Daily {
+				parseTime, err := time.Parse(time.TimeOnly, i.Time)
+				if err != nil {
+					return nil, err
+				}
+
+				resTime :=  value.Hour() - parseTime.Hour()
+				if resTime >= 1 {
+					array = append(array, key)
+				}
+
+			}
+		}
+	}
+
+	for _, i := range array {
+		animal ,err := a.Get(ctx, i)
+		if err != nil {
+			return nil, err
+		}
+
+		animalsList.Animals = append(animalsList.Animals, animal)
+
+		count += 1
+	}
+
+	animalsList.TotalCount = uint64(count)
+	return &animalsList, nil
 }

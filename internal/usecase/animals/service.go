@@ -53,3 +53,7 @@ func (a *animalService) Get(ctx context.Context, animalID string) (*entity.Anima
 func (a *animalService) List(ctx context.Context, page, limit uint64, params map[string]any) (*entity.ListAnimal, error) {
 	return a.repo.List(ctx, page, limit, params)
 }
+
+func (a *animalService) HungryAnimals(ctx context.Context, page, limit uint64) (*entity.ListAnimal, error) {
+	return a.repo.HungryAnimals(ctx, page, limit)
+}

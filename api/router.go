@@ -85,6 +85,7 @@ func NewRoute(option RouteOption) *gin.Engine {
 	api.GET("/animals", HandlerV1.ListAnimals)
 	api.PUT("/animals", HandlerV1.UpdateAnimal)
 	api.DELETE("/animals/:id", HandlerV1.DeleteAnimal)
+	api.GET("/animals/hungry", HandlerV1.HungryAnimals)
 
 	// PRODUCT METHODS
 	api.POST("/products", HandlerV1.CreateProduct)
